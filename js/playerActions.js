@@ -1,5 +1,5 @@
 import { getState, getPlayer, getOpponentId, isGameOver } from './state.js';
-import { renderGame, updatePlayableCards } from './render.js';
+import { renderGame, updatePlayableCards, createCardElement } from './render.js';
 import { deselectCard } from './uiState.js';
 import { logMessage } from './messaging.js';
 import { updateBoardStats } from './boardLogic.js';
@@ -8,8 +8,10 @@ import { MAX_BOARD_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { getTargetFromElement } from './actionUtils.js';
 import { triggerCardEffect } from './cardEffects.js';
+import { animateCardMovement } from './animations.js'; // Import the animation helper
+import { getDOMElement } from './dom.js'; // Need access to board/hand elements
 
-export function playCard(player, card, cardIndexInHand, targetElement = null) {
+export async function playCard(player, card, cardIndexInHand, targetElement = null) {
     console.log(`${player.id} attempts to play ${card.name}`);
 
     if (player.currentMana < card.cost) {
@@ -27,11 +29,40 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
          return;
     }
 
+    // --- Animation Setup ---
+    let startRect = null;
+    let endRect = null;
+    const handCardElement = player.handElement?.querySelector(`.card[data-hand-index="${cardIndexInHand}"]`);
+
+    if (handCardElement) {
+        startRect = handCardElement.getBoundingClientRect();
+        // Hide the original card in hand immediately
+        handCardElement.style.opacity = '0';
+    }
+
     player.currentMana -= card.cost;
 
+    // Remove card from hand state *before* animation starts,
+    // but keep the data for animation/effects.
     const playedCard = player.hand.splice(cardIndexInHand, 1)[0];
 
     let success = true;
+    let animationPromise = Promise.resolve(); // Default to resolved promise if no animation
+
+    // --- Calculate End Position for Animation ---
+    if (startRect) {
+        if (playedCard.type === "Creature") {
+            // Target the next available slot on the board
+            const boardEl = getDOMElement(`${player.id}BoardEl`);
+            const tempBoardCard = createCardElement(playedCard, 'board'); // Create a temporary element to measure
+            tempBoardCard.style.visibility = 'hidden'; // Don't show it
+            boardEl.appendChild(tempBoardCard);
+            endRect = tempBoardCard.getBoundingClientRect();
+            boardEl.removeChild(tempBoardCard); // Clean up temp element
+        }
+        // Add logic for spell target position if desired (e.g., center of board or target)
+    }
+
     if (playedCard.type === "Creature") {
         console.log(`Playing creature: ${playedCard.name}`);
         logMessage(`${player.id} plays ${playedCard.name}.`);
@@ -44,10 +75,17 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
         playedCard.health = libraryCard.health;
         playedCard.attack = libraryCard.attack;
 
+        // --- Trigger Play Animation ---
+        if (startRect && endRect) {
+            animationPromise = animateCardMovement(playedCard, startRect, endRect, 'play');
+        }
+
+        // Add to board state *after* animation setup, before awaiting
         player.board.push(playedCard);
 
+        // Handle Deploy effects AFTER the creature is on the board state
         if (playedCard.deployActionId) {
-            triggerCardEffect(player, playedCard, playedCard.deployActionId, playedCard.deployParams || {}, null);
+            // Effects will trigger after animation visually completes
         }
 
         updateBoardStats(player.id);
@@ -56,6 +94,12 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
     } else if (playedCard.type === "Spell") {
         console.log(`Playing spell: ${playedCard.name}`);
         logMessage(`${player.id} plays ${playedCard.name}.`);
+
+        // --- Trigger Spell Animation (optional - maybe just fade out?) ---
+        // For now, let's just use the hand card fade out.
+        // If animation is desired, calculate endRect (e.g., center of board/target)
+        // animationPromise = animateCardMovement(playedCard, startRect, endRect, 'play');
+
         if (playedCard.actionId) {
             const target = getTargetFromElement(targetElement, playedCard.target, player);
 
@@ -64,6 +108,7 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
                 success = triggerCardEffect(player, playedCard, playedCard.actionId, playedCard.actionParams || {}, target);
             } else {
                 console.log("Invalid target for spell.");
+                if (handCardElement) handCardElement.style.opacity = '1'; // Make original card visible again
                 logMessage(`Invalid target for ${playedCard.name}.`, 'log-error');
                 player.hand.splice(cardIndexInHand, 0, playedCard);
                 player.currentMana += playedCard.cost;
@@ -77,6 +122,15 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
             player.discardPile.push(playedCard);
             console.log(`${playedCard.name} added to ${player.id}'s discard pile.`);
         }
+    }
+
+    // --- Wait for Animation and Apply Effects ---
+    await animationPromise;
+
+    // Apply deploy effects *after* the creature animation finishes visually landing
+    if (success && playedCard.type === "Creature" && playedCard.deployActionId) {
+        console.log(`Triggering deploy effect for ${playedCard.name} after animation.`);
+        triggerCardEffect(player, playedCard, playedCard.deployActionId, playedCard.deployParams || {}, null);
     }
 
     deselectCard();

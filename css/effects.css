@@ -27,6 +27,34 @@
   75% { transform: translateX(3px) rotate(1deg); }
 }
 
+/* --- Card Movement Animations --- */
+
+/* Class applied to the card *during* animation */
+.card-animating {
+    position: fixed; /* Take out of flow, position relative to viewport */
+    z-index: 1500; /* Ensure it's above most other elements */
+    pointer-events: none; /* Prevent interaction during animation */
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth transition */
+    /* Size should match the card */
+    width: 80px;
+    height: 120px;
+    /* Will be populated with card content by JS */
+    background-color: white; /* Fallback */
+    border: 1px solid #333;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Specific animation keyframes (optional, could do all with JS transform) */
+/* Example: Attack lunge (could be refined) */
+@keyframes attack-lunge {
+    0% { transform: translate(0, 0) scale(1.05); }
+    50% { transform: translate(var(--attack-dx, 0px), var(--attack-dy, 0px)) scale(1.15); } /* Move towards target */
+    100% { transform: translate(0, 0) scale(1.05); } /* Return to start */
+}
+
+/* --- Stat/Effect Flashes --- */
+
 @keyframes flash-bright {
     0% { filter: brightness(1.5); }
     100% { filter: brightness(1); }
