@@ -1,6 +1,4 @@
 import { getPlayer, getOpponentPlayer } from './state.js';
-// Removed import of actionImplementations
-// Removed triggerCardEffect function
 
 // --- Helper Functions ---
 
@@ -27,6 +25,13 @@ export function getTargetFromElement(element, targetType, caster) {
     } else if (cardInstanceId && targetPlayerId) { // Targeting a creature
         const targetPlayer = getPlayer(targetPlayerId);
         const targetCard = targetPlayer?.board.find(c => c.instanceId === cardInstanceId);
+        // --- Stealth Check ---
+        // Cannot target an enemy stealthed creature with single-target effects/attacks
+        if (targetCard && targetCard.isStealthed && targetPlayerId !== caster.id) {
+            console.log(`Invalid target: Cannot target stealthed creature ${targetCard.name}`);
+            return "invalid";
+        }
+        // --- End Stealth Check ---
         if (targetCard && (targetType === 'any' || targetType === 'creature')) {
             return targetCard; // Return the card instance object
         } else {

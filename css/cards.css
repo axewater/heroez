@@ -186,3 +186,8 @@
     /* Example: Add a subtle red glow or border */
     border: 2px solid darkred;
 }
+.card.is-stealthed {
+    opacity: 0.65; /* Make slightly transparent */
+    box-shadow: inset 0 0 10px 3px rgba(50, 50, 50, 0.5); /* Add a subtle inner shadow */
+    /* Prevent hover zoom while stealthed? Optional */
+}

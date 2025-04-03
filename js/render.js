@@ -82,6 +82,7 @@ export function createCardElement(card, location, indexInHand = -1) {
     if (card.hasAttacked) cardEl.classList.add('has-attacked');
     if (card.isFrozen) cardEl.classList.add('is-frozen');
     if (card.mechanics?.includes("Frenzy") && !card.frenzyTriggered) cardEl.classList.add('has-frenzy'); // Add class if Frenzy is ready
+    if (card.isStealthed) cardEl.classList.add('is-stealthed'); // Add class if Stealthed
 
     // Selection / Attacking highlights (applied during render based on state)
     const selectedCard = getSelectedCard();
@@ -157,7 +158,7 @@ export function updateTargetHighlights() {
     const canTargetCreature = (targetCard, targetType) => {
         if (!targetCard) return false;
         if (targetType === 'any') return true;
-        if (targetType === 'creature' && targetCard.type === 'Creature') return true;
+        if (targetType === 'creature' && targetCard.type === 'Creature' ) return true;
         // Add more checks (e.g., cannot target stealthed unless AOE?)
         return false;
     };
@@ -177,7 +178,7 @@ export function updateTargetHighlights() {
             currentPlayer.heroElement.classList.add('targetable');
         }
         currentPlayer.board.forEach(card => {
-            if (canTargetCreature(card, targetType)) {
+            if (canTargetCreature(card, targetType)) { // Player can target their own stealthed minions
                 const el = currentPlayer.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
                 if (el) el.classList.add('targetable');
             }
@@ -188,7 +189,8 @@ export function updateTargetHighlights() {
             opponentPlayer.heroElement.classList.add('targetable');
         }
         opponentPlayer.board.forEach(card => {
-            if (canTargetCreature(card, targetType)) {
+            // Cannot target stealthed enemy minions with single-target spells
+            if (canTargetCreature(card, targetType) && !card.isStealthed) {
                 const el = opponentPlayer.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
                 if (el) el.classList.add('targetable');
             }
@@ -196,18 +198,18 @@ export function updateTargetHighlights() {
 
     } else if (targeting.mode === 'attack') {
         // Highlight opponent creatures/hero that can be attacked
-        const tauntMinions = opponentPlayer.board.filter(c => c.isTaunt); // Assuming isTaunt property exists
+        const tauntMinions = opponentPlayer.board.filter(c => c.isTaunt && !c.isStealthed); // Stealthed minions cannot Taunt
 
         if (tauntMinions.length > 0) {
             // Only highlight taunt minions
             tauntMinions.forEach(card => {
                 const el = opponentPlayer.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
-                if (el) el.classList.add('targetable');
+                if (el) el.classList.add('targetable'); // Already checked for stealth
             });
         } else {
-            // Highlight all opponent creatures and hero
+            // Highlight all non-stealthed opponent creatures and hero
             opponentPlayer.board.forEach(card => {
-                const el = opponentPlayer.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
+                const el = opponentPlayer.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`); // Check stealth before adding class
                 if (el) el.classList.add('targetable');
             });
             if (opponentPlayer.heroElement) {

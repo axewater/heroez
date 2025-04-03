@@ -27,7 +27,7 @@ export function findBestSpellTarget(aiPlayer, humanPlayer, spellCard) {
         }
         // Check creature targets
         humanPlayer.board.forEach(creature => {
-            if (targetType === 'any' || targetType === 'creature') {
+            if ((targetType === 'any' || targetType === 'creature') && !creature.isStealthed) { // AI cannot target stealthed creatures
                 const element = getCardElement(creature);
                 if (element) {
                     let score = 0;
@@ -100,7 +100,7 @@ export function findBestSpellTarget(aiPlayer, humanPlayer, spellCard) {
 export function findBestAttackTarget(attacker, humanPlayer) {
     let potentialTargets = []; // Array of { element: DOMElement, score: number }
 
-    const opponentTaunts = humanPlayer.board.filter(c => c.isTaunt);
+    const opponentTaunts = humanPlayer.board.filter(c => c.isTaunt && !c.isStealthed); // Stealthed minions cannot Taunt
 
     // Helper to get element for a card instance or hero
     const getElement = (target) => {
@@ -129,30 +129,33 @@ export function findBestAttackTarget(attacker, humanPlayer) {
         // Priority: Lethal on hero > Kill creature (value trade) > Damage hero > Damage creature (unfavorable trade)
 
         // Check hero lethal
-        if (humanPlayer.heroHealth <= attacker.currentAttack && humanPlayer.heroElement) {
+        if (humanPlayer.heroHealth <= attacker.currentAttack && humanPlayer.heroElement) { // Can always target hero
             potentialTargets.push({ element: humanPlayer.heroElement, score: 10000 });
         }
 
         // Check creatures
         humanPlayer.board.forEach(creature => {
-             const element = getElement(creature);
-             if (element) {
-                 let score = 50; // Base score for attacking a creature
-                 const lethalOnTarget = creature.currentHealth <= attacker.currentAttack;
-                 const attackerDies = attacker.currentHealth <= creature.currentAttack;
+             // AI cannot target stealthed creatures
+             if (!creature.isStealthed) {
+                 const element = getElement(creature);
+                 if (element) {
+                     let score = 50; // Base score for attacking a non-stealthed creature
+                     const lethalOnTarget = creature.currentHealth <= attacker.currentAttack;
+                     const attackerDies = attacker.currentHealth <= creature.currentAttack;
 
-                 if (lethalOnTarget) score += 200; // Good to kill things
-                 if (attackerDies) score -= 150; // Bad if attacker dies
-                 if (lethalOnTarget && !attackerDies) score += 300; // Excellent trade
+                     if (lethalOnTarget) score += 200; // Good to kill things
+                     if (attackerDies) score -= 150; // Bad if attacker dies
+                     if (lethalOnTarget && !attackerDies) score += 300; // Excellent trade
 
-                 score += creature.currentAttack * 5; // Prioritize removing threats
-                 score -= creature.currentHealth; // Prefer lower health targets if not lethal
+                     score += creature.currentAttack * 5; // Prioritize removing threats
+                     score -= creature.currentHealth; // Prefer lower health targets if not lethal
 
-                 potentialTargets.push({ element, score });
+                     potentialTargets.push({ element, score });
+                 }
              }
         });
 
-         // Target hero non-lethal (lower priority than good trades)
+         // Target hero non-lethal (lower priority than good trades, always possible)
          if (humanPlayer.heroHealth > attacker.currentAttack && humanPlayer.heroElement) {
               potentialTargets.push({ element: humanPlayer.heroElement, score: 40 });
          }

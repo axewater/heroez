@@ -85,6 +85,7 @@ export function createCardInstance(cardData, ownerId) {
         // --- Derived State (set based on mechanics for easier access) ---
         isTaunt: !!libraryCard.mechanics?.includes("Taunt"),
         isSwift: !!libraryCard.mechanics?.includes("Swift"),
+        isStealthed: !!libraryCard.mechanics?.includes("Stealth"), // Initialize Stealth state
         // Add more state as needed (isStealthed, poisonCounters, etc.)
         // Frenzy specific state
         effects: [], // Initialize effects array here

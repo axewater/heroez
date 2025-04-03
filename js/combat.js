@@ -25,7 +25,7 @@ export function creatureAttack(attackerCard, targetElement) {
     const targetIsHero = target instanceof HTMLElement && target.classList.contains('hero-info');
     const targetCardInstance = (!targetIsHero && typeof target === 'object' && target.instanceId) ? target : null;
 
-    const tauntMinions = opponentPlayer.board.filter(c => c.isTaunt);
+    const tauntMinions = opponentPlayer.board.filter(c => c.isTaunt && !c.isStealthed); // Stealthed minions cannot Taunt
     if (tauntMinions.length > 0 && (!targetCardInstance || !targetCardInstance.isTaunt)) {
         logMessage("Must attack a Taunt creature!", 'log-error');
         console.log("Attack blocked by Taunt");
@@ -34,15 +34,24 @@ export function creatureAttack(attackerCard, targetElement) {
         return;
     }
 
-     // Check if attacker can attack (redundant with UI checks but good safety)
-     if (!attackerCard.canAttack || attackerCard.hasAttacked || attackerCard.isFrozen || attackerCard.currentAttack <= 0) {
-         console.log(`Attacker ${attackerCard.name} cannot attack (canAttack: ${attackerCard.canAttack}, hasAttacked: ${attackerCard.hasAttacked}, isFrozen: ${attackerCard.isFrozen}, Attack: ${attackerCard.currentAttack}).`);
-         setMessage(`${attackerCard.name} cannot attack.`);
-         deselectAttacker();
-         renderGame();
-         return;
-     }
+    // --- Stealth Check ---
+    if (targetCardInstance && targetCardInstance.isStealthed) {
+        logMessage(`Cannot attack ${targetCardInstance.name}: It is Stealthed!`, 'log-error');
+        console.log("Attack blocked by Stealth");
+        deselectAttacker();
+        renderGame();
+        return;
+    }
+    // --- End Stealth Check ---
 
+    // Check if attacker can attack (redundant with UI checks but good safety)
+    if (!attackerCard.canAttack || attackerCard.hasAttacked || attackerCard.isFrozen || attackerCard.currentAttack <= 0) {
+        console.log(`Attacker ${attackerCard.name} cannot attack (canAttack: ${attackerCard.canAttack}, hasAttacked: ${attackerCard.hasAttacked}, isFrozen: ${attackerCard.isFrozen}, Attack: ${attackerCard.currentAttack}).`);
+        setMessage(`${attackerCard.name} cannot attack.`);
+        deselectAttacker();
+        renderGame();
+        return;
+    }
 
     // --- Execute Combat ---
     const targetName = targetCardInstance ? targetCardInstance.name : (targetIsHero ? getOpponentId(attackerPlayer.id) + ' hero' : 'invalid target');
@@ -60,12 +69,18 @@ export function creatureAttack(attackerCard, targetElement) {
     attackerCard.hasAttacked = true;
     attackerCard.canAttack = false; // Cannot attack again this turn (usually)
 
+    // --- Break Stealth ---
+    if (attackerCard.isStealthed) {
+        attackerCard.isStealthed = false;
+        logMessage(`${attackerCard.name} loses Stealth.`);
+    }
+
     // --- Post-Action Cleanup ---
     deselectAttacker(); // Clear selection state
     if (!isGameOver()) {
         checkWinCondition(); // Check win condition after combat
     }
-     if (!isGameOver()) {
+    if (!isGameOver()) {
         renderGame(); // Update UI
         updatePlayableCards(attackerPlayer); // Update highlights (attacker can no longer attack)
     }

@@ -7,7 +7,7 @@ export const cardLibrary = [
     { id: "c5", name: "Stone Defender", cost: 3, attack: 2, health: 4, type: "Creature", mechanics: [] },
     { id: "c6", name: "Healing Acolyte", cost: 2, attack: 1, health: 2, type: "Creature", mechanics: ["Deploy"], deployActionId: 'restoreHealthToSelf', deployParams: { amount: 2 }, effectText: "Deploy: Restore 2 health to your hero." },
     { id: "c7", name: "Raging Berserker", cost: 3, attack: 3, health: 3, type: "Creature", mechanics: ["Frenzy"], frenzyActionId: 'gainAttack', frenzyActionParams: { amount: 2 }, effectText: "Frenzy: Gains +2 Attack the first time it survives damage." },
-    // { id: "c8", name: "Shadow Stalker", cost: 4, attack: 3, health: 3, type: "Creature", mechanics: ["Stealth"], effectText: "Stealth (1 turn)" }, // Stealth not implemented
+    { id: "c15", name: "Shadow Panther", cost: 3, attack: 4, health: 2, type: "Creature", mechanics: ["Stealth"], effectText: "Stealth" },
 
     // --- New Common Creatures ---
     { id: "c9", name: "Shield Bearer", cost: 1, attack: 0, health: 2, type: "Creature", mechanics: ["Taunt"] },
@@ -16,7 +16,6 @@ export const cardLibrary = [
     { id: "c12", name: "Stormwind Knight", cost: 4, attack: 2, health: 5, type: "Creature", mechanics: ["Swift"] },
     { id: "c13", name: "Murloc Raider", cost: 1, attack: 2, health: 1, type: "Creature", mechanics: [] },
     { id: "c14", name: "Enraged Gryphon", cost: 4, attack: 3, health: 4, type: "Creature", mechanics: ["Frenzy"], frenzyActionId: 'gainAttack', frenzyActionParams: { amount: 3 }, effectText: "Frenzy: Gains +3 Attack the first time it survives damage." },
-
 
     // --- Existing Rare Creatures ---
     // { id: "r1", name: "Arcane Scholar", cost: 4, attack: 2, health: 4, type: "Creature", mechanics: ["Spell Power +1"], effectText: "Spell Power +1" }, // Spell Power not implemented
@@ -29,13 +28,12 @@ export const cardLibrary = [
     { id: "r6", name: "Cult Adept", cost: 4, attack: 3, health: 2, type: "Creature", mechanics: ["Deploy"], deployActionId: 'drawCards', deployParams: { amount: 1 }, effectText: "Deploy: Draw a card." },
     { id: "r7", name: "Booty Bay Bodyguard", cost: 5, attack: 5, health: 4, type: "Creature", mechanics: ["Taunt"] },
     { id: "r8", name: "Priestess of Elune", cost: 5, attack: 4, health: 4, type: "Creature", mechanics: ["Deploy"], deployActionId: 'restoreHealthToSelf', deployParams: { amount: 4 }, effectText: "Deploy: Restore 4 health to your hero." },
-
+    { id: "r9", name: "Jungle Stalker", cost: 5, attack: 4, health: 4, type: "Creature", mechanics: ["Stealth"], effectText: "Stealth" },
 
     // --- New Epic Creatures ---
     { id: "e1", name: "Lord of the Arena", cost: 6, attack: 6, health: 5, type: "Creature", mechanics: ["Taunt"] },
     { id: "e2", name: "War Golem Veteran", cost: 7, attack: 7, health: 7, type: "Creature", mechanics: [] },
     { id: "e3", name: "Ironbark Protector", cost: 8, attack: 8, health: 8, type: "Creature", mechanics: ["Taunt"] },
-
 
     // --- Existing Spells ---
     { id: "s1", name: "Fireball", cost: 3, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 4 }, effectText: "Deal 4 damage." },
@@ -55,7 +53,6 @@ export const cardLibrary = [
     { id: "s13", name: "Frost Shock", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'freezeCreature', actionParams: {}, effectText: "Freeze a creature." },
     { id: "s14", name: "Blessing of Kings", cost: 4, type: "Spell", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 4, health: 4 }, effectText: "Give a creature +4/+4." },
 
-
     // --- Existing Legendary Card ---
     { id: "l1", name: "Dragon Lord", cost: 8, attack: 7, health: 7, type: "Creature", mechanics: ["Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "whelp", count: 1 }, effectText: "Deploy: Summon a 3/3 Dragon Whelp." },
     // Definition for the summoned creature
@@ -65,5 +62,4 @@ export const cardLibrary = [
     { id: "l2", name: "Obsidian Destroyer", cost: 9, attack: 7, health: 7, type: "Creature", mechanics: ["Taunt", "Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "scarab", count: 1 }, effectText: "Taunt. Deploy: Summon a 1/1 Scarab with Taunt." },
     // Definition for the summoned Scarab
     { id: "scarab", name: "Scarab", cost: 0, attack: 1, health: 1, type: "Creature", mechanics: ["Taunt"], collectible: false },
-
 ];
