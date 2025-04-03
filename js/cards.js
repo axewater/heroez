@@ -41,7 +41,7 @@ export const cardLibrary = [
     { id: "s1", name: "Fireball", cost: 3, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 4 }, effectText: "Deal 4 damage." },
     { id: "s2", name: "Healing Touch", cost: 2, type: "Spell", target: "any", mechanics: [], actionId: 'restoreHealth', actionParams: { amount: 4 }, effectText: "Restore 4 health." },
     // { id: "s3", name: "Battle Rage", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a creature +2 Attack until end of turn." }, // Temp buff not fully implemented
-    // { id: "s4", name: "Frost Nova", cost: 4, type: "Spell", target: "opponent-board", mechanics: [], actionId: 'freezeBoard', actionParams: {}, effectText: "Freeze all enemy creatures." }, // Freeze not implemented
+    { id: "s4", name: "Frost Nova", cost: 4, type: "Spell", target: "opponent-board", mechanics: [], actionId: 'freezeBoard', actionParams: {}, effectText: "Freeze all enemy creatures." },
     { id: "s5", name: "Arcane Intellect", cost: 3, type: "Spell", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 2 }, effectText: "Draw 2 cards." },
     { id: "s6", name: "Shield Wall", cost: 2, type: "Spell", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 3 }, effectText: "Give a creature +0/+3." },
     { id: "s7", name: "Lightning Bolt", cost: 2, type: "Spell", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage to a creature." },
@@ -52,7 +52,7 @@ export const cardLibrary = [
     { id: "s10", name: "Sprint", cost: 5, type: "Spell", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 4 }, effectText: "Draw 4 cards." },
     { id: "s11", name: "Starfire", cost: 6, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 5 }, effectText: "Deal 5 damage." },
     { id: "s12", name: "Pyroblast", cost: 10, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 10 }, effectText: "Deal 10 damage." },
-    { id: "s13", name: "Frost Shock", cost: 2, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage." }, // Simplified from Frostbolt
+    { id: "s13", name: "Frost Shock", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'freezeCreature', actionParams: {}, effectText: "Freeze a creature." },
     { id: "s14", name: "Blessing of Kings", cost: 4, type: "Spell", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 4, health: 4 }, effectText: "Give a creature +4/+4." },
 
 

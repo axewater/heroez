@@ -87,6 +87,7 @@ export function createCardInstance(cardData, ownerId) {
         isSwift: !!libraryCard.mechanics?.includes("Swift"),
         // Add more state as needed (isStealthed, poisonCounters, etc.)
         // Frenzy specific state
+        effects: [], // Initialize effects array here
         frenzyTriggered: false,
         frenzyActionId: libraryCard.frenzyActionId || null,
         appliedAuraAttackBonus: 0, // Initialize aura bonus tracking
@@ -132,15 +133,14 @@ export function startTurn(playerId) {
     // 3. Unfreeze
     // 4. TODO: Handle other start-of-turn effects (e.g., card triggers)
     player.board.forEach(creature => {
-        creature.hasAttacked = false;
+        creature.hasAttacked = false; // Reset attack status
         if (creature.isFrozen) {
             creature.isFrozen = false; // Unfreeze at start of turn
-            creature.canAttack = !creature.justPlayed; // Can attack if not just played
+            creature.canAttack = !creature.justPlayed; // Can attack now *unless* it still has summoning sickness (was played last turn)
+            logMessage(`${creature.name} unfreezes.`);
         } else if (creature.justPlayed) {
             creature.justPlayed = false; // Remove summoning sickness
             creature.canAttack = true; // Can attack now (unless frozen, handled above)
-        } else {
-            creature.canAttack = true; // Already on board, can attack
         }
         // Ensure Swift creatures that were just played can still attack
         if (creature.isSwift) creature.canAttack = true;
@@ -180,20 +180,26 @@ export function endTurn() {
     logMessage(`${currentPlayerId} ends turn.`);
     console.log(`${currentPlayerId} ends turn.`);
 
-    // --- End of Turn Effects ---
+    // --- End of Turn Effects for the player whose turn just ended ---
     // TODO: Implement end-of-turn triggers (e.g., Poison, card effects)
-    // Example: Clear temporary buffs
-    // currentPlayer.board.forEach(c => {
-    //     c.effects = c.effects?.filter(effect => {
-    //         if (effect.type === 'tempBuff') {
-    //             c.currentAttack -= effect.attack;
-    //             c.currentHealth -= effect.health; // Be careful with health reduction
-    //             // Handle duration decrement if implemented
-    //             return false; // Remove effect
-    //         }
-    //         return true; // Keep other effects
-    //     });
-    // });
+    // Process temporary buffs
+    currentPlayer.board.forEach(creature => {
+        // Iterate backwards to allow safe removal
+        for (let i = creature.effects.length - 1; i >= 0; i--) {
+            const effect = creature.effects[i];
+            if (effect.type === 'tempBuff') {
+                effect.duration--; // Decrement duration
+                if (effect.duration <= 0) {
+                    // Remove buff stats
+                    creature.currentAttack = Math.max(0, creature.currentAttack - effect.attack);
+                    creature.currentHealth -= effect.health; // Health can go to 0 or below, death check happens later
+                    logMessage(`${creature.name}'s temporary buff (+${effect.attack}/+${effect.health}) wears off.`);
+                    creature.effects.splice(i, 1); // Remove the effect object
+                }
+            }
+            // Add handling for other end-of-turn effect types here (e.g., poison)
+        }
+    });
 
     // Check win condition *before* starting next turn (e.g., if end-of-turn effect was lethal)
     if (checkWinCondition()) return;

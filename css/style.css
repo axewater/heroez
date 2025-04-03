@@ -301,7 +301,9 @@ body {
     border: 3px solid brown;
 }
 .card.is-frozen {
-    box-shadow: inset 0 0 10px 5px lightblue;
+    box-shadow: inset 0 0 10px 3px rgba(173, 216, 230, 0.8); /* Lightblue inset shadow */
+    filter: saturate(0.5) brightness(0.9); /* Slightly desaturated and darker */
+    border-color: lightblue; /* Add a light blue border */
 }
 .card.has-frenzy {
     /* Example: Add a subtle red glow or border */

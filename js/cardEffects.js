@@ -15,6 +15,7 @@ export const actionImplementations = {
     temporaryBuff: (target, params, caster) => temporaryBuff(target, params.attack, params.health),
     permanentBuff: (target, params, caster) => permanentBuff(target, params.attack, params.health),
     freezeBoard: (target, params, caster) => freezeBoard(target),
+    freezeCreature: (target, params, caster) => freezeCreature(target), // Added for single target freeze
     drawCards: (target, params, caster) => {
         for (let i = 0; i < params.amount; i++) {
             drawCardLogic(caster);
@@ -181,54 +182,67 @@ function permanentBuff(targetCard, attackBuff, healthBuff) {
 }
 
 function temporaryBuff(targetCard, attackBuff, healthBuff) {
-    // TODO: Implement proper temporary effect tracking and removal at end of turn
-    console.warn("Temporary buff applied - currently lasts forever!");
     if (targetCard && targetCard.type === 'Creature') {
-         const cardEl = document.querySelector(`.card[data-instance-id="${targetCard.instanceId}"]`);
+        const cardEl = document.querySelector(`.card[data-instance-id="${targetCard.instanceId}"]`);
+        const effectId = `tempBuff_${generateId()}`; // Unique ID for this specific buff instance
 
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + attackBuff);
-         if (cardEl) {
-             const attackEl = cardEl.querySelector('.card-attack');
-             if (attackEl) attackEl.textContent = targetCard.currentAttack;
-         }
+        if (cardEl) {
+            const attackEl = cardEl.querySelector('.card-attack');
+            if (attackEl) attackEl.textContent = targetCard.currentAttack;
+        }
 
         targetCard.currentHealth += healthBuff;
-         if (cardEl) {
-             const healthEl = cardEl.querySelector('.card-health');
-             if (healthEl) healthEl.textContent = targetCard.currentHealth;
-         }
+        if (cardEl) {
+            const healthEl = cardEl.querySelector('.card-health');
+            if (healthEl) healthEl.textContent = targetCard.currentHealth;
+        }
+
         // DO NOT increase max health (targetCard.health) for temporary buffs
         logMessage(`${targetCard.name} gets temporarily ${attackBuff >= 0 ? '+' : ''}${attackBuff}/${healthBuff >= 0 ? '+' : ''}${healthBuff}.`);
         console.log(`${targetCard.name} gets temporarily +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}`);
-        // Add effect to card.effects list to be cleared at end of turn
-        // targetCard.effects = targetCard.effects || [];
-        // targetCard.effects.push({ type: 'tempBuff', attack: attackBuff, health: healthBuff, duration: 1 }); // Duration 1 = end of current turn
+
+        targetCard.effects.push({ id: effectId, type: 'tempBuff', attack: attackBuff, health: healthBuff, duration: 1 }); // Duration 1 = expires at end of this turn
     } else {
          console.warn("temporaryBuff target is not a creature:", targetCard);
     }
 }
 
-function freezeBoard(board) { // Expects the array of creatures
-    // TODO: Implement Freeze mechanic properly (visuals in render, state here)
-    console.warn("Freeze effect not fully implemented!");
+/**
+ * Freezes all creatures on a given board (array of creature instances).
+ * @param {Array<Object>} board - The array of creature instances to freeze.
+ */
+function freezeBoard(board) {
     if (Array.isArray(board)) {
         board.forEach(creature => {
             if (creature && creature.type === 'Creature') {
                 creature.isFrozen = true;
                 creature.canAttack = false; // Frozen creatures cannot attack
                 logMessage(`${creature.name} is frozen.`);
-                console.log(`${creature.name} is frozen.`);
-                 // Optionally update class immediately
-                 // const cardEl = document.querySelector(`.card[data-instance-id="${creature.instanceId}"]`);
-                 // if (cardEl) cardEl.classList.add('is-frozen');
+                console.log(`${creature.name} (${creature.instanceId}) is frozen.`);
             }
         });
-        setMessageState("Enemy creatures frozen!"); // Update message state // This seems unused, setMessage is used instead
         setMessage("Enemy creatures frozen!");
     } else {
          console.warn("freezeBoard target is not a board array:", board);
     }
     // Visual update happens in renderGame
+}
+
+/**
+ * Freezes a single target creature.
+ * @param {Object} targetCard - The creature card instance to freeze.
+ */
+function freezeCreature(targetCard) {
+    if (targetCard && targetCard.type === 'Creature') {
+        targetCard.isFrozen = true;
+        targetCard.canAttack = false; // Ensure cannot attack while frozen
+        logMessage(`${targetCard.name} is frozen.`);
+        console.log(`${targetCard.name} (${targetCard.instanceId}) is frozen.`);
+        // Visual update happens in renderGame
+    } else {
+        console.warn("freezeCreature target is not a valid creature:", targetCard);
+    }
 }
 
 function gainAttack(targetCard, amount) {
@@ -298,9 +312,14 @@ function removeCreatureFromBoard(creature) {
             updateBoardStats(owner.id);
             updateBoardStats(getOpponentId(owner.id));
         }
-        // Could add to a graveyard pile if needed: owner.graveyard.push(creature);
+        // Could add to a graveyard pile if needed: owner.gr aveyard.push(creature);
     } else {
         console.error(`Could not find owner (${creature.owner}) for creature ${creature.name}`);
     }
      // Visual update happens in renderGame called by the action that caused removal
+}
+
+// Helper to generate unique IDs for effects
+function generateId() {
+    return Math.random().toString(36).substring(2, 11);
 }
