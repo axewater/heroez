@@ -1,6 +1,6 @@
-import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE } from './constants.js';
+import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE, AI_TURN_START_DELAY } from './constants.js';
 import { cardLibrary } from './cards.js';
-import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver } from './state.js';
+import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver, setDebugMode } from './state.js';
 import { renderGame, updatePlayableCards } from './render.js';
 import { setMessage, logMessage } from './messaging.js';
 import { showGameOverScreen, hideGameOverScreen, showGameUI, hideGameUI } from './uiState.js';
@@ -20,9 +20,11 @@ export function initGame() {
     // The actual game start logic is now in startGameWithHero
 }
 
-export function startGameWithHero(selectedHero) {
+export function startGameWithHero(selectedHero, isDebug = false) {
     console.log("[GameLogic] startGameWithHero called for:", selectedHero?.name);
     console.log(`Starting game with hero: ${selectedHero.name}`);
+    console.log(`[GameLogic] Debug mode: ${isDebug}`);
+
     cacheDOMElements(); // Ensure elements are cached
     hideGameOverScreen(); // Ensure overlay is hidden
 
@@ -54,6 +56,7 @@ export function startGameWithHero(selectedHero) {
 
     // --- Initialize State First ---
     resetState(initialPlayerDeck, initialOpponentDeck); // Initialize/reset the state object, pass decks
+    getState().isDebugMode = isDebug; // Set the debug mode in the state
 
     // --- Now Access Player Data ---
     const player = getPlayer('player');
@@ -205,7 +208,7 @@ export function startTurn(playerId) {
     if (playerId === 'opponent') {
         setMessage("Opponent is thinking..."); // Show message while AI thinks
         // Disable player actions during AI turn (already handled by button disable and event checks)
-        setTimeout(runAITurn, 1000); // Add delay for visibility
+        setTimeout(runAITurn, AI_TURN_START_DELAY); // Use constant for delay
     }
 }
 

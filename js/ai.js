@@ -1,12 +1,11 @@
 import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, isGameOver } from './state.js';
 import { playCard, creatureAttack, getTargetFromElement } from './actions.js';
 import { endTurn } from './gameLogic.js';
-import { MAX_BOARD_SIZE, STARTING_HEALTH } from './constants.js';
+import { MAX_BOARD_SIZE, STARTING_HEALTH, AI_TURN_START_DELAY } from './constants.js';
 import { getDOMElement, logMessage } from './ui.js'; // To find target elements, added logMessage
 
 const AI_ACTION_DELAY = 750; // ms between AI actions
 const AI_ATTACK_DELAY = 500; // ms before AI attack visualization
-const AI_TURN_START_DELAY = 1000; // ms before AI starts thinking (set in gameLogic)
 const MAX_AI_ACTIONS_PER_TURN = 20; // Safety break
 
 export function runAITurn() {
@@ -145,7 +144,7 @@ export function runAITurn() {
     }
 
     // Start the AI action loop
-    performNextAIAction();
+    setTimeout(performNextAIAction, AI_TURN_START_DELAY);
 }
 
 
@@ -305,7 +304,7 @@ function findBestAttackTarget(attacker, humanPlayer) {
          }
     }
 
-     // --- Select Best Target ---
+     //  Select Best Target
     if (potentialTargets.length > 0) {
         potentialTargets.sort((a, b) => b.score - a.score); // Sort descending by score
         console.log(`AI Attack Targeting for ${attacker.name}: Best target score ${potentialTargets[0].score}`, potentialTargets[0].element);

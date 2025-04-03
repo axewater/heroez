@@ -73,7 +73,8 @@ export function createCardElement(card, location, indexInHand = -1) {
     cardEl.dataset.cardId = card.id; // Store library ID
     if (location === 'hand') cardEl.dataset.handIndex = indexInHand;
     if (location === 'board') cardEl.dataset.owner = card.owner;
-
+    // Add location to dataset for easier CSS targeting (e.g., debug mode)
+    cardEl.dataset.location = location;
     const state = getState(); // Get current state for checks
 
     // Add state classes
@@ -94,6 +95,9 @@ export function createCardElement(card, location, indexInHand = -1) {
          cardEl.classList.add('attacking');
     }
 
+    // --- Debug Mode Check for Opponent Hand ---
+    const isOpponentHandCard = card.owner === 'opponent' && location === 'hand';
+    const showOpponentCard = state.isDebugMode && isOpponentHandCard;
 
     // Card Content
     let effectText = card.effectText || "";
@@ -102,12 +106,14 @@ export function createCardElement(card, location, indexInHand = -1) {
         effectText = effectText ? `${mechanicsText}. ${effectText}` : mechanicsText;
     }
 
+    // Only show details if it's not an opponent hand card OR if debug mode is on
+    const shouldShowDetails = !isOpponentHandCard || showOpponentCard;
     cardEl.innerHTML = `
-        <div class="card-cost">${card.cost}</div>
-        <div class="card-name">${card.name}</div>
-        ${card.type === 'Creature' ? `<div class="card-attack">${card.currentAttack !== undefined ? card.currentAttack : card.attack}</div>` : ''}
-        ${card.type === 'Creature' ? `<div class="card-health">${card.currentHealth !== undefined ? card.currentHealth : card.health}</div>` : ''}
-        <div class="card-effect">${effectText}</div>
+        <div class="card-cost">${shouldShowDetails ? card.cost : ''}</div>
+        <div class="card-name">${shouldShowDetails ? card.name : ''}</div>
+        ${card.type === 'Creature' ? `<div class="card-attack">${shouldShowDetails ? (card.currentAttack !== undefined ? card.currentAttack : card.attack) : ''}</div>` : ''}
+        ${card.type === 'Creature' ? `<div class="card-health">${shouldShowDetails ? (card.currentHealth !== undefined ? card.currentHealth : card.health) : ''}</div>` : ''}
+        <div class="card-effect">${shouldShowDetails ? effectText : ''}</div>
     `;
 
     // Add event listeners only for the player's interactive elements
@@ -118,6 +124,11 @@ export function createCardElement(card, location, indexInHand = -1) {
             cardEl.addEventListener('click', () => handleBoardCardClick(card));
         }
         // Add targeting listeners for opponent's board cards (handled by delegation in main.js)
+    }
+
+    // If it's an opponent hand card shown in debug mode, remove the default hidden style class
+    if (showOpponentCard) {
+        cardEl.classList.add('debug-visible'); // Add class for CSS override
     }
 
     return cardEl;

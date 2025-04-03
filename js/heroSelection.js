@@ -4,6 +4,7 @@ import { startGame } from './main.js'; // Assuming main.js will have the final s
 let heroSelectionScreenEl = null;
 let heroOptionsContainerEl = null;
 let selectedHero = null;
+let isDebugMode = false; // Store debug mode choice
 
 export function initHeroSelection() {
     console.log("Initializing Hero Selection...");
@@ -67,15 +68,16 @@ export function confirmHeroSelection() {
     if (selectedHero) {
         console.log("[HeroSelection] confirmHeroSelection called for:", selectedHero.name);
         console.log(`Confirmed hero selection: ${selectedHero.name}`);
-        hideHeroSelection();
-        startGame(selectedHero); // Pass selected hero data to start the game
+        hideHeroSelection(isDebugMode); // Pass debug mode flag when hiding
+        startGame(selectedHero, isDebugMode); // Pass selected hero data and debug mode flag to start the game
     } else {
         console.warn("Attempted to confirm hero selection, but none was selected.");
     }
 }
 
-export function showHeroSelection() {
+export function showHeroSelection(debug = false) {
     if (heroSelectionScreenEl) {
+        isDebugMode = debug; // Store the debug mode choice
         populateHeroOptions(); // Repopulate in case it's shown again
         heroSelectionScreenEl.style.display = 'flex';
         heroSelectionScreenEl.style.opacity = '1';
@@ -83,7 +85,7 @@ export function showHeroSelection() {
     }
 }
 
-export function hideHeroSelection() {
+export function hideHeroSelection(debugModeFlag) { // Accept flag
     if (heroSelectionScreenEl) {
         console.log("[HeroSelection] hideHeroSelection called.");
         heroSelectionScreenEl.style.opacity = '0';
@@ -91,5 +93,6 @@ export function hideHeroSelection() {
             heroSelectionScreenEl.style.display = 'none';
             heroSelectionScreenEl.classList.add('hidden');
         }, 500); // Match CSS transition duration
+        startGame(selectedHero, debugModeFlag); // Pass flag to startGame
     }
 }

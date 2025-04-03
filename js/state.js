@@ -42,6 +42,7 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 boardElement: null,
             }
         },
+        isDebugMode: false, // Added debug mode flag
         currentPlayerId: 'player',
         turn: 0,
         gameOver: false,
@@ -118,6 +119,10 @@ export function getTargetingMode() {
         mode: state.targetingMode,
         spellTargetType: state.spellTargetType
     };
+}
+
+export function setDebugMode(isDebug) {
+    state.isDebugMode = !!isDebug; // Ensure boolean
 }
 
 export function isGameOver() {

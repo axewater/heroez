@@ -9,7 +9,6 @@ import { findBestSpellTarget, findBestAttackTarget } from './aiTargeting.js';
 
 const AI_ACTION_DELAY = 750; // ms between AI actions
 const AI_ATTACK_DELAY = 500; // ms before AI attack visualization
-const AI_TURN_START_DELAY = 1000; // ms before AI starts thinking (set in gameLogic)
 const MAX_AI_ACTIONS_PER_TURN = 20; // Safety break
 
 export function runAITurn() {

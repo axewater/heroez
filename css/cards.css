@@ -124,25 +124,77 @@
 .card.Spell { background-color: #bbdefb; } /* Light blue */
 
 /* Opponent's hand card style (hidden) */
-#opponent-hand .card {
+/* Default hidden style for opponent hand cards */
+#opponent-hand .card:not(.debug-visible) {
     background-color: #888;
     color: transparent;
     cursor: default;
 }
- #opponent-hand .card:hover {
+
+/* Disable hover zoom for hidden opponent hand cards */
+ #opponent-hand .card:not(.debug-visible):hover {
     /* Explicitly disable transform/shadow for opponent hand */
     transform: none;
     box-shadow: none;
     z-index: auto; /* Reset z-index */
  }
-#opponent-hand .card .card-cost,
-#opponent-hand .card .card-attack,
-#opponent-hand .card .card-health,
-#opponent-hand .card .card-name,
-#opponent-hand .card .card-effect {
+
+/* Hide details on hidden opponent hand cards (when NOT in debug mode) */
+#opponent-hand .card:not(.debug-visible) .card-cost,
+#opponent-hand .card:not(.debug-visible) .card-attack,
+#opponent-hand .card:not(.debug-visible) .card-health,
+#opponent-hand .card:not(.debug-visible) .card-name,
+#opponent-hand .card:not(.debug-visible) .card-effect {
      visibility: hidden;
 }
 
+/* --- Debug Mode Opponent Hand Styling --- */
+
+/* Default style for opponent hand cards IN debug mode (NOT hovered) */
+#opponent-hand .card.debug-visible {
+    background-color: #888; /* Keep the grey back */
+    cursor: pointer; /* Allow hover */
+}
+
+/* Hide most details by default in debug mode, but show name */
+#opponent-hand .card.debug-visible .card-cost,
+#opponent-hand .card.debug-visible .card-attack,
+#opponent-hand .card.debug-visible .card-health,
+#opponent-hand .card.debug-visible .card-effect {
+    visibility: hidden;
+}
+#opponent-hand .card.debug-visible .card-name {
+    visibility: visible; /* Show the name */
+    color: white; /* Make name readable on grey */
+    text-shadow: 1px 1px 1px black; /* Add shadow for contrast */
+}
+
+/* Hover style for opponent hand cards IN debug mode */
+#opponent-hand .card.debug-visible:hover {
+    transform: scale(1.7); /* Same zoom as player cards */
+    z-index: 100;
+    /* Restore original background based on type or default white */
+    /* This requires more complex logic if we want original colors. */
+    /* For simplicity, let's just make it white on hover for now. */
+    background-color: white; /* Show as white when hovered */
+}
+
+/* Show ALL details on hover in debug mode */
+#opponent-hand .card.debug-visible:hover .card-cost,
+#opponent-hand .card.debug-visible:hover .card-attack,
+#opponent-hand .card.debug-visible:hover .card-health,
+#opponent-hand .card.debug-visible:hover .card-name,
+#opponent-hand .card.debug-visible:hover .card-effect {
+    visibility: visible;
+    color: initial; /* Reset color from default debug style */
+    text-shadow: none; /* Reset shadow from default debug style */
+}
+
+/* Ensure effect text block is displayed on hover */
+#opponent-hand .card.debug-visible:hover .card-effect {
+    display: block;
+    z-index: 101; /* Ensure text is above the zoomed card's siblings */
+}
 
 /* Card States */
 .card.playable {
@@ -151,7 +203,8 @@
 
 /* Show text only on hovered cards (that are allowed to be hovered) */
 .player-area .card:hover .card-effect,
-#opponent-board .card:hover .card-effect {
+#opponent-board .card:hover .card-effect,
+#opponent-hand .card.debug-visible:hover .card-effect { /* Added for debug hover */
     display: block; /* Show effect text */
     z-index: 101; /* Ensure text is above the zoomed card's siblings */
 }

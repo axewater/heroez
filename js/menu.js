@@ -1,21 +1,25 @@
 import { showHeroSelection } from './heroSelection.js';
+import { setDebugMode } from './state.js';
 
 let openingMenuEl = null;
 let startButtonEl = null;
+let startDebugButtonEl = null;
 let settingsButtonEl = null;
 
 export function initMenu() {
     console.log("Initializing Opening Menu...");
     openingMenuEl = document.getElementById('opening-menu');
     startButtonEl = document.getElementById('start-game-button');
+    startDebugButtonEl = document.getElementById('start-debug-button');
     settingsButtonEl = document.getElementById('settings-button');
 
-    if (!openingMenuEl || !startButtonEl || !settingsButtonEl) {
+    if (!openingMenuEl || !startButtonEl || !startDebugButtonEl || !settingsButtonEl) {
         console.error("Menu elements not found!");
         return;
     }
 
     startButtonEl.addEventListener('click', handleStartClick);
+    startDebugButtonEl.addEventListener('click', handleStartDebugClick);
     settingsButtonEl.addEventListener('click', handleSettingsClick);
 
     showOpeningMenu();
@@ -24,7 +28,13 @@ export function initMenu() {
 function handleStartClick() {
     console.log("Start button clicked");
     hideOpeningMenu();
-    showHeroSelection(); // Transition to hero selection
+    showHeroSelection(false); // Transition to hero selection (not in debug mode)
+}
+
+function handleStartDebugClick() {
+    console.log("Start Debug button clicked");
+    hideOpeningMenu();
+    showHeroSelection(true); // Transition to hero selection (in debug mode)
 }
 
 function handleSettingsClick() {

@@ -33,6 +33,7 @@
     background-color: rgba(0, 0, 0, 0.3);
     color: white;
     margin: 15px;
+    margin-top: 10px; /* Adjusted margin for closer buttons */
     transition: background-color 0.3s ease, transform 0.2s ease;
     min-width: 200px;
 }

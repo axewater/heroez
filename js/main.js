@@ -1,12 +1,12 @@
 // /js/main.js
 import { initGame, startGameWithHero, endTurn } from './gameLogic.js';
-import { getState, isGameOver } from './state.js';
+import { getState, isGameOver, setDebugMode } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
 import { getDOMElement } from './dom.js';
 import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
 import { initMenu } from './menu.js';
-import { initHeroSelection, confirmHeroSelection, hideHeroSelection } from './heroSelection.js';
-import { renderGame } from './render.js'; // Added renderGame import
+import { initHeroSelection, confirmHeroSelection, hideHeroSelection, showHeroSelection } from './heroSelection.js';
+import { renderGame } from './render.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -99,10 +99,12 @@ function setupEventListeners() {
 }
 
 // New function to be called after hero selection
-export function startGame(selectedHero) {
+export function startGame(selectedHero, isDebug = false) {
     console.log("[Main] startGame called with hero:", selectedHero?.name);
     console.log("Main: Starting game with selected hero:", selectedHero.name);
-    startGameWithHero(selectedHero); // Call the modified game logic start function
+    console.log(`Main: Debug mode is ${isDebug ? 'ON' : 'OFF'}`);
+    setDebugMode(isDebug); // Set the debug mode flag in the state
+    startGameWithHero(selectedHero, isDebug); // Pass debug flag to game logic start function
     setupEventListeners(); // Set up game-specific listeners only when the game starts
 }
 
