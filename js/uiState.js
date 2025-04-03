@@ -55,3 +55,19 @@ export function hideGameOverScreen() {
         gameOverOverlay.style.display = 'none';
     }
 }
+
+export function showGameUI() {
+    const gameContainer = getDOMElement('gameContainer');
+    const gameMainArea = getDOMElement('gameMainArea');
+    const logPanel = getDOMElement('messageLogPanelEl');
+    console.log("[UIState] showGameUI called. Game Container:", gameContainer);
+    if (gameContainer) gameContainer.classList.remove('hidden');
+    if (logPanel) logPanel.classList.remove('hidden');
+}
+
+export function hideGameUI() {
+    const gameContainer = getDOMElement('gameContainer');
+    const logPanel = getDOMElement('messageLogPanelEl');
+    if (gameContainer) gameContainer.classList.add('hidden');
+    if (logPanel) logPanel.classList.add('hidden');
+}

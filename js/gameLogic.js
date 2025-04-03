@@ -3,7 +3,7 @@ import { cardLibrary } from './cards.js';
 import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver } from './state.js';
 import { renderGame, updatePlayableCards } from './render.js';
 import { setMessage, logMessage } from './messaging.js';
-import { showGameOverScreen, hideGameOverScreen } from './uiState.js';
+import { showGameOverScreen, hideGameOverScreen, showGameUI, hideGameUI } from './uiState.js';
 import { cacheDOMElements, getDOMElement, assignElementsToPlayerState } from './dom.js';
 import { dealDamage } from './cardEffects.js'; // Needed for fatigue
 import { runAITurn } from './aiCore.js';
@@ -11,23 +11,49 @@ import { runAITurn } from './aiCore.js';
 // --- Game Setup ---
 
 export function initGame() {
+    // This function is now primarily for resetting after a game ends.
+    // The initial setup (deck building, etc.) happens in startGameWithHero.
     console.log("Initializing game...");
     cacheDOMElements(); // Find and store DOM elements
     hideGameOverScreen();
+    hideGameUI(); // Ensure game UI is hidden before starting
+    // The actual game start logic is now in startGameWithHero
+}
+
+export function startGameWithHero(selectedHero) {
+    console.log("[GameLogic] startGameWithHero called for:", selectedHero?.name);
+    console.log(`Starting game with hero: ${selectedHero.name}`);
+    cacheDOMElements(); // Ensure elements are cached
+    hideGameOverScreen(); // Ensure overlay is hidden
 
     // --- Build Decks (Needed before resetState) ---
-    const allPlayerCards = [];
+    const commonCards = cardLibrary.filter(c => c.collectible !== false && !c.heroSpecific);
+    const heroSpecificCards = cardLibrary.filter(c => selectedHero.uniqueCardIds.includes(c.id));
+
+    const playerDeckList = [];
     const allOpponentCards = [];
-    cardLibrary.filter(c => c.collectible !== false).forEach(card => {
-        // Create temporary instances just for the deck list; owner will be set properly by resetState if needed or by draw
-        allPlayerCards.push(createCardInstance(card, 'player'));
-        allPlayerCards.push(createCardInstance(card, 'player'));
+
+    // Add two copies of each common card
+    commonCards.forEach(card => {
+        playerDeckList.push(createCardInstance(card, 'player'));
+        playerDeckList.push(createCardInstance(card, 'player'));
         allOpponentCards.push(createCardInstance(card, 'opponent'));
         allOpponentCards.push(createCardInstance(card, 'opponent'));
     });
 
+    // Add one copy of each hero-specific card
+    heroSpecificCards.forEach(card => {
+        playerDeckList.push(createCardInstance(card, 'player'));
+        // Opponent doesn't get hero cards for now
+    });
+
+    // Shuffle the deck lists before passing to resetState
+    const initialPlayerDeck = shuffleDeck(playerDeckList);
+    const initialOpponentDeck = shuffleDeck(allOpponentCards);
+
+
     // --- Initialize State First ---
-    resetState(allPlayerCards, allOpponentCards); // Initialize/reset the state object, pass decks
+    resetState(initialPlayerDeck, initialOpponentDeck); // Initialize/reset the state object, pass decks
 
     // --- Now Access Player Data ---
     const player = getPlayer('player');
@@ -36,9 +62,8 @@ export function initGame() {
     // Assign DOM elements after state is initialized and players exist
     assignElementsToPlayerState(getPlayer);
 
-    // Shuffle the decks that are now in the state
-    player.deck = shuffleDeck([...player.deck]); // Shuffle the deck copies from state
-    opponent.deck = shuffleDeck([...opponent.deck]);
+    // Decks are already shuffled and passed to resetState
+    console.log("Player Deck Size:", player.deck.length);
 
     // Draw initial hands
     for (let i = 0; i < STARTING_HAND_SIZE; i++) {
@@ -53,6 +78,7 @@ export function initGame() {
     opponent.currentMana = 0;
 
     logMessage("Game Starting...", 'log-info');
+    showGameUI(); // Make the game UI visible now
     renderGame(); // Initial render before first turn starts
 
     // Delay slightly before starting the first turn for effect

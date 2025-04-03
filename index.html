@@ -8,12 +8,29 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/heroSelection.css">
     <link rel="stylesheet" href="css/effects.css">
     <link rel="stylesheet" href="css/log.css">
 </head>
 <body>
 
-    <div id="game-container">
+    <!-- Opening Menu -->
+    <div id="opening-menu">
+        <h1>AceBattler</h1>
+        <button id="start-game-button" class="menu-button">START</button>
+        <button id="settings-button" class="menu-button">SETTINGS</button>
+    </div>
+
+    <!-- Hero Selection Screen -->
+    <div id="hero-selection-screen" class="hidden">
+        <h2>Choose Your Hero</h2>
+        <div id="hero-options-container">
+            <!-- Hero options will be populated by JS -->
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden"> <!-- Initially hidden -->
         <div id="game-main-area">
             <!-- Opponent Area -->
             <div id="opponent-area" class="player-area">
@@ -54,7 +71,7 @@
             </div>
         </div>
         <!-- Message Log Panel -->
-        <div id="message-log-panel">
+        <div id="message-log-panel" class="hidden">
             <div id="message-log-content"></div>
         </div>
     </div>

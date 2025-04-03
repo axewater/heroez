@@ -62,4 +62,18 @@ export const cardLibrary = [
     { id: "l2", name: "Obsidian Destroyer", cost: 9, attack: 7, health: 7, type: "Creature", mechanics: ["Taunt", "Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "scarab", count: 1 }, effectText: "Taunt. Deploy: Summon a 1/1 Scarab with Taunt." },
     // Definition for the summoned Scarab
     { id: "scarab", name: "Scarab", cost: 0, attack: 1, health: 1, type: "Creature", mechanics: ["Taunt"], collectible: false },
+
+    // --- Hero Specific Cards (Not collectible in general pool) ---
+    // Warrior
+    { id: "h_w1", name: "Charge!", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a friendly creature +2 Attack this turn.", collectible: false, heroSpecific: true },
+    { id: "h_w2", name: "Armored Raider", cost: 3, attack: 3, health: 3, type: "Creature", mechanics: ["Swift"], collectible: false, heroSpecific: true },
+    // Mage
+    { id: "h_m1", name: "Arcane Blast", cost: 2, type: "Spell", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage.", collectible: false, heroSpecific: true },
+    { id: "h_m2", name: "Mana Wyrm", cost: 1, attack: 1, health: 2, type: "Creature", mechanics: [], effectText: "Gains +1 Attack whenever you cast a spell.", collectible: false, heroSpecific: true }, // Effect not implemented yet
+    // Rogue
+    { id: "h_r1", name: "Backstab", cost: 0, type: "Spell", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage to an undamaged creature.", collectible: false, heroSpecific: true }, // Condition not implemented yet
+    { id: "h_r2", name: "Silent Assassin", cost: 2, attack: 2, health: 1, type: "Creature", mechanics: ["Stealth"], collectible: false, heroSpecific: true },
+    // Priest
+    { id: "h_p1", name: "Power Word: Shield", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 2 }, effectText: "Give a creature +2 Health.", collectible: false, heroSpecific: true }, // Should also draw a card ideally
+    { id: "h_p2", name: "Northshire Cleric", cost: 1, attack: 1, health: 3, type: "Creature", mechanics: [], effectText: "Whenever a creature is healed, draw a card.", collectible: false, heroSpecific: true }, // Effect not implemented yet
 ];

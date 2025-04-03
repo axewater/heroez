@@ -1,8 +1,10 @@
-import { initGame, endTurn } from './gameLogic.js';
+import { initGame, startGameWithHero, endTurn } from './gameLogic.js';
 import { getState, isGameOver } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
 import { getDOMElement } from './dom.js';
-import { deselectCard, deselectAttacker } from './uiState.js'; // For click outside deselect
+import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
+import { initMenu } from './menu.js';
+import { initHeroSelection, confirmHeroSelection, hideHeroSelection } from './heroSelection.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -22,7 +24,11 @@ function setupEventListeners() {
 
     const restartButton = getDOMElement('restartButton');
     if (restartButton) {
-        restartButton.addEventListener('click', initGame);
+        restartButton.addEventListener('click', () => {
+            // Restarting should probably go back to the menu or hero select?
+            // For now, just re-init the menu flow.
+            initMenu();
+        });
     } else {
          console.error("Restart button not found!");
     }
@@ -89,8 +95,21 @@ function setupEventListeners() {
     console.log("Event listeners set up.");
 }
 
+// New function to be called after hero selection
+export function startGame(selectedHero) {
+    console.log("[Main] startGame called with hero:", selectedHero?.name);
+    console.log("Main: Starting game with selected hero:", selectedHero.name);
+    startGameWithHero(selectedHero); // Call the modified game logic start function
+    setupEventListeners(); // Set up game-specific listeners only when the game starts
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Loaded. Initializing game.");
-    initGame();
-    setupEventListeners();
+    console.log("DOM Loaded.");
+    // Don't initialize game directly anymore
+    // initGame();
+    // setupEventListeners();
+
+    // Initialize the pre-game UI modules
+    initMenu();
+    initHeroSelection(); // Initialize elements, but don't show yet
 });

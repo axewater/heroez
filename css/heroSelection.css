@@ -1,0 +1,105 @@
+#hero-selection-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom left, #7f7fd5, #86a8e7, #91eae4); /* Different gradient */
+    display: none; /* Hidden initially */
+    flex-direction: column;
+    justify-content: space-around; /* Space out title and heroes */
+    align-items: center;
+    z-index: 1900; /* Below menu, above game */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px; /* Match game container */
+    transition: opacity 0.5s ease-out;
+}
+
+#hero-selection-screen h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+#hero-options-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align tops */
+    gap: 30px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.hero-option {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    width: 200px; /* Fixed width for each hero box */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hero-option:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: white;
+}
+
+.hero-option.selected {
+    border-color: gold;
+    box-shadow: 0 0 15px 5px gold;
+    transform: scale(1.05);
+}
+
+.hero-portrait {
+    width: 120px;
+    height: 120px;
+    background-color: #555; /* Placeholder */
+    border: 3px solid #eee;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover; /* If using images */
+    display: flex; /* For placeholder text */
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+}
+
+.hero-option h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.hero-description {
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    min-height: 40px; /* Reserve space */
+}
+
+.select-hero-button {
+    padding: 8px 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 5px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.select-hero-button:hover {
+    background-color: #45a049;
+}
+
+.select-hero-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+    border-color: #888;
+}
