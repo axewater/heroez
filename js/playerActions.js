@@ -72,6 +72,11 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
         } else {
              console.log(`Spell ${playedCard.name} has no defined action.`);
         }
+        // Add successfully played spell to discard pile
+        if (success) {
+            player.discardPile.push(playedCard);
+            console.log(`${playedCard.name} added to ${player.id}'s discard pile.`);
+        }
     }
 
     deselectCard();

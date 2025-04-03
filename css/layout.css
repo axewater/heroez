@@ -92,8 +92,10 @@
     color: blue;
     margin-top: 4px;
 }
-.hero-deck {
+.hero-draw-pile, .hero-discard-pile {
     font-size: 0.9em;
     color: #333;
     margin-top: 4px;
+    display: inline-block; /* Or block if preferred */
+    margin-right: 8px; /* Add some spacing between counts */
 }

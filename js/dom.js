@@ -5,14 +5,16 @@ export function cacheDOMElements() {
     domElements = {
         opponentHealthEl: document.getElementById('opponent-health'),
         opponentManaEl: document.getElementById('opponent-mana'),
-        opponentDeckEl: document.getElementById('opponent-deck'),
+        opponentDrawCountEl: document.getElementById('opponent-draw-count'),
+        opponentDiscardCountEl: document.getElementById('opponent-discard-count'),
         opponentHandEl: document.getElementById('opponent-hand'),
         opponentBoardEl: document.getElementById('opponent-board'),
         opponentHeroEl: document.getElementById('opponent-hero'),
 
         playerHealthEl: document.getElementById('player-health'),
         playerManaEl: document.getElementById('player-mana'),
-        playerDeckEl: document.getElementById('player-deck'),
+        playerDrawCountEl: document.getElementById('player-draw-count'),
+        playerDiscardCountEl: document.getElementById('player-discard-count'),
         playerHandEl: document.getElementById('player-hand'),
         playerBoardEl: document.getElementById('player-board'),
         playerHeroEl: document.getElementById('player-hero'),
@@ -43,7 +45,8 @@ export function assignElementsToPlayerState(getPlayer) {
         player.heroElement = domElements.playerHeroEl;
         player.healthElement = domElements.playerHealthEl;
         player.manaElement = domElements.playerManaEl;
-        player.deckElement = domElements.playerDeckEl;
+        player.drawPileElement = domElements.playerDrawCountEl;
+        player.discardPileElement = domElements.playerDiscardCountEl;
         player.handElement = domElements.playerHandEl;
         player.boardElement = domElements.playerBoardEl;
     }
@@ -53,7 +56,8 @@ export function assignElementsToPlayerState(getPlayer) {
         opponent.heroElement = domElements.opponentHeroEl;
         opponent.healthElement = domElements.opponentHealthEl;
         opponent.manaElement = domElements.opponentManaEl;
-        opponent.deckElement = domElements.opponentDeckEl;
+        opponent.drawPileElement = domElements.opponentDrawCountEl;
+        opponent.discardPileElement = domElements.opponentDiscardCountEl;
         opponent.handElement = domElements.opponentHandEl;
         opponent.boardElement = domElements.opponentBoardEl;
     }

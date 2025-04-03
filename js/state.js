@@ -12,15 +12,16 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 heroHealth: STARTING_HEALTH,
                 maxMana: 0,
                 currentMana: 0,
-                deck: [...initialPlayerDeck], // Use initial decks if provided
+                drawPile: [...initialPlayerDeck], // Renamed from deck
                 hand: [],
                 board: [],
-                fatigue: 0,
+                discardPile: [], // Added discard pile
                 // DOM elements will be assigned in initGame after DOM is ready
                 heroElement: null,
                 healthElement: null,
                 manaElement: null,
-                deckElement: null,
+                drawPileElement: null, // Added draw pile element ref
+                discardPileElement: null, // Added discard pile element ref
                 handElement: null,
                 boardElement: null,
             },
@@ -29,15 +30,16 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 heroHealth: STARTING_HEALTH,
                 maxMana: 0,
                 currentMana: 0,
-                deck: [...initialOpponentDeck], // Use initial decks if provided
+                drawPile: [...initialOpponentDeck], // Renamed from deck
                 hand: [],
                 board: [],
-                fatigue: 0,
+                discardPile: [], // Added discard pile
                  // DOM elements will be assigned in initGame after DOM is ready
                 heroElement: null,
                 healthElement: null,
                 manaElement: null,
-                deckElement: null,
+                drawPileElement: null, // Added draw pile element ref
+                discardPileElement: null, // Added discard pile element ref
                 handElement: null,
                 boardElement: null,
             }

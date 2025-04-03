@@ -304,15 +304,16 @@ function removeCreatureFromBoard(creature) {
     const owner = getPlayer(creature.owner);
     if (owner) {
         const initialBoardSize = owner.board.length;
+        // Add creature to discard pile *before* removing from board array
+        owner.discardPile.push(creature);
+        console.log(`Added ${creature.name} (${creature.instanceId}) to ${owner.id}'s discard pile.`);
         owner.board = owner.board.filter(c => c.instanceId !== creature.instanceId);
         const removed = owner.board.length < initialBoardSize;
         if (removed) {
             console.log(`Removed ${creature.name} from ${owner.id}'s board.`);
-            // Update board stats for both players after creature leaves
             updateBoardStats(owner.id);
             updateBoardStats(getOpponentId(owner.id));
         }
-        // Could add to a graveyard pile if needed: owner.gr aveyard.push(creature);
     } else {
         console.error(`Could not find owner (${creature.owner}) for creature ${creature.name}`);
     }

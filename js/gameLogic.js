@@ -32,30 +32,30 @@ export function startGameWithHero(selectedHero, isDebug = false) {
     const commonCards = cardLibrary.filter(c => c.collectible !== false && !c.heroSpecific);
     const heroSpecificCards = cardLibrary.filter(c => selectedHero.uniqueCardIds.includes(c.id));
 
-    const playerDeckList = [];
-    const allOpponentCards = [];
+    const playerDrawPileList = [];
+    const allOpponentDrawPileCards = [];
 
     // Add two copies of each common card
     commonCards.forEach(card => {
-        playerDeckList.push(createCardInstance(card, 'player'));
-        playerDeckList.push(createCardInstance(card, 'player'));
-        allOpponentCards.push(createCardInstance(card, 'opponent'));
-        allOpponentCards.push(createCardInstance(card, 'opponent'));
+        playerDrawPileList.push(createCardInstance(card, 'player'));
+        playerDrawPileList.push(createCardInstance(card, 'player'));
+        allOpponentDrawPileCards.push(createCardInstance(card, 'opponent'));
+        allOpponentDrawPileCards.push(createCardInstance(card, 'opponent'));
     });
 
     // Add one copy of each hero-specific card
     heroSpecificCards.forEach(card => {
-        playerDeckList.push(createCardInstance(card, 'player'));
+        playerDrawPileList.push(createCardInstance(card, 'player'));
         // Opponent doesn't get hero cards for now
     });
 
-    // Shuffle the deck lists before passing to resetState
-    const initialPlayerDeck = shuffleDeck(playerDeckList);
-    const initialOpponentDeck = shuffleDeck(allOpponentCards);
+    // Shuffle the draw pile lists before passing to resetState
+    const initialPlayerDrawPile = shuffleDeck(playerDrawPileList);
+    const initialOpponentDrawPile = shuffleDeck(allOpponentDrawPileCards);
 
 
     // --- Initialize State First ---
-    resetState(initialPlayerDeck, initialOpponentDeck); // Initialize/reset the state object, pass decks
+    resetState(initialPlayerDrawPile, initialOpponentDrawPile); // Initialize/reset the state object, pass draw piles
     getState().isDebugMode = isDebug; // Set the debug mode in the state
 
     // --- Now Access Player Data ---
@@ -65,8 +65,8 @@ export function startGameWithHero(selectedHero, isDebug = false) {
     // Assign DOM elements after state is initialized and players exist
     assignElementsToPlayerState(getPlayer);
 
-    // Decks are already shuffled and passed to resetState
-    console.log("Player Deck Size:", player.deck.length);
+    // Draw piles are already shuffled and passed to resetState
+    console.log("Player Draw Pile Size:", player.drawPile.length);
 
     // Draw initial hands
     for (let i = 0; i < STARTING_HAND_SIZE; i++) {
@@ -252,27 +252,35 @@ export function endTurn() {
 // --- Card Drawing ---
 
 export function drawCard(player) {
+    // Check if draw pile is empty
+    if (player.drawPile.length === 0) {
+        // Check if discard pile has cards
+        if (player.discardPile.length > 0) {
+            logMessage(`${player.id}'s draw pile is empty. Shuffling discard pile...`, 'log-info');
+            // Shuffle discard pile and move it to draw pile
+            player.drawPile = shuffleDeck(player.discardPile);
+            player.discardPile = []; // Clear discard pile
+            console.log(`${player.id} shuffled discard into draw pile. New draw pile size: ${player.drawPile.length}`);
+        } else {
+            // Both piles are empty - game might end or fatigue could be re-implemented here if desired
+            logMessage(`${player.id} has no cards left in draw or discard piles!`, 'log-error');
+            console.log(`${player.id} deck and discard empty! Cannot draw.`);
+            // Currently, nothing happens. Fatigue is removed.
+            return; // Exit the function, cannot draw
+        }
+    }
+
+    // Proceed with drawing if cards are available in drawPile
     if (player.hand.length >= MAX_HAND_SIZE) {
-        const burnedCard = player.deck.pop(); // Remove card from deck
+        const burnedCard = player.drawPile.pop(); // Remove card from draw pile
         const cardName = burnedCard?.name || 'a card';
         console.log(`${player.id} hand full! Card burned: ${cardName}`);
         logMessage(`${player.id}'s hand is full! Burned ${cardName}.`, 'log-error');
-        // Optionally show burned card briefly?
-    } else if (player.deck.length > 0) {
-        const card = player.deck.pop();
+    } else {
+        const card = player.drawPile.pop(); // Draw from the draw pile
         player.hand.push(card);
         logMessage(`${player.id} draws ${card.name}.`);
         console.log(`${player.id} drew ${card.name}`);
-        // TODO: Trigger draw effects if any
-    } else {
-        // Fatigue damage
-        player.fatigue++;
-        logMessage(`${player.id} is out of cards and takes ${player.fatigue} fatigue damage!`, 'log-error');
-        console.log(`${player.id} deck empty! Taking ${player.fatigue} fatigue damage.`);
-        setMessage(`${player.id} is out of cards and takes ${player.fatigue} fatigue damage!`);
-        dealDamage(player.heroElement, player.fatigue); // dealDamage handles visuals and health update
-        // Check win condition after fatigue damage
-        checkWinCondition();
     }
     // No need to re-render here, startTurn/endTurn calls renderGame
     // But update player info immediately if not part of start/end turn?

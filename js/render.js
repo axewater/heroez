@@ -38,14 +38,15 @@ export function renderGame() {
 }
 
 function renderPlayerInfo(player) {
-    if (!player || !player.healthElement || !player.manaElement || !player.deckElement) {
+    if (!player || !player.healthElement || !player.manaElement || !player.drawPileElement || !player.discardPileElement) {
         // Elements might not be assigned yet if cacheDOMElements/assignElementsToPlayerState hasn't run
         // console.warn(`Player info elements not ready for ${player?.id}`);
         return;
     }
     player.healthElement.textContent = player.heroHealth;
     player.manaElement.textContent = `${player.currentMana}/${player.maxMana}`;
-    player.deckElement.textContent = `Deck: ${player.deck.length}`;
+    player.drawPileElement.textContent = `Draw: ${player.drawPile.length}`;
+    player.discardPileElement.textContent = `Discard: ${player.discardPile.length}`;
 }
 
 function renderHand(player) {
