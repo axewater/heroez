@@ -21,7 +21,7 @@ export const cardLibrary = [
     // --- Existing Rare Creatures ---
     // { id: "r1", name: "Arcane Scholar", cost: 4, attack: 2, health: 4, type: "Creature", mechanics: ["Spell Power +1"], effectText: "Spell Power +1" }, // Spell Power not implemented
     { id: "r2", name: "War Golem", cost: 6, attack: 6, health: 6, type: "Creature", mechanics: [] },
-    { id: "r3", name: "Battlefield Commander", cost: 5, attack: 4, health: 4, type: "Creature", mechanics: ["Aura"], effectText: "Aura: Your other creatures have +1 Attack." },
+    { id: "r3", name: "BF Commander", cost: 5, attack: 4, health: 4, type: "Creature", mechanics: ["Aura"], effectText: "Aura: Your other creatures have +1 Attack." },
     // { id: "r4", name: "Venomous Spider", cost: 3, attack: 2, health: 3, type: "Creature", mechanics: ["Poison"], effectText: "Poison: Damages creature at end of turn." }, // Poison not implemented
 
     // --- New Rare Creatures ---
