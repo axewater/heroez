@@ -4,17 +4,17 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom left, #7f7fd5, #86a8e7, #91eae4); /* Different gradient */
-    display: none; /* Hidden initially */
+    background: linear-gradient(to bottom left, #7f7fd5, #86a8e7, #91eae4);
+    display: none;
     flex-direction: column;
-    justify-content: space-around; /* Space out title and heroes */
+    justify-content: space-around;
     align-items: center;
-    z-index: 1900; /* Below menu, above game */
+    z-index: 1900;
     color: white;
     text-align: center;
     padding: 20px;
     box-sizing: border-box;
-    border-radius: 10px; /* Match game container */
+    border-radius: 10px;
     transition: opacity 0.5s ease-out;
 }
 
@@ -27,9 +27,9 @@
 #hero-options-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align tops */
+    align-items: flex-start;
     gap: 30px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
 }
 
 .hero-option {
@@ -37,7 +37,7 @@
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 10px;
     padding: 20px;
-    width: 200px; /* Fixed width for each hero box */
+    width: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,8 +46,8 @@
 }
 
 .hero-option:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     border-color: white;
 }
 
@@ -58,17 +58,24 @@
 }
 
 .hero-portrait {
-    width: 120px;
-    height: 120px;
-    background-color: #555; /* Placeholder */
+    width: 100px;
+    height: 100px;
+    background-color: #444;
     border: 3px solid #eee;
     border-radius: 50%;
     margin-bottom: 15px;
-    object-fit: cover; /* If using images */
-    display: flex; /* For placeholder text */
+    overflow: hidden;
+    display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0.8em;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.hero-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .hero-option h3 {
@@ -79,7 +86,7 @@
 .hero-description {
     font-size: 0.9em;
     margin-bottom: 15px;
-    min-height: 40px; /* Reserve space */
+    min-height: 40px;
 }
 
 .select-hero-button {
@@ -89,7 +96,7 @@
     cursor: pointer;
     border: 1px solid white;
     border-radius: 5px;
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
     color: white;
     transition: background-color 0.3s ease;
 }
