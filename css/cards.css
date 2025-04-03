@@ -39,21 +39,21 @@
 
 .card-name {
     font-weight: bold;
-    text-align: center;
-    margin-top: 2px;
-    margin-bottom: 4px;
-    font-size: 10px; /* Smaller name */
+    text-align: left; /* Align to the left */
+    font-size: 9px; /* Even smaller name */
     white-space: normal; /* Allow wrapping */
     overflow-wrap: break-word; /* Break long words if necessary */
     word-wrap: break-word; /* Older browsers */
-    position: relative; /* Ensure it's above cost/stats if overlapping */
+    position: absolute; /* Position relative to card */
     z-index: 2; /* Above cost */
-    padding-top: 18px; /* Push name down below cost */
+    top: 4px; /* Align vertically with cost */
+    left: 25px; /* Position right of cost */
+    right: 4px; /* Constrain width */
 }
 
 .card-image {
     position: absolute;
-    top: 40px; /* Position below name */
+    top: 25px; /* Position below cost/name area */
     left: 15px; /* Centered horizontally (80 - 50) / 2 */
     width: 50px;
     height: 50px;
@@ -73,7 +73,7 @@
     line-height: 1.2;
     text-align: center;
     position: absolute; /* Take out of flow */
-    top: 95px; /* Position below image */
+    top: 80px; /* Position below image */
     left: 4px; right: 4px; bottom: 22px; /* Position above stats */
     background: rgba(255, 255, 255, 0.9); /* Slightly opaque background */
     border-radius: 3px;

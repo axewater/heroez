@@ -163,15 +163,27 @@ export function createCardElement(card, location, indexInHand = -1) {
     }
 
     // --- Add Card Image ---
-    // Determine image URL: Check specific ID first, then rarity fallback
-    // Use relative paths (no leading slash) since index.html is in the 'cardbattler' folder.
     const specificImageUrl = `img/cards/${card.id}.png`;
     const rarityImageUrl = `img/cards/${card.rarity}.png`;
-    // Simple check: Assume specific exists if not a token or basic card (adjust as needed)
-    const imageUrl = (card.rarity !== 'token' && card.rarity !== 'basic') ? specificImageUrl : rarityImageUrl;
+
     const imageDiv = document.createElement('div');
     imageDiv.classList.add('card-image');
-    imageDiv.style.backgroundImage = `url('${imageUrl}')`;
+
+    // Set fallback image initially
+    imageDiv.style.backgroundImage = `url('${rarityImageUrl}')`;
+
+    // Try to load specific image
+    const img = new Image();
+    img.onload = () => {
+        // If specific image loads, use it
+        imageDiv.style.backgroundImage = `url('${specificImageUrl}')`;
+    };
+    img.onerror = () => {
+        // Specific image failed, keep the fallback (already set)
+        console.warn(`Failed to load specific image for ${card.name} (${card.id}). Using ${card.rarity} fallback.`);
+    };
+    img.src = specificImageUrl; // Trigger load attempt
+
     cardEl.appendChild(imageDiv); // Append image div to card element
 
     return cardEl;

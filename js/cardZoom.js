@@ -62,21 +62,39 @@ export function showCardZoom(cardElement) {
             effectText = effectText ? `${mechanicsText}. ${effectText}` : mechanicsText;
         }
 
-        // Determine image URL for zoom view
+        // Define image URLs
         const specificImageUrl = `img/cards/${cardData.id}.png`;
         const rarityImageUrl = `img/cards/${cardData.rarity}.png`;
-        // Simple check: Assume specific exists if not a token or basic card
-        const imageUrl = (cardData.rarity !== 'token' && cardData.rarity !== 'basic') ? specificImageUrl : rarityImageUrl;
 
         // Basic structure matching the CSS selectors
         zoomContainer.innerHTML = `
             <div class="card-cost">${shouldHideDetails ? '' : cardData.cost}</div>
             <div class="card-name">${shouldHideDetails ? '???' : cardData.name}</div>
-            <div class="card-image-zoom" style="background-image: url('${imageUrl}');"></div>
+            <div class="card-image-zoom"></div>
             ${cardData.type === 'Creature' ? `<div class="card-attack">${shouldHideDetails ? '' : (cardData.currentAttack ?? cardData.attack)}</div>` : ''}
             ${cardData.type === 'Creature' ? `<div class="card-health">${shouldHideDetails ? '' : (cardData.currentHealth ?? cardData.health)}</div>` : ''}
             <div class="card-effect">${shouldHideDetails ? '' : effectText}</div>
         `;
+
+        // --- Set Image with Fallback ---
+        const imageDivZoom = zoomContainer.querySelector('.card-image-zoom');
+        if (imageDivZoom) {
+            // Set fallback image initially
+            imageDivZoom.style.backgroundImage = `url('${rarityImageUrl}')`;
+
+            // Try to load specific image
+            const img = new Image();
+            img.onload = () => {
+                // If specific image loads, use it
+                imageDivZoom.style.backgroundImage = `url('${specificImageUrl}')`;
+            };
+            img.onerror = () => {
+                // Specific image failed, keep the fallback (already set)
+                console.warn(`Failed to load specific zoom image for ${cardData.name} (${cardData.id}). Using ${cardData.rarity} fallback.`);
+            };
+            img.src = specificImageUrl; // Trigger load attempt
+        }
+        // --- End Set Image ---
 
         // Add classes for type and state for background/borders
         zoomContainer.className = 'card'; // Reset classes first
