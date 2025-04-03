@@ -78,7 +78,7 @@ function renderPlayerInfo(player) {
     // For now, it shows the actual mana state.
 }
 
-export function renderHand(player) {
+function renderHand(player) {
     if (!player || !player.handElement) return;
     player.handElement.innerHTML = ''; // Clear current hand
     player.hand.forEach((card, index) => {

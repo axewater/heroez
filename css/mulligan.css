@@ -6,10 +6,8 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.85); /* Darker overlay */
-    opacity: 0; /* Start hidden for fade-in */
-    transition: opacity 0.5s ease-out; /* Fade transition */
     color: white;
-    display: flex; /* Use flex even when hidden for transition */
+    display: none; /* Hidden by default */
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -20,12 +18,7 @@
 }
 
 #mulligan-overlay.visible {
-    opacity: 1; /* Fade in */
-}
-
-/* Add a class for fade-out */
-#mulligan-overlay.fading-out {
-    opacity: 0;
+    display: flex; /* Show when active */
 }
 
 #mulligan-overlay h2 {
@@ -49,10 +42,8 @@
 
 #mulligan-hand-container .card {
     cursor: pointer;
-    position: relative; /* Needed for potential transform origins */
     border: 3px solid transparent; /* Start with transparent border */
-    transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.3s ease-out;
-    opacity: 1; /* Start visible */
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 #mulligan-hand-container .card:hover {
@@ -84,43 +75,4 @@
 #confirm-mulligan-button:disabled {
     background-color: #aaa;
     cursor: not-allowed;
-}
-
-/* --- Mulligan Animations --- */
-
-@keyframes mulligan-card-draw {
-    from { transform: translateY(100px) scale(0.8); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-@keyframes mulligan-card-discard {
-    to { transform: translateY(150px) scale(0.7); opacity: 0; }
-}
-
-@keyframes mulligan-card-flash {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.8); }
-}
-
-.mulligan-card-enter {
-    opacity: 0; /* Start hidden before animation */
-    animation: mulligan-card-draw 0.5s ease-out forwards;
-    /* Add delay based on index? */
-    /* animation-delay: calc(var(--card-index) * 0.1s); */
-}
-
-.mulligan-card-exit {
-    animation: mulligan-card-discard 0.4s ease-in forwards;
-    /* Add delay based on index? */
-    /* animation-delay: calc(var(--card-index) * 0.05s); */
-}
-
-.mulligan-card-confirm-flash {
-    /* Apply to all cards in hand after mulligan */
-    animation: mulligan-card-flash 0.3s ease-in-out 2; /* Flash twice */
-}
-
-/* Class to hide cards instantly (used before replacing) */
-.mulligan-card-hidden {
-    opacity: 0 !important;
 }

@@ -361,6 +361,6 @@ export function confirmMulligan(selectedIndices) {
     }
     console.log("Drew replacement cards. New hand size:", player.hand.length);
 
-    // Return the new hand state for UI updates
-    return player.hand;
+    hideMulliganUI(); // Hide the mulligan screen
+    startTurn('player'); // Start the actual first turn
 }
