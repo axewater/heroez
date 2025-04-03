@@ -1,5 +1,5 @@
 # AceBattler: Card Battler
-Version 0.11
+Version 0.2
 
 ## Overview
 
