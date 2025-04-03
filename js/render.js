@@ -162,6 +162,18 @@ export function createCardElement(card, location, indexInHand = -1) {
         cardEl.classList.add('debug-visible'); // Add class for CSS override
     }
 
+    // --- Add Card Image ---
+    // Determine image URL: Check specific ID first, then rarity fallback
+    // Use relative paths (no leading slash) since index.html is in the 'cardbattler' folder.
+    const specificImageUrl = `img/cards/${card.id}.png`;
+    const rarityImageUrl = `img/cards/${card.rarity}.png`;
+    // Simple check: Assume specific exists if not a token or basic card (adjust as needed)
+    const imageUrl = (card.rarity !== 'token' && card.rarity !== 'basic') ? specificImageUrl : rarityImageUrl;
+    const imageDiv = document.createElement('div');
+    imageDiv.classList.add('card-image');
+    imageDiv.style.backgroundImage = `url('${imageUrl}')`;
+    cardEl.appendChild(imageDiv); // Append image div to card element
+
     return cardEl;
 }
 

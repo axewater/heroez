@@ -67,16 +67,29 @@
 
 /* Styles for elements INSIDE the zoom container */
 #card-zoom-container .card-cost { font-size: 24px; width: 40px; height: 40px; top: 5px; left: 5px; position: absolute; z-index: 1; }
-#card-zoom-container .card-name { font-size: 20px; margin-top: 5px; margin-bottom: 10px; padding-top: 35px; text-align: center; font-weight: bold; position: relative; z-index: 2; white-space: normal; overflow-wrap: break-word; }
+#card-zoom-container .card-name { font-size: 18px; margin-top: 5px; margin-bottom: 5px; padding-top: 35px; text-align: center; font-weight: bold; position: relative; z-index: 2; white-space: normal; overflow-wrap: break-word; }
+
+#card-zoom-container .card-image-zoom {
+    width: 150px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 5px auto; /* Center horizontally, add vertical space */
+    border: 2px solid #555;
+    border-radius: 5px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
 #card-zoom-container .card-effect {
-    font-size: 14px;
+    font-size: 13px; /* Slightly smaller effect text */
     line-height: 1.3;
     position: static; /* Override absolute positioning */
     display: block !important; /* Ensure it's always visible, override potential .card hiding */
     flex-grow: 1; /* Take remaining space */
-    margin: 10px 0;
+    margin: 5px 0; /* Reduced vertical margin */
     overflow-y: auto; /* Allow vertical scrolling */
-    max-height: 180px; /* Limit height to prevent overflow */
+    max-height: 100px; /* Reduced max height to fit image */
     text-align: center; padding: 5px; background: rgba(0,0,0,0.03); border-radius: 5px; }
 #card-zoom-container .card-attack, #card-zoom-container .card-health { font-size: 24px; width: 40px; height: 40px; bottom: 5px; position: absolute; z-index: 1; display: flex; justify-content: center; align-items: center; font-weight: bold; border-radius: 50%; color: white; border: 1px solid white; }
 #card-zoom-container .card-attack { left: 5px; background-color: orange; }

@@ -62,10 +62,17 @@ export function showCardZoom(cardElement) {
             effectText = effectText ? `${mechanicsText}. ${effectText}` : mechanicsText;
         }
 
+        // Determine image URL for zoom view
+        const specificImageUrl = `img/cards/${cardData.id}.png`;
+        const rarityImageUrl = `img/cards/${cardData.rarity}.png`;
+        // Simple check: Assume specific exists if not a token or basic card
+        const imageUrl = (cardData.rarity !== 'token' && cardData.rarity !== 'basic') ? specificImageUrl : rarityImageUrl;
+
         // Basic structure matching the CSS selectors
         zoomContainer.innerHTML = `
             <div class="card-cost">${shouldHideDetails ? '' : cardData.cost}</div>
             <div class="card-name">${shouldHideDetails ? '???' : cardData.name}</div>
+            <div class="card-image-zoom" style="background-image: url('${imageUrl}');"></div>
             ${cardData.type === 'Creature' ? `<div class="card-attack">${shouldHideDetails ? '' : (cardData.currentAttack ?? cardData.attack)}</div>` : ''}
             ${cardData.type === 'Creature' ? `<div class="card-health">${shouldHideDetails ? '' : (cardData.currentHealth ?? cardData.health)}</div>` : ''}
             <div class="card-effect">${shouldHideDetails ? '' : effectText}</div>
