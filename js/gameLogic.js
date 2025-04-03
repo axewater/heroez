@@ -1,7 +1,7 @@
 import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, setGameOver, setMessageState, isGameOver } from './state.js';
-import { renderGame, updatePlayableCards, setMessage, showGameOverScreen, hideGameOverScreen, cacheDOMElements, getDOMElement } from './ui.js';
+import { renderGame, updatePlayableCards, setMessage, logMessage, showGameOverScreen, hideGameOverScreen, cacheDOMElements, getDOMElement } from './ui.js';
 import { dealDamage } from './actions.js'; // Needed for fatigue
 import { runAITurn } from './ai.js';
 
@@ -43,7 +43,7 @@ export function initGame() {
     opponent.maxMana = 0;
     opponent.currentMana = 0;
 
-    setMessage("Game Starting...");
+    logMessage("Game Starting...", 'log-info');
     renderGame(); // Initial render before first turn starts
 
     // Delay slightly before starting the first turn for effect
@@ -102,6 +102,7 @@ export function startTurn(playerId) {
     const player = getCurrentPlayer();
     const opponent = getOpponentPlayer();
     console.log(`--- Turn ${getTurn()}: ${playerId} ---`);
+    logMessage(`--- Turn ${getTurn()} (${playerId}) ---`, 'log-turn');
 
     // Reset selections and targeting mode
     // deselectCard(); // Handled by UI/Action interactions
@@ -143,7 +144,8 @@ export function startTurn(playerId) {
     drawCard(player);
 
     // Update UI
-    setMessageState(`${playerId}'s turn.`);
+    // setMessageState(`${playerId}'s turn.`); // State message is less useful now
+    setMessage(`${playerId}'s turn.`); // Update prompt bar
     renderGame(); // Render after state updates but before AI turn
 
     // Enable/disable button
@@ -152,7 +154,7 @@ export function startTurn(playerId) {
 
     // If it's the AI's turn, run its logic
     if (playerId === 'opponent') {
-        setMessage("Opponent's turn..."); // Show message while AI thinks
+        setMessage("Opponent is thinking..."); // Show message while AI thinks
         // Disable player actions during AI turn (already handled by button disable and event checks)
         setTimeout(runAITurn, 1000); // Add delay for visibility
     }
@@ -163,6 +165,7 @@ export function endTurn() {
 
     const currentPlayerId = getState().currentPlayerId;
     const currentPlayer = getCurrentPlayer();
+    logMessage(`${currentPlayerId} ends turn.`);
     console.log(`${currentPlayerId} ends turn.`);
 
     // --- End of Turn Effects ---
@@ -193,17 +196,20 @@ export function endTurn() {
 export function drawCard(player) {
     if (player.hand.length >= MAX_HAND_SIZE) {
         const burnedCard = player.deck.pop(); // Remove card from deck
-        console.log(`${player.id} hand full! Card burned: ${burnedCard?.name || 'Unknown'}`);
-        setMessage(`${player.id}'s hand is full! Card burned.`);
+        const cardName = burnedCard?.name || 'a card';
+        console.log(`${player.id} hand full! Card burned: ${cardName}`);
+        logMessage(`${player.id}'s hand is full! Burned ${cardName}.`, 'log-error');
         // Optionally show burned card briefly?
     } else if (player.deck.length > 0) {
         const card = player.deck.pop();
         player.hand.push(card);
+        logMessage(`${player.id} draws ${card.name}.`);
         console.log(`${player.id} drew ${card.name}`);
         // TODO: Trigger draw effects if any
     } else {
         // Fatigue damage
         player.fatigue++;
+        logMessage(`${player.id} is out of cards and takes ${player.fatigue} fatigue damage!`, 'log-error');
         console.log(`${player.id} deck empty! Taking ${player.fatigue} fatigue damage.`);
         setMessage(`${player.id} is out of cards and takes ${player.fatigue} fatigue damage!`);
         dealDamage(player.heroElement, player.fatigue); // dealDamage handles visuals and health update
@@ -242,6 +248,7 @@ export function checkWinCondition() {
 export function gameOver(message) {
     console.log("Game Over:", message);
     setGameOver(true, message);
-    setMessage(message); // Update message bar immediately
+    setMessage(message); // Update message bar immediately with final result
+    logMessage(`--- Game Over: ${message} ---`, 'log-turn'); // Log final result
     showGameOverScreen(message); // Show the overlay
 }

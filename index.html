@@ -9,42 +9,48 @@
 <body>
 
     <div id="game-container">
-        <!-- Opponent Area -->
-        <div id="opponent-area" class="player-area">
-            <div id="opponent-hero" class="hero-info">
-                <div>Opponent</div>
-                <div id="opponent-health" class="hero-health">30</div>
-                <div id="opponent-mana" class="hero-mana">0/0</div>
-                <div id="opponent-deck" class="hero-deck">Deck: 0</div>
+        <div id="game-main-area">
+            <!-- Opponent Area -->
+            <div id="opponent-area" class="player-area">
+                <div id="opponent-hero" class="hero-info">
+                    <div>Opponent</div>
+                    <div id="opponent-health" class="hero-health">30</div>
+                    <div id="opponent-mana" class="hero-mana">0/0</div>
+                    <div id="opponent-deck" class="hero-deck">Deck: 0</div>
+                </div>
+                <div id="opponent-hand" class="hand"></div>
+                <div id="opponent-board" class="board"></div>
             </div>
-            <div id="opponent-hand" class="hand"></div>
-            <div id="opponent-board" class="board"></div>
-        </div>
 
-        <!-- Message Area -->
-        <div id="message-area">Game Starting...</div>
+            <!-- Message Area -->
+            <div id="message-area">Game Starting...</div>
 
-        <!-- Player Area -->
-        <div id="player-area" class="player-area">
-             <div id="player-hero" class="hero-info">
-                <div>Player</div>
-                <div id="player-health" class="hero-health">30</div>
-                <div id="player-mana" class="hero-mana">0/0</div>
-                <div id="player-deck" class="hero-deck">Deck: 0</div>
+            <!-- Player Area -->
+            <div id="player-area" class="player-area">
+                 <div id="player-hero" class="hero-info">
+                    <div>Player</div>
+                    <div id="player-health" class="hero-health">30</div>
+                    <div id="player-mana" class="hero-mana">0/0</div>
+                    <div id="player-deck" class="hero-deck">Deck: 0</div>
+                </div>
+                <div id="player-board" class="board"></div>
+                <div id="player-hand" class="hand"></div>
             </div>
-            <div id="player-board" class="board"></div>
-            <div id="player-hand" class="hand"></div>
-        </div>
 
-        <!-- Game Controls -->
-        <div id="game-controls">
-            <button id="end-turn-button" disabled>End Turn</button>
-        </div>
+            <!-- Game Controls -->
+            <div id="game-controls">
+                <button id="end-turn-button" disabled>End Turn</button>
+            </div>
 
-         <!-- Game Over Overlay -->
-        <div id="game-over-overlay">
-            <h2 id="game-over-message"></h2>
-            <button id="restart-button">Play Again</button>
+             <!-- Game Over Overlay -->
+            <div id="game-over-overlay">
+                <h2 id="game-over-message"></h2>
+                <button id="restart-button">Play Again</button>
+            </div>
+        </div>
+        <!-- Message Log Panel -->
+        <div id="message-log-panel">
+            <div id="message-log-content"></div>
         </div>
     </div>
 

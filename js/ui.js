@@ -1,5 +1,5 @@
 import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, getSelectedCard, setSelectedCard, getSelectedAttacker, setSelectedAttacker, setTargetingMode, getTargetingMode, setMessageState } from './state.js';
-import { playCard, creatureAttack } from './actions.js';
+import { playCard, creatureAttack, getTargetFromElement } from './actions.js';
 import { MAX_BOARD_SIZE } from './constants.js';
 
 // --- DOM Element References ---
@@ -26,6 +26,9 @@ export function cacheDOMElements() {
         gameOverOverlay: document.getElementById('game-over-overlay'),
         gameOverMessage: document.getElementById('game-over-message'),
         restartButton: document.getElementById('restart-button'),
+
+        messageLogContentEl: document.getElementById('message-log-content'),
+        messageLogPanelEl: document.getElementById('message-log-panel'),
     };
     console.log("DOM elements cached.");
 
@@ -51,6 +54,40 @@ export function getDOMElement(id) {
     return domElements[id];
 }
 
+// --- Message Logging ---
+
+/**
+ * Appends a message to the message log panel.
+ * @param {string} message - The text message to log.
+ * @param {string} [type='log-action'] - The type of message ('log-error', 'log-info', 'log-action', 'log-turn'). Used for styling.
+ */
+export function logMessage(message, type = 'log-action') {
+    if (!domElements.messageLogContentEl) return;
+
+    const logEntry = document.createElement('div');
+    logEntry.classList.add('log-message', type);
+    logEntry.textContent = message;
+
+    domElements.messageLogContentEl.appendChild(logEntry);
+
+    // Auto-scroll to the bottom
+    domElements.messageLogContentEl.scrollTop = domElements.messageLogContentEl.scrollHeight;
+
+    // Optionally, still update the main message area for temporary prompts
+    if (type === 'log-info' || type === 'log-error') {
+        setMessage(message); // Keep important prompts visible in the main bar
+    }
+}
+
+/**
+ * Sets the text content of the main message area.
+ * @param {string} msg - The message to display.
+ */
+export function setMessage(msg) {
+    if (domElements.messageAreaEl) {
+        domElements.messageAreaEl.textContent = msg;
+    }
+}
 
 // --- Rendering Functions ---
 
@@ -72,7 +109,8 @@ export function renderGame() {
     renderBoard(getPlayer('opponent'));
 
     // Update Message
-    setMessage(state.message || `${state.currentPlayerId}'s turn.`);
+    // Message area now primarily used for prompts, log handles history
+    // setMessage(state.message || `${state.currentPlayerId}'s turn.`); // Keep this? Or rely on log? Let's keep prompts.
 
     // Update Button State
     domElements.endTurnButton.disabled = state.currentPlayerId !== 'player' || state.targetingMode !== null;
@@ -165,14 +203,6 @@ export function createCardElement(card, location, indexInHand = -1) {
     }
 
     return cardEl;
-}
-
-export function setMessage(msg) {
-    if (domElements.messageAreaEl) {
-        domElements.messageAreaEl.textContent = msg;
-        // Also update state if this is the source of truth
-        // setMessageState(msg); // Be careful not to create loops if state change triggers render->setMessage
-    }
 }
 
 export function updatePlayableCards(player) {
@@ -282,7 +312,7 @@ export function deselectCard() {
         setSelectedCard(null);
         if (getTargetingMode().mode === 'spell') {
             setTargetingMode(null);
-            setMessageState(`${getState().currentPlayerId}'s turn.`); // Reset message
+            setMessage(`${getState().currentPlayerId}'s turn.`); // Reset message bar
             updateTargetHighlights(); // Clear target highlights
         }
     }
@@ -299,7 +329,7 @@ export function deselectAttacker() {
         setSelectedAttacker(null);
         if (getTargetingMode().mode === 'attack') {
             setTargetingMode(null);
-            setMessageState(`${getState().currentPlayerId}'s turn.`); // Reset message
+            setMessage(`${getState().currentPlayerId}'s turn.`); // Reset message bar
             updateTargetHighlights(); // Clear target highlights
         }
     }
@@ -365,13 +395,13 @@ export function handleHandCardClick(card, index) {
                         // deselectCard() is called within playCard's flow
                     } else {
                          setMessage("Board is full!");
-                         setSelectedCard(null); // Deselect invalid play
+                         logMessage(`Cannot play ${card.name}: Board is full!`, 'log-error');
                     }
                 } else if (card.type === 'Spell') {
                     // Enter targeting mode if the spell requires it
                     if (card.target && card.target !== 'self' && card.target !== 'opponent-board') { // Needs specific target
                         setTargetingMode('spell', card.target);
-                        setMessageState(`Select a target for ${card.name}`);
+                        setMessage(`Select a target for ${card.name}`);
                         // Highlights updated in renderGame
                     } else {
                         // Play spell immediately (targets self or whole board)
@@ -382,6 +412,7 @@ export function handleHandCardClick(card, index) {
             }
         } else {
             setMessage("Not enough mana!");
+            logMessage(`Cannot play ${card.name}: Not enough mana!`, 'log-error');
         }
     }
     renderGame(); // Update UI with selection/deselection/highlights
@@ -398,12 +429,14 @@ export function handleBoardCardClick(card) {
         // Clicked own creature while targeting for a spell
         const spell = getSelectedCard()?.card;
         const targetElement = player.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
-        if (targetElement && targetElement.classList.contains('targetable') && spell) {
+        const targetData = getTargetFromElement(targetElement, targeting.spellTargetType, player); // Check if target is valid for spell
+
+        if (targetData !== "invalid" && targetElement && targetElement.classList.contains('targetable') && spell) {
             playCard(player, spell, getSelectedCard().index, targetElement);
             // deselectCard/renderGame called within playCard's flow
         } else {
             setMessage("Invalid target for spell.");
-            // Maybe deselect spell here? For now, do nothing.
+            logMessage(`Invalid target for ${spell?.name || 'spell'}.`, 'log-error');
         }
     } else if (targeting.mode === 'attack') {
         // Clicked own creature while selecting target for attack - invalid action
@@ -425,15 +458,18 @@ export function handleBoardCardClick(card) {
                     // Don't add 'attacking' class here, renderGame will do it based on state
                     setSelectedAttacker(card);
                     setTargetingMode('attack');
-                    setMessageState(`Select target for ${card.name} to attack.`);
+                    setMessage(`Select target for ${card.name} to attack.`);
                     // Highlights updated in renderGame
                 }
             } else if (card.hasAttacked) {
                 setMessage(`${card.name} has already attacked this turn.`);
+                logMessage(`${card.name} cannot attack: Already attacked.`, 'log-info');
             } else if (card.isFrozen) {
                 setMessage(`${card.name} is frozen.`);
+                logMessage(`${card.name} cannot attack: Frozen.`, 'log-info');
             } else {
                 setMessage(`${card.name} cannot attack yet.`);
+                logMessage(`${card.name} cannot attack: Summoning sickness or 0 Attack.`, 'log-info');
             }
         }
     }
@@ -450,6 +486,7 @@ export function handleTargetClick(targetElement) {
 
     if (!targetElement.classList.contains('targetable')) {
         setMessage("Invalid target.");
+        logMessage("Invalid target selected.", 'log-error');
         // Consider deselecting spell/attacker here if needed
         return;
     }
@@ -462,6 +499,7 @@ export function handleTargetClick(targetElement) {
         } else {
              console.error("Targeting spell, but no spell selected in state.");
              setTargetingMode(null); // Reset targeting state
+             logMessage("Error: Spell targeting failed (no spell selected).", 'log-error');
              renderGame();
         }
     } else if (targeting.mode === 'attack') {
@@ -472,6 +510,7 @@ export function handleTargetClick(targetElement) {
         } else {
              console.error("Targeting attack, but no attacker selected in state.");
              setTargetingMode(null); // Reset targeting state
+             logMessage("Error: Attack targeting failed (no attacker selected).", 'log-error');
              renderGame();
         }
     }

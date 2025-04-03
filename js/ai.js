@@ -2,7 +2,7 @@ import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, isGameOver } 
 import { playCard, creatureAttack, getTargetFromElement } from './actions.js';
 import { endTurn } from './gameLogic.js';
 import { MAX_BOARD_SIZE, STARTING_HEALTH } from './constants.js';
-import { getDOMElement } from './ui.js'; // To find target elements
+import { getDOMElement, logMessage } from './ui.js'; // To find target elements, added logMessage
 
 const AI_ACTION_DELAY = 750; // ms between AI actions
 const AI_ATTACK_DELAY = 500; // ms before AI attack visualization
@@ -12,7 +12,7 @@ const MAX_AI_ACTIONS_PER_TURN = 20; // Safety break
 export function runAITurn() {
     console.log("--- AI Turn Start ---");
     if (isGameOver()) {
-        console.log("AI Turn: Game already over.");
+        logMessage("AI Turn: Game already over.", 'log-info');
         return;
     }
     const aiPlayer = getCurrentPlayer(); // AI is the current player
@@ -23,14 +23,14 @@ export function runAITurn() {
     function performNextAIAction() {
         if (isGameOver() || getState().currentPlayerId !== aiPlayer.id || actionsTakenThisTurn++ >= MAX_AI_ACTIONS_PER_TURN) {
             if (!isGameOver() && getState().currentPlayerId === aiPlayer.id) {
-                console.log("--- AI Turn End (Max Actions or No More Plays) ---");
+                logMessage("--- AI Turn End (Max Actions or No More Plays) ---", 'log-turn');
                 endTurn();
             } else if (isGameOver()) {
-                 console.log("AI Action loop stopped: Game Over.");
+                 logMessage("AI Action loop stopped: Game Over.", 'log-info');
             } else if (getState().currentPlayerId !== aiPlayer.id) {
-                 console.log("AI Action loop stopped: No longer AI's turn.");
+                 logMessage("AI Action loop stopped: No longer AI's turn.", 'log-info');
             } else {
-                 console.log("AI Action loop stopped: Max actions reached.");
+                 logMessage("AI Action loop stopped: Max actions reached.", 'log-info');
                  endTurn(); // Force end turn if stuck
             }
             return;
@@ -83,7 +83,7 @@ export function runAITurn() {
                      playCard(aiPlayer, cardToPlay, cardIndex, null);
                      actionExecuted = true;
                 } else {
-                    console.log(`AI could not find suitable target for ${cardToPlay.name}. Skipping play.`);
+                    logMessage(`AI could not find suitable target for ${cardToPlay.name}. Skipping play.`, 'log-info');
                     // Card remains in hand for now, maybe try attacking instead.
                 }
             }
@@ -113,11 +113,11 @@ export function runAITurn() {
                                 // Check if more actions can be taken after attack
                                 setTimeout(performNextAIAction, AI_ACTION_DELAY); // Check for next action after a short delay
                             } else {
-                                 console.log(`AI ${attacker.name} target disappeared before attack.`);
+                                 logMessage(`AI ${attacker.name} target disappeared before attack.`, 'log-info');
                                  performNextAIAction(); // Try next action
                             }
                         } else {
-                             console.log(`AI ${attacker.name} attack cancelled (Game state changed).`);
+                             logMessage(`AI ${attacker.name} attack cancelled (Game state changed).`, 'log-info');
                              if (!isGameOver() && getState().currentPlayerId === aiPlayer.id) {
                                  performNextAIAction(); // Still AI's turn, try next action
                              } else if (!isGameOver()){
@@ -127,7 +127,7 @@ export function runAITurn() {
                     }, AI_ATTACK_DELAY);
                     return; // Exit function early, attack timeout will trigger next check
                 } else {
-                    console.log(`AI ${attacker.name} found no valid target to attack.`);
+                    logMessage(`AI ${attacker.name} found no valid target to attack.`, 'log-info');
                     // Try next attacker or end turn if no attackers left
                 }
             }
@@ -139,7 +139,7 @@ export function runAITurn() {
             setTimeout(performNextAIAction, AI_ACTION_DELAY);
         } else {
             // If no card played and no attack initiated, end the turn
-            console.log("--- AI Turn End (No more actions found) ---");
+            logMessage("--- AI Turn End (No more actions found) ---", 'log-turn');
             endTurn();
         }
     }
@@ -239,7 +239,7 @@ function findBestSpellTarget(aiPlayer, humanPlayer, spellCard) {
         return potentialTargets[0].element; // Return the DOM element of the best target
     }
 
-    console.log(`AI Spell Targeting for ${spellCard.name}: No suitable target found.`);
+    logMessage(`AI Spell Targeting for ${spellCard.name}: No suitable target found.`, 'log-info');
     return null; // No suitable target found
 }
 
@@ -312,6 +312,6 @@ function findBestAttackTarget(attacker, humanPlayer) {
         return potentialTargets[0].element; // Return the DOM element of the best target
     }
 
-    console.log(`AI Attack Targeting for ${attacker.name}: No target found.`);
+    logMessage(`AI Attack Targeting for ${attacker.name}: No target found.`, 'log-info');
     return null; // No target found
 }

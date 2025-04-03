@@ -1,6 +1,6 @@
 import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setMessageState, setGameOver, isGameOver } from './state.js';
-import { renderGame, updatePlayableCards, deselectCard, deselectAttacker, setMessage, flashElement, getDOMElement } from './ui.js';
-import { checkWinCondition, drawCard as drawCardLogic, createCardInstance } from './gameLogic.js'; // Renamed drawCard to avoid conflict
+import { renderGame, updatePlayableCards, deselectCard, deselectAttacker, setMessage, logMessage, flashElement, getDOMElement } from './ui.js';
+import { checkWinCondition, drawCard as drawCardLogic, createCardInstance } from './gameLogic.js';
 import { MAX_BOARD_SIZE, STARTING_HEALTH } from './constants.js';
 import { cardLibrary } from './cards.js'; // Needed for summonCreature
 
@@ -27,18 +27,18 @@ const actionImplementations = {
 // --- Core Action Functions ---
 
 export function playCard(player, card, cardIndexInHand, targetElement = null) {
-    console.log("${player.id} attempts to play ${card.name}");
+    console.log(`${player.id} attempts to play ${card.name}`);
 
     // Basic checks (redundant with UI checks but good for safety)
     if (player.currentMana < card.cost) {
-        setMessage("Not enough mana!");
+        logMessage(`Cannot play ${card.name}: Not enough mana!`, 'log-error');
         console.log("Not enough mana");
         deselectCard(); // Ensure card is deselected if play fails
         renderGame();
         return;
     }
     if (card.type === "Creature" && player.board.length >= MAX_BOARD_SIZE) {
-         setMessage("Board is full!");
+         logMessage(`Cannot play ${card.name}: Board is full!`, 'log-error');
          console.log("Board is full");
          deselectCard();
          renderGame();
@@ -55,6 +55,7 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
     let success = true;
     if (playedCard.type === "Creature") {
         console.log("Playing creature: ${playedCard.name}");
+        logMessage(`${player.id} plays ${playedCard.name}.`);
         // Assign runtime properties
         playedCard.justPlayed = true; // Has summoning sickness
         playedCard.canAttack = !!playedCard.mechanics?.includes("Swift"); // Can attack immediately if Swift
@@ -76,14 +77,15 @@ export function playCard(player, card, cardIndexInHand, targetElement = null) {
 
     } else if (playedCard.type === "Spell") {
         console.log("Playing spell: ${playedCard.name}");
+        logMessage(`${player.id} plays ${playedCard.name}.`);
         if (playedCard.actionId) {
             const target = getTargetFromElement(targetElement, playedCard.target, player);
             if (target !== "invalid") {
-                console.log("Executing spell action on target:", target);
+                console.log(`Executing spell action ${playedCard.actionId} on target:`, target);
                 success = triggerCardEffect(player, playedCard, playedCard.actionId, playedCard.actionParams || {}, target);
             } else {
                 console.log("Invalid target for spell.");
-                setMessage("Invalid target for spell.");
+                logMessage(`Invalid target for ${playedCard.name}.`, 'log-error');
                 // Refund mana & put card back (simple rollback)
                 player.hand.splice(cardIndexInHand, 0, playedCard);
                 player.currentMana += playedCard.cost;
@@ -127,16 +129,16 @@ export function creatureAttack(attackerCard, targetElement) {
 
     const tauntMinions = opponentPlayer.board.filter(c => c.isTaunt);
     if (tauntMinions.length > 0 && (!targetCardInstance || !targetCardInstance.isTaunt)) {
-        setMessage("Must attack a Taunt creature!");
+        logMessage("Must attack a Taunt creature!", 'log-error');
         console.log("Attack blocked by Taunt");
         deselectAttacker();
         renderGame(); // Re-render to remove attacking state
         return;
     }
 
-     // Check if attacker can attack
+     // Check if attacker can attack (redundant with UI checks but good safety)
      if (!attackerCard.canAttack || attackerCard.hasAttacked || attackerCard.isFrozen || attackerCard.currentAttack <= 0) {
-         console.log("Attacker ${attackerCard.name} cannot attack.");
+         console.log(`Attacker ${attackerCard.name} cannot attack (canAttack: ${attackerCard.canAttack}, hasAttacked: ${attackerCard.hasAttacked}, isFrozen: ${attackerCard.isFrozen}).`);
          setMessage("${attackerCard.name} cannot attack.");
          deselectAttacker();
          renderGame();
@@ -145,7 +147,8 @@ export function creatureAttack(attackerCard, targetElement) {
 
 
     // --- Execute Combat ---
-    console.log("${attackerCard.name} attacks ${targetCardInstance ? targetCardInstance.name : (targetIsHero ? getOpponentId(attackerPlayer.id) + ' hero' : 'invalid target')}");
+    const targetName = targetCardInstance ? targetCardInstance.name : (targetIsHero ? getOpponentId(attackerPlayer.id) + ' hero' : 'invalid target');
+    logMessage(`${attackerCard.name} attacks ${targetName}.`);
 
     // Attacker deals damage to target
     dealDamage(target, attackerCard.currentAttack);
@@ -177,7 +180,7 @@ function triggerCardEffect(casterPlayer, sourceCard, actionId, params, target) {
     const actionFn = actionImplementations[actionId];
     if (actionFn) {
         try {
-            console.log("Triggering effect ${actionId} from ${sourceCard.name} on", target);
+            console.log(`Triggering effect ${actionId} from ${sourceCard.name} on target:`, target);
             actionFn(target, params, casterPlayer); // Pass caster context if needed
             return true; // Indicate success
         } catch (e) {
@@ -203,7 +206,7 @@ export function dealDamage(target, amount) {
         const player = getPlayer(playerId);
         player.heroHealth -= amount;
         targetHealth = player.heroHealth;
-        targetName = "${playerId} hero";
+        targetName = `${playerId} hero`;
         if (player.heroHealth <= 0) {
             player.heroHealth = 0; // Don't go below 0
             // Win condition checked separately
@@ -226,6 +229,7 @@ export function dealDamage(target, amount) {
         // Check for death AFTER applying damage visual
         if (target.currentHealth <= 0) {
             console.log("Creature ${target.name} (${target.instanceId}) died.");
+            logMessage(`${target.name} is destroyed.`);
             removeCreatureFromBoard(target);
             // Don't check win condition here, let the calling action do it
         } else {
@@ -237,7 +241,7 @@ export function dealDamage(target, amount) {
         return; // Exit if target wasn't valid
     }
 
-    console.log("${targetName} takes ${amount} damage. Health: ${targetHealth}");
+    console.log(`${targetName} takes ${amount} damage. Health: ${targetHealth}`);
     // Re-rendering and win check happens in the calling function (playCard/creatureAttack)
 }
 
@@ -254,7 +258,7 @@ export function restoreHealth(target, amount) {
         player.heroHealth += amount;
         if (player.heroHealth > STARTING_HEALTH) player.heroHealth = STARTING_HEALTH; // Cap at max health
         currentHealth = player.heroHealth;
-        targetName = "${playerId} hero";
+        targetName = `${playerId} hero`;
         flashElement(target, 'heal-flash');
 
     } else if (target && typeof target === 'object' && target.instanceId) { // Target is Creature
@@ -277,7 +281,7 @@ export function restoreHealth(target, amount) {
         return;
     }
 
-    console.log("${targetName} restores ${amount} health. Health: ${currentHealth}/${maxHealth}");
+    console.log(`${targetName} restores ${amount} health. Health: ${currentHealth}/${maxHealth}`);
     // Re-rendering happens in the calling function (playCard)
 }
 
@@ -286,7 +290,8 @@ export function permanentBuff(targetCard, attackBuff, healthBuff) {
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + attackBuff); // Attack can't be negative
         targetCard.currentHealth += healthBuff;
         targetCard.health += healthBuff; // Increase max health as well
-        console.log("${targetCard.name} gets permanently +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}");
+        logMessage(`${targetCard.name} gets permanently +${attackBuff}/+${healthBuff}.`);
+        console.log(`${targetCard.name} gets permanently +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}`);
         // Visual update happens in renderGame
     } else {
         console.warn("permanentBuff target is not a creature:", targetCard);
@@ -300,7 +305,8 @@ export function temporaryBuff(targetCard, attackBuff, healthBuff) {
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + attackBuff);
         targetCard.currentHealth += healthBuff;
         // DO NOT increase max health (targetCard.health) for temporary buffs
-        console.log("${targetCard.name} gets temporarily +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}");
+        logMessage(`${targetCard.name} gets temporarily +${attackBuff}/+${healthBuff}.`);
+        console.log(`${targetCard.name} gets temporarily +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}`);
         // Add effect to card.effects list to be cleared at end of turn
         // targetCard.effects = targetCard.effects || [];
         // targetCard.effects.push({ type: 'tempBuff', attack: attackBuff, health: healthBuff, duration: 1 });
@@ -317,6 +323,7 @@ export function freezeBoard(board) { // Expects the array of creatures
             if (creature && creature.type === 'Creature') {
                 creature.isFrozen = true;
                 creature.canAttack = false; // Frozen creatures cannot attack
+                logMessage(`${creature.name} is frozen.`);
                 console.log("${creature.name} is frozen.");
             }
         });
@@ -328,26 +335,22 @@ export function freezeBoard(board) { // Expects the array of creatures
 }
 
 export function summonCreature(player, cardIdToSummon, count) {
-    console.log(`Invalid target: Card element found (id: ${cardInstanceId}), but spell requires ${targetType} or card not found on board.`);     const cardData = cardLibrary.find(c => c.id === cardIdToSummon);
-     if (!cardData) {
-         console.error("Card data not found for ID: ${cardIdToSummon}");
-         return;
-     }
-
-     for (let i = 0; i < count; i++) {
-         if (player.board.length < MAX_BOARD_SIZE) {
-             const newCreature = createCardInstance(cardData, player.id); // Use createCardInstance from gameLogic
-             newCreature.justPlayed = true; // Summoning sickness
-             newCreature.canAttack = !!newCreature.mechanics?.includes("Swift");
-             player.board.push(newCreature);
-             console.log("Summoned ${newCreature.name} for ${player.id}");
-         } else {
-             console.log("Board full, cannot summon ${cardData.name}");
-             setMessage("Board full, could not summon everything!");
-             break; // Stop summoning if board is full
-         }
-     }
-     // Visual update happens in renderGame
+    const cardData = cardLibrary.find(c => c.id === cardIdToSummon);
+    if (!cardData) {
+        console.error(`Card data not found for ID: ${cardIdToSummon}`);
+        return;
+    }
+    for (let i = 0; i < count; i++) {
+        if (player.board.length < MAX_BOARD_SIZE) {
+            const newCreature = createCardInstance(cardData, player.id);
+            player.board.push(newCreature);
+            logMessage(`${player.id} summons ${newCreature.name}.`);
+        } else {
+            logMessage(`Board full, cannot summon ${cardData.name}!`, 'log-error');
+            break;
+        }
+    }
+    // Visual update happens in renderGame
 }
 
 
@@ -390,7 +393,7 @@ export function getTargetFromElement(element, targetType, caster) {
         if (targetCard && (targetType === 'any' || targetType === 'creature')) {
             return targetCard; // Return the card instance object
         } else {
-             console.log("Invalid target: Card element found (id: ${cardInstanceId}), but spell requires ${targetType} or card not found on board.");
+             console.log(`Invalid target: Card element found (id: ${cardInstanceId}), but spell requires ${targetType} or card not found on board.`);
             return "invalid";
         }
     }
