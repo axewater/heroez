@@ -99,3 +99,48 @@ export function animateCardMovement(cardData, startRect, endRect, animationType,
         }, duration + 100); // A bit longer than the animation duration
     });
 }
+
+/**
+ * Creates and animates a simple visual effect for a spell.
+ * The effect appears near the target (or caster if no target) and fades out.
+ *
+ * @param {HTMLElement} casterElement - The DOM element of the caster (usually hero).
+ * @param {HTMLElement | null} targetElement - The DOM element of the target, or null.
+ * @param {string} effectType - The type of effect (e.g., 'fire', 'frost'). Matches CSS class suffix.
+ * @param {number} [duration=600] - Duration of the effect in ms (should match CSS animation).
+ * @returns {Promise<void>} A promise that resolves when the effect finishes.
+ */
+export function animateSpellEffect(casterElement, targetElement, effectType, duration = 600) {
+    return new Promise(resolve => {
+        const gameContainer = getDOMElement('gameContainer');
+        if (!gameContainer || !casterElement) {
+            console.warn("Spell effect prerequisites not met (container or caster missing).");
+            resolve();
+            return;
+        }
+
+        // Determine position: Target center or Caster center
+        const positioningElement = targetElement || casterElement;
+        const rect = positioningElement.getBoundingClientRect();
+        const effectX = rect.left + rect.width / 2;
+        const effectY = rect.top + rect.height / 2;
+
+        // Create effect element
+        const effectEl = document.createElement('div');
+        effectEl.classList.add('spell-effect', `spell-effect-${effectType}`);
+
+        // Position the effect (centered on the calculated point)
+        effectEl.style.left = `${effectX}px`;
+        effectEl.style.top = `${effectY}px`;
+
+        // Append and automatically remove after animation
+        gameContainer.appendChild(effectEl);
+
+        setTimeout(() => {
+            if (effectEl.parentNode) {
+                effectEl.remove();
+            }
+            resolve();
+        }, duration); // Remove after the CSS animation duration
+    });
+}

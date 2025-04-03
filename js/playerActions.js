@@ -8,7 +8,7 @@ import { MAX_BOARD_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { getTargetFromElement } from './actionUtils.js';
 import { triggerCardEffect } from './cardEffects.js';
-import { animateCardMovement } from './animations.js'; // Import the animation helper
+import { animateCardMovement, animateSpellEffect } from './animations.js'; // Import animation helpers
 import { getDOMElement } from './dom.js'; // Need access to board/hand elements
 
 export async function playCard(player, card, cardIndexInHand, targetElement = null) {
@@ -99,12 +99,21 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
         // For now, let's just use the hand card fade out.
         // If animation is desired, calculate endRect (e.g., center of board/target)
         // animationPromise = animateCardMovement(playedCard, startRect, endRect, 'play');
+        // Instead, we'll trigger a spell-specific animation.
+        let spellAnimationPromise = Promise.resolve();
 
         if (playedCard.actionId) {
             const target = getTargetFromElement(targetElement, playedCard.target, player);
 
             if (target !== "invalid") {
                 console.log(`Executing spell action ${playedCard.actionId} on target:`, target);
+
+                // --- Trigger Spell Visual Effect ---
+                if (playedCard.visualEffectType) {
+                    const casterHeroElement = getDOMElement(`${player.id}HeroEl`);
+                    // Pass the actual target element (card or hero) or null if target is board/self
+                    spellAnimationPromise = animateSpellEffect(casterHeroElement, targetElement, playedCard.visualEffectType);
+                }
                 success = triggerCardEffect(player, playedCard, playedCard.actionId, playedCard.actionParams || {}, target);
             } else {
                 console.log("Invalid target for spell.");
@@ -117,6 +126,13 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
         } else {
              console.log(`Spell ${playedCard.name} has no defined action.`);
         }
+
+        // --- Wait for Spell Visual Effect ---
+        // This ensures the visual happens before the game state potentially changes drastically
+        // from the card effect (e.g., creature dying).
+        await spellAnimationPromise;
+
+
         // Add successfully played spell to discard pile
         if (success) {
             player.discardPile.push(playedCard);

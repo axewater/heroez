@@ -36,22 +36,22 @@ export const cardLibrary = [
     { id: "e3", name: "Ironbark Protector", cost: 8, attack: 8, health: 8, type: "Creature", rarity: "epic", mechanics: ["Taunt"] },
 
     // --- Existing Spells ---
-    { id: "s1", name: "Fireball", cost: 3, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 4 }, effectText: "Deal 4 damage." },
-    { id: "s2", name: "Healing Touch", cost: 2, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'restoreHealth', actionParams: { amount: 4 }, effectText: "Restore 4 health." },
+    { id: "s1", name: "Fireball", cost: 3, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 4 }, effectText: "Deal 4 damage.", visualEffectType: 'fire' },
+    { id: "s2", name: "Healing Touch", cost: 2, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'restoreHealth', actionParams: { amount: 4 }, effectText: "Restore 4 health.", visualEffectType: 'holy' },
     // { id: "s3", name: "Battle Rage", cost: 1, type: "Spell", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a creature +2 Attack until end of turn." }, // Temp buff not fully implemented
-    { id: "s4", name: "Frost Nova", cost: 4, type: "Spell", rarity: "rare", target: "opponent-board", mechanics: [], actionId: 'freezeBoard', actionParams: {}, effectText: "Freeze all enemy creatures." },
-    { id: "s5", name: "Arcane Intellect", cost: 3, type: "Spell", rarity: "common", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 2 }, effectText: "Draw 2 cards." },
-    { id: "s6", name: "Shield Wall", cost: 2, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 3 }, effectText: "Give a creature +0/+3." },
-    { id: "s7", name: "Lightning Bolt", cost: 2, type: "Spell", rarity: "rare", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage to a creature." },
+    { id: "s4", name: "Frost Nova", cost: 4, type: "Spell", rarity: "rare", target: "opponent-board", mechanics: [], actionId: 'freezeBoard', actionParams: {}, effectText: "Freeze all enemy creatures.", visualEffectType: 'frost' },
+    { id: "s5", name: "Arcane Intellect", cost: 3, type: "Spell", rarity: "common", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 2 }, effectText: "Draw 2 cards.", visualEffectType: 'arcane' },
+    { id: "s6", name: "Shield Wall", cost: 2, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 3 }, effectText: "Give a creature +0/+3.", visualEffectType: 'physical' },
+    { id: "s7", name: "Lightning Bolt", cost: 2, type: "Spell", rarity: "rare", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage to a creature.", visualEffectType: 'lightning' },
 
     // --- New Spells ---
-    { id: "s8", name: "Holy Smite", cost: 1, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage." },
-    { id: "s9", name: "Reinforce", cost: 2, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 2, health: 2 }, effectText: "Give a creature +2/+2." },
-    { id: "s10", name: "Sprint", cost: 5, type: "Spell", rarity: "rare", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 4 }, effectText: "Draw 4 cards." },
-    { id: "s11", name: "Starfire", cost: 6, type: "Spell", rarity: "rare", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 5 }, effectText: "Deal 5 damage." },
-    { id: "s12", name: "Pyroblast", cost: 10, type: "Spell", rarity: "epic", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 10 }, effectText: "Deal 10 damage." },
-    { id: "s13", name: "Frost Shock", cost: 1, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'freezeCreature', actionParams: {}, effectText: "Freeze a creature." },
-    { id: "s14", name: "Blessing of Kings", cost: 4, type: "Spell", rarity: "rare", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 4, health: 4 }, effectText: "Give a creature +4/+4." },
+    { id: "s8", name: "Holy Smite", cost: 1, type: "Spell", rarity: "common", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage.", visualEffectType: 'holy' },
+    { id: "s9", name: "Reinforce", cost: 2, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 2, health: 2 }, effectText: "Give a creature +2/+2.", visualEffectType: 'physical' },
+    { id: "s10", name: "Sprint", cost: 5, type: "Spell", rarity: "rare", target: "self", mechanics: [], actionId: 'drawCards', actionParams: { amount: 4 }, effectText: "Draw 4 cards.", visualEffectType: 'shadow' }, // Generic/shadow effect?
+    { id: "s11", name: "Starfire", cost: 6, type: "Spell", rarity: "rare", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 5 }, effectText: "Deal 5 damage.", visualEffectType: 'lightning' }, // Nature/lightning?
+    { id: "s12", name: "Pyroblast", cost: 10, type: "Spell", rarity: "epic", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 10 }, effectText: "Deal 10 damage.", visualEffectType: 'fire' },
+    { id: "s13", name: "Frost Shock", cost: 1, type: "Spell", rarity: "common", target: "creature", mechanics: [], actionId: 'freezeCreature', actionParams: {}, effectText: "Freeze a creature.", visualEffectType: 'frost' },
+    { id: "s14", name: "Blessing of Kings", cost: 4, type: "Spell", rarity: "rare", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 4, health: 4 }, effectText: "Give a creature +4/+4.", visualEffectType: 'holy' },
 
     // --- Existing Legendary Card ---
     { id: "l1", name: "Dragon Lord", cost: 8, attack: 7, health: 7, type: "Creature", rarity: "legendary", mechanics: ["Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "whelp", count: 1 }, effectText: "Deploy: Summon a 3/3 Dragon Whelp." },
@@ -65,15 +65,15 @@ export const cardLibrary = [
 
     // --- Hero Specific Cards (Not collectible in general pool) ---
     // Warrior
-    { id: "h_w1", name: "Charge!", cost: 1, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a friendly creature +2 Attack this turn.", collectible: false, heroSpecific: true },
+    { id: "h_w1", name: "Charge!", cost: 1, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a friendly creature +2 Attack this turn.", collectible: false, heroSpecific: true, visualEffectType: 'physical' },
     { id: "h_w2", name: "Armored Raider", cost: 3, attack: 3, health: 3, type: "Creature", rarity: "basic", mechanics: ["Swift"], collectible: false, heroSpecific: true },
     // Mage
-    { id: "h_m1", name: "Arcane Blast", cost: 2, type: "Spell", rarity: "basic", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage.", collectible: false, heroSpecific: true },
+    { id: "h_m1", name: "Arcane Blast", cost: 2, type: "Spell", rarity: "basic", target: "any", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 3 }, effectText: "Deal 3 damage.", collectible: false, heroSpecific: true, visualEffectType: 'arcane' },
     { id: "h_m2", name: "Mana Wyrm", cost: 1, attack: 1, health: 2, type: "Creature", rarity: "basic", mechanics: [], effectText: "Gains +1 Attack whenever you cast a spell.", collectible: false, heroSpecific: true }, // Effect not implemented yet
     // Rogue
-    { id: "h_r1", name: "Backstab", cost: 0, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage to an undamaged creature.", collectible: false, heroSpecific: true }, // Condition not implemented yet
+    { id: "h_r1", name: "Backstab", cost: 0, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'dealDamage', actionParams: { amount: 2 }, effectText: "Deal 2 damage to an undamaged creature.", collectible: false, heroSpecific: true, visualEffectType: 'shadow' }, // Condition not implemented yet
     { id: "h_r2", name: "Silent Assassin", cost: 2, attack: 2, health: 1, type: "Creature", rarity: "basic", mechanics: ["Stealth"], collectible: false, heroSpecific: true },
     // Priest
-    { id: "h_p1", name: "Power Word: Shield", cost: 1, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 2 }, effectText: "Give a creature +2 Health.", collectible: false, heroSpecific: true }, // Should also draw a card ideally
+    { id: "h_p1", name: "Power Word: Shield", cost: 1, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'permanentBuff', actionParams: { attack: 0, health: 2 }, effectText: "Give a creature +2 Health.", collectible: false, heroSpecific: true, visualEffectType: 'holy' }, // Should also draw a card ideally
     { id: "h_p2", name: "Northshire Cleric", cost: 1, attack: 1, health: 3, type: "Creature", rarity: "basic", mechanics: [], effectText: "Whenever a creature is healed, draw a card.", collectible: false, heroSpecific: true }, // Effect not implemented yet
 ];

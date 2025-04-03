@@ -134,3 +134,100 @@
 #card-zoom-container .is-stealthed { opacity: 0.8; box-shadow: inset 0 0 10px 3px rgba(50, 50, 50, 0.5); }
 #card-zoom-container.Creature { background-color: #c8e6c9; }
 #card-zoom-container.Spell { background-color: #bbdefb; }
+
+/* --- Spell Visual Effects --- */
+.spell-effect {
+    position: fixed;
+    z-index: 1600; /* Above cards, below zoom */
+    pointer-events: none;
+    width: 50px; /* Base size, can be overridden */
+    height: 50px;
+    border-radius: 50%;
+    opacity: 0; /* Start invisible */
+    transform: translate(-50%, -50%) scale(0.5); /* Center on target point, start small */
+    /* Animation will be applied by specific type */
+}
+
+/* --- Keyframes for Spell Effects --- */
+@keyframes spell-fade-in-out {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    25% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+    75% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+@keyframes spell-pulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    25% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9); }
+    75% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+}
+
+@keyframes spell-shatter {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
+    25% { opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(10deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.7) rotate(-15deg); }
+    /* TODO: Could add pseudo-elements for shatter particles */
+}
+
+/* --- Specific Spell Effect Styles --- */
+
+.spell-effect-fire {
+    background: radial-gradient(circle, rgba(255,180,50,0.9) 0%, rgba(255,80,0,0.7) 50%, rgba(200,0,0,0) 70%);
+    box-shadow: 0 0 15px 5px rgba(255, 100, 0, 0.5);
+    animation: spell-pulse 0.5s ease-out forwards;
+}
+
+.spell-effect-frost {
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(200,240,255,0.9) 0%, rgba(100,200,255,0.7) 50%, rgba(50,150,255,0) 70%);
+    border: 2px solid rgba(220, 250, 255, 0.8);
+    box-shadow: 0 0 20px 8px rgba(150, 220, 255, 0.4);
+    animation: spell-shatter 0.6s ease-in-out forwards;
+}
+
+.spell-effect-arcane {
+    background: radial-gradient(circle, rgba(255,150,255,0.9) 0%, rgba(180,50,200,0.7) 50%, rgba(100,0,150,0) 70%);
+    box-shadow: 0 0 15px 5px rgba(200, 100, 255, 0.5);
+    animation: spell-pulse 0.7s ease-in-out forwards;
+}
+
+.spell-effect-holy {
+    width: 70px; height: 70px;
+    background: radial-gradient(circle, rgba(255,255,200,0.95) 0%, rgba(255,255,100,0.8) 50%, rgba(255,215,0,0) 70%);
+    box-shadow: 0 0 25px 10px rgba(255, 255, 150, 0.5);
+    animation: spell-fade-in-out 0.6s ease-out forwards;
+}
+
+.spell-effect-lightning {
+    width: 40px; height: 60px; /* More elongated */
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Irregular shape */
+    background: linear-gradient(45deg, rgba(255,255,100,0.9) 0%, rgba(100,200,255,0.7) 100%);
+    box-shadow: 0 0 15px 5px rgba(200, 220, 255, 0.6);
+    animation: spell-fade-in-out 0.4s ease-in forwards; /* Quick zap */
+}
+
+.spell-effect-shadow {
+    width: 55px; height: 55px;
+    background: radial-gradient(circle, rgba(100,50,150,0.8) 0%, rgba(50,0,80,0.6) 50%, rgba(20,0,30,0) 70%);
+    box-shadow: 0 0 15px 5px rgba(80, 40, 120, 0.4);
+    filter: blur(1px);
+    animation: spell-fade-in-out 0.7s ease-out forwards;
+}
+
+.spell-effect-physical {
+    width: 45px; height: 45px;
+    background: radial-gradient(circle, rgba(180,180,180,0.8) 0%, rgba(120,120,120,0.6) 50%, rgba(80,80,80,0) 70%);
+    border: 1px solid rgba(100, 100, 100, 0.5);
+    box-shadow: 0 0 10px 3px rgba(150, 150, 150, 0.3);
+    animation: spell-fade-in-out 0.4s ease-out forwards;
+}
+
+/* Example of a movement animation (if needed later) */
+/*
+@keyframes spell-move-target {
+    0% { opacity: 0.5; transform: translate(var(--start-x), var(--start-y)) scale(0.5); }
+    100% { opacity: 0; transform: translate(var(--end-x), var(--end-y)) scale(1); }
+}
+*/
