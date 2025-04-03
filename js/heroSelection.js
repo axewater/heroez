@@ -1,5 +1,6 @@
 import { heroData } from './heroes.js';
-import { startGame } from './main.js'; // Assuming main.js will have the final start function
+import { getDOMElement } from './dom.js'; // Import getDOMElement
+import { showDeckSelection, initDeckSelection } from './deckSelection.js'; // Import deck selection functions
 
 let heroSelectionScreenEl = null;
 let heroOptionsContainerEl = null;
@@ -8,8 +9,9 @@ let isDebugMode = false; // Store debug mode choice
 
 export function initHeroSelection() {
     console.log("Initializing Hero Selection...");
-    heroSelectionScreenEl = document.getElementById('hero-selection-screen');
-    heroOptionsContainerEl = document.getElementById('hero-options-container');
+    heroSelectionScreenEl = getDOMElement('heroSelectionScreenEl'); // Use getDOMElement
+    heroOptionsContainerEl = getDOMElement('heroOptionsContainerEl'); // Use getDOMElement
+    // initDeckSelection(); // No longer needed here, called from main.js
 
     if (!heroSelectionScreenEl || !heroOptionsContainerEl) {
         console.error("Hero selection elements not found!");
@@ -68,8 +70,8 @@ export function confirmHeroSelection() {
     if (selectedHero) {
         console.log("[HeroSelection] confirmHeroSelection called for:", selectedHero.name);
         console.log(`Confirmed hero selection: ${selectedHero.name}`);
-        hideHeroSelection(isDebugMode); // Pass debug mode flag when hiding
-        startGame(selectedHero, isDebugMode); // Pass selected hero data and debug mode flag to start the game
+        hideHeroSelection(); // Hide this screen
+        showDeckSelection(selectedHero, isDebugMode); // Show deck selection
     } else {
         console.warn("Attempted to confirm hero selection, but none was selected.");
     }
@@ -85,7 +87,7 @@ export function showHeroSelection(debug = false) {
     }
 }
 
-export function hideHeroSelection(debugModeFlag) { // Accept flag
+export function hideHeroSelection() {
     if (heroSelectionScreenEl) {
         console.log("[HeroSelection] hideHeroSelection called.");
         heroSelectionScreenEl.style.opacity = '0';
@@ -93,6 +95,5 @@ export function hideHeroSelection(debugModeFlag) { // Accept flag
             heroSelectionScreenEl.style.display = 'none';
             heroSelectionScreenEl.classList.add('hidden');
         }, 500); // Match CSS transition duration
-        startGame(selectedHero, debugModeFlag); // Pass flag to startGame
     }
 }

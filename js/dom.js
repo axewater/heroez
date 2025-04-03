@@ -37,16 +37,27 @@ export function cacheDOMElements() {
         mulliganHandContainerEl: document.getElementById('mulligan-hand-container'),
         confirmMulliganButtonEl: document.getElementById('confirm-mulligan-button'),
         mulliganInstructionsEl: document.getElementById('mulligan-instructions'),
+
+        // Deck Selection UI Elements
+        deckSelectionScreenEl: document.getElementById('deck-selection-screen'),
+        deckOptionsContainerEl: document.getElementById('deck-options-container'),
+        deckSelectionHeroNameEl: document.getElementById('deck-selection-hero-name'),
+
+        // Menu Elements
+        openingMenuEl: document.getElementById('opening-menu'),
+        startGameButtonEl: document.getElementById('start-game-button'),
+        startDebugButtonEl: document.getElementById('start-debug-button'),
+        settingsButtonEl: document.getElementById('settings-button'),
+
+        // Hero Selection Elements
+        heroSelectionScreenEl: document.getElementById('hero-selection-screen'),
+        heroOptionsContainerEl: document.getElementById('hero-options-container'),
     };
     console.log("DOM elements cached.");
-
-    // Assign elements to player state objects (Requires getPlayer)
-    // This part might need to be called from gameLogic or main after state is initialized
-    // Or, pass getPlayer function as an argument
 }
 
 export function assignElementsToPlayerState(getPlayer) {
-     // Assign elements to player state objects
+    // Assign elements to player state objects
     const player = getPlayer('player');
     if (player) {
         player.heroElement = domElements.playerHeroEl;
@@ -59,7 +70,7 @@ export function assignElementsToPlayerState(getPlayer) {
     }
 
     const opponent = getPlayer('opponent');
-     if (opponent) {
+    if (opponent) {
         opponent.heroElement = domElements.opponentHeroEl;
         opponent.healthElement = domElements.opponentHealthEl;
         opponent.manaElement = domElements.opponentManaContainerEl;
@@ -69,7 +80,6 @@ export function assignElementsToPlayerState(getPlayer) {
         opponent.boardElement = domElements.opponentBoardEl;
     }
 }
-
 
 export function getDOMElement(id) {
     return domElements[id];

@@ -1,5 +1,5 @@
 // /js/mulligan.js
-import { getState, getPlayer, setTargetingMode, isMulliganActive, getMulliganSelectedIndices } from './state.js';
+import { getState, getPlayer, isMulliganActive, getMulliganSelectedIndices } from './state.js';
 import { getDOMElement } from './dom.js';
 import { createCardElement, renderGame } from './render.js';
 import { confirmMulligan as confirmMulliganAction } from './gameLogic.js';
@@ -11,10 +11,11 @@ let confirmMulliganButtonEl = null;
 let mulliganInstructionsEl = null;
 
 export function initMulligan() {
-    mulliganOverlayEl = getDOMElement('mulliganOverlayEl'); // Will be cached later
-    mulliganHandContainerEl = getDOMElement('mulliganHandContainerEl');
-    confirmMulliganButtonEl = getDOMElement('confirmMulliganButtonEl');
-    mulliganInstructionsEl = getDOMElement('mulliganInstructionsEl');
+    console.log("Initializing Mulligan UI elements...");
+    mulliganOverlayEl = getDOMElement('mulliganOverlayEl'); // Use getDOMElement
+    mulliganHandContainerEl = getDOMElement('mulliganHandContainerEl'); // Use getDOMElement
+    confirmMulliganButtonEl = getDOMElement('confirmMulliganButtonEl'); // Use getDOMElement
+    mulliganInstructionsEl = getDOMElement('mulliganInstructionsEl'); // Use getDOMElement
 
     // Event listener for the confirm button (added when shown)
 }

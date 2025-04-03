@@ -1,4 +1,5 @@
 import { showHeroSelection } from './heroSelection.js';
+import { getDOMElement } from './dom.js';
 import { setDebugMode } from './state.js';
 
 let openingMenuEl = null;
@@ -8,10 +9,10 @@ let settingsButtonEl = null;
 
 export function initMenu() {
     console.log("Initializing Opening Menu...");
-    openingMenuEl = document.getElementById('opening-menu');
-    startButtonEl = document.getElementById('start-game-button');
-    startDebugButtonEl = document.getElementById('start-debug-button');
-    settingsButtonEl = document.getElementById('settings-button');
+    openingMenuEl = getDOMElement('openingMenuEl');
+    startButtonEl = getDOMElement('startGameButtonEl');
+    startDebugButtonEl = getDOMElement('startDebugButtonEl');
+    settingsButtonEl = getDOMElement('settingsButtonEl');
 
     if (!openingMenuEl || !startButtonEl || !startDebugButtonEl || !settingsButtonEl) {
         console.error("Menu elements not found!");

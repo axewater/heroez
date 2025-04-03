@@ -1,14 +1,15 @@
 // /js/main.js
-import { initGame, startGameWithHero, endTurn } from './gameLogic.js';
+import { initGame, endTurn } from './gameLogic.js';
 import { getState, isGameOver, setDebugMode, isMulliganActive } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
-import { getDOMElement } from './dom.js';
+import { getDOMElement, cacheDOMElements } from './dom.js';
 import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
 import { initMenu } from './menu.js';
 import { initHeroSelection } from './heroSelection.js';
 import { renderGame } from './render.js';
 import { initCardZoomListeners } from './cardZoom.js';
-import { showMulliganUI, hideMulliganUI } from './mulligan.js';
+import { initMulligan } from './mulligan.js';
+import { initDeckSelection, showDeckSelection } from './deckSelection.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -100,25 +101,17 @@ function setupEventListeners() {
     console.log("Event listeners set up.");
 }
 
-// New function to be called after hero selection
-export function startGame(selectedHero, isDebug = false) {
-    console.log("[Main] startGame called with hero:", selectedHero?.name);
-    console.log("Main: Starting game with selected hero:", selectedHero.name);
-    console.log(`Main: Debug mode is ${isDebug ? 'ON' : 'OFF'}`);
-    setDebugMode(isDebug); // Set the debug mode flag in the state
-    startGameWithHero(selectedHero, isDebug); // Pass debug flag to game logic start function
-    initCardZoomListeners(); // Initialize card zoom hover listeners
-    setupEventListeners(); // Set up game-specific listeners only when the game starts
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded.");
-    // Don't initialize game directly anymore
-    // initGame();
-    // setupEventListeners();
+
+    // 1. Cache DOM elements FIRST
+    cacheDOMElements();
 
     // Initialize the pre-game UI modules
     initMenu();
     initHeroSelection(); // Initialize elements, but don't show yet
-    // Mulligan init might happen here or within startGame if needed
+    initDeckSelection(); // Initialize deck selection elements
+    initMulligan(); // Initialize mulligan elements
+    initCardZoomListeners(); // Initialize card zoom hover listeners (can be done once)
+    setupEventListeners(); // Setup general game event listeners
 });

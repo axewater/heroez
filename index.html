@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/effects.css">
     <link rel="stylesheet" href="css/log.css">
     <link rel="stylesheet" href="css/mulligan.css">
+    <link rel="stylesheet" href="css/deckSelection.css">
 </head>
 <body>
 
@@ -29,6 +30,19 @@
         <h2>Choose Your Hero</h2>
         <div id="hero-options-container">
             <!-- Hero options will be populated by JS -->
+        </div>
+    </div>
+
+    <!-- Deck Selection Screen -->
+    <div id="deck-selection-screen" class="hidden">
+        <h2>Choose Your Deck for <span id="deck-selection-hero-name">Hero</span></h2>
+        <div id="deck-options-container">
+            <!-- Deck options will be populated by JS -->
+            <!-- Example Deck Option Structure:
+            <div class="deck-option" data-deck-id="default">
+                <h3>Default Deck</h3>
+                <button class="select-deck-button">Choose Deck & Start</button>
+            </div> -->
         </div>
     </div>
 
