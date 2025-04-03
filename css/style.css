@@ -1,0 +1,374 @@
+/* --- General Styles --- */
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none; /* Prevent text selection during drags */
+}
+
+#game-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 800px;
+    background-color: #e0e0e0;
+    border: 2px solid #333;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- Player Areas --- */
+.player-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    position: relative; /* For absolute positioning of hero */
+}
+
+#opponent-area {
+    background-color: #c0c0c0;
+    border-bottom: 2px dashed #888;
+}
+
+#player-area {
+    background-color: #d0d0d0;
+}
+
+/* --- Board Area --- */
+.board {
+    height: 160px; /* Fixed height for creature cards */
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid #aaa;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    min-height: 150px; /* Ensure it doesn't collapse */
+    overflow-x: auto; /* Allow scrolling if many creatures */
+}
+
+#opponent-board { order: 1; }
+#player-board { order: 2; }
+
+
+/* --- Hand Area --- */
+.hand {
+    height: 150px; /* Fixed height for hand cards */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    overflow-x: auto; /* Allow scrolling if many cards */
+     overflow-y: hidden;
+}
+
+#opponent-hand { order: 0; background: rgba(0,0,0,0.05); }
+#player-hand { order: 3; background: rgba(0,0,0,0.05);}
+
+/* --- Hero/Player Info --- */
+.hero-info {
+    position: absolute;
+    bottom: 10px; /* Position relative to player-area */
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    min-width: 80px;
+    z-index: 10; /* Above board/hand */
+    cursor: pointer; /* Make heroes targetable */
+    transition: background-color 0.2s ease; /* For visual feedback */
+}
+#opponent-area .hero-info {
+    top: 10px;
+    bottom: auto;
+}
+.hero-health {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: red;
+}
+.hero-mana {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: blue;
+    margin-top: 4px;
+}
+.hero-deck {
+    font-size: 0.9em;
+    color: #333;
+    margin-top: 4px;
+}
+
+
+/* --- Card Styles --- */
+.card {
+    width: 80px;
+    height: 120px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease, opacity 0.2s ease, border 0.2s ease;
+    font-size: 11px; /* Smaller base font for cards */
+    position: relative; /* For pseudo-elements like cost/attack/health */
+    overflow: hidden; /* Hide overflowing text */
+    flex-shrink: 0; /* Prevent cards from shrinking in flex containers */
+}
+
+.card:hover {
+    transform: scale(1.1);
+    z-index: 100; /* Bring hovered card to front */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Card positioning elements */
+.card-cost {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background-color: blue;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1; /* Above background */
+}
+
+.card-name {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    font-size: 12px; /* Slightly larger for name */
+    height: 15px; /* Limit name height */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative; /* Ensure it's above cost/stats if overlapping */
+    z-index: 1;
+    padding-top: 18px; /* Push name down below cost */
+}
+
+.card-effect {
+    font-size: 10px; /* Smallest font for effect text */
+    flex-grow: 1;
+    margin: 2px 0;
+    overflow-y: auto; /* Allow scrolling for long effects */
+    line-height: 1.2;
+    text-align: center;
+    position: relative; /* Ensure it's above stats */
+    z-index: 1;
+    padding-bottom: 18px; /* Avoid overlapping stats */
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto; /* Push stats to the bottom */
+    padding: 0 2px; /* Spacing from edges */
+}
+
+.card-attack {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    background-color: orange;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1;
+}
+
+.card-health {
+     position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1;
+}
+
+/* Card Types */
+.card.Creature { background-color: #c8e6c9; } /* Light green */
+.card.Spell { background-color: #bbdefb; } /* Light blue */
+
+/* Opponent's hand card style (hidden) */
+#opponent-hand .card {
+    background-color: #888;
+    color: transparent;
+    cursor: default;
+}
+ #opponent-hand .card:hover {
+    transform: none;
+    box-shadow: none;
+ }
+#opponent-hand .card .card-cost,
+#opponent-hand .card .card-attack,
+#opponent-hand .card .card-health,
+#opponent-hand .card .card-name,
+#opponent-hand .card .card-effect {
+     visibility: hidden;
+}
+
+
+/* Card States */
+.card.playable {
+    box-shadow: 0 0 10px 3px gold; /* Highlight playable cards */
+}
+.card.selected {
+     box-shadow: 0 0 15px 5px blue;
+     transform: scale(1.05) translateY(-10px);
+}
+ .card.attacking {
+     box-shadow: 0 0 15px 5px orange;
+     transform: scale(1.05) translateY(-10px);
+ }
+.targetable { /* Apply to cards AND hero-info */
+    outline: 3px dashed green !important; /* Use important to override other outlines/borders */
+    outline-offset: 2px;
+}
+.card.has-attacked {
+     opacity: 0.7;
+}
+ .card.can-attack {
+     outline: 2px solid orange;
+     outline-offset: 1px;
+ }
+.card.is-taunt {
+    border: 3px solid brown;
+}
+.card.is-frozen {
+    box-shadow: inset 0 0 10px 5px lightblue;
+}
+
+/* --- Game Controls & Messages --- */
+#game-controls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+     z-index: 20;
+}
+
+#end-turn-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    margin-bottom: 10px;
+}
+#end-turn-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+#message-area {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    padding: 5px;
+    height: 25px; /* Fixed height for message area */
+    background-color: rgba(255, 255, 255, 0.7);
+    position: relative; /* Ensure it's above player areas if needed */
+    z-index: 5;
+}
+
+/* --- Game Over Screen --- */
+#game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 1000;
+}
+#game-over-overlay h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+#restart-button {
+     padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* --- Visual Effects --- */
+.damage-flash {
+    animation: flash-red 0.3s ease-out;
+}
+
+@keyframes flash-red {
+    0% { background-color: rgba(255, 0, 0, 0.5); }
+    100% { background-color: rgba(255, 255, 255, 0.8); } /* Assuming default hero bg */
+}
+
+.heal-flash {
+     animation: flash-green 0.3s ease-out;
+}
+
+@keyframes flash-green {
+    0% { background-color: rgba(0, 255, 0, 0.5); }
+    100% { background-color: rgba(255, 255, 255, 0.8); } /* Assuming default hero bg */
+}
+
+.card-damage-shake {
+    animation: shake 0.2s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px) rotate(-1deg); }
+  75% { transform: translateX(3px) rotate(1deg); }
+}

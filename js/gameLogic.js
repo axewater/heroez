@@ -1,0 +1,247 @@
+import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE } from './constants.js';
+import { cardLibrary } from './cards.js';
+import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, setGameOver, setMessageState, isGameOver } from './state.js';
+import { renderGame, updatePlayableCards, setMessage, showGameOverScreen, hideGameOverScreen, cacheDOMElements, getDOMElement } from './ui.js';
+import { dealDamage } from './actions.js'; // Needed for fatigue
+import { runAITurn } from './ai.js';
+
+// --- Game Setup ---
+
+export function initGame() {
+    console.log("Initializing game...");
+    resetState(); // Initialize/reset the state object
+    cacheDOMElements(); // Find and store DOM elements, assign to player state
+    hideGameOverScreen();
+
+    const player = getPlayer('player');
+    const opponent = getPlayer('opponent');
+
+    // Build decks
+    // Simplistic deck building: 2 copies of each card
+    const allPlayerCards = [];
+    const allOpponentCards = [];
+    cardLibrary.filter(c => c.collectible !== false).forEach(card => {
+        allPlayerCards.push(createCardInstance(card, 'player'));
+        allPlayerCards.push(createCardInstance(card, 'player'));
+        allOpponentCards.push(createCardInstance(card, 'opponent'));
+        allOpponentCards.push(createCardInstance(card, 'opponent'));
+    });
+
+    player.deck = shuffleDeck([...allPlayerCards]);
+    opponent.deck = shuffleDeck([...allOpponentCards]);
+
+    // Draw initial hands
+    for (let i = 0; i < STARTING_HAND_SIZE; i++) {
+        drawCard(player);
+        drawCard(opponent);
+    }
+
+    // Start the first turn (Player 1)
+    // Player 1 gets 0 mana crystal on turn 0, then starts turn 1 properly
+    player.maxMana = 0;
+    player.currentMana = 0;
+    opponent.maxMana = 0;
+    opponent.currentMana = 0;
+
+    setMessage("Game Starting...");
+    renderGame(); // Initial render before first turn starts
+
+    // Delay slightly before starting the first turn for effect
+    setTimeout(() => {
+         startTurn('player');
+         console.log("Game Initialized:", getState());
+    }, 500);
+}
+
+export function createCardInstance(cardData, ownerId) {
+    // Create a unique instance of a card from the library
+    const libraryCard = cardLibrary.find(c => c.id === cardData.id); // Get fresh data
+    if (!libraryCard) {
+        console.error(`Card data not found in library for id: ${cardData.id}`);
+        return null; // Or handle error appropriately
+    }
+    return {
+        ...libraryCard, // Copy properties from library
+        instanceId: generateId(), // Assign unique ID for this specific card instance
+        owner: ownerId,
+        currentHealth: libraryCard.health, // Initialize current health
+        currentAttack: libraryCard.attack, // Initialize current attack
+        // --- Runtime State (initialized here or when played/entering zone) ---
+        canAttack: false,       // Can it attack this turn? (Set true on turn start if eligible)
+        hasAttacked: false,     // Has it attacked this turn? (Reset on turn start)
+        isFrozen: false,        // Frozen state (Reset on turn start)
+        justPlayed: false,      // Played this turn? (Summoning Sickness - set true when played, false on turn start)
+        effects: [],            // For temporary effects, statuses etc.
+        // --- Derived State (set based on mechanics for easier access) ---
+        isTaunt: !!libraryCard.mechanics?.includes("Taunt"),
+        isSwift: !!libraryCard.mechanics?.includes("Swift"),
+        // Add more state as needed (isStealthed, poisonCounters, etc.)
+    };
+}
+
+export function generateId() {
+    return Math.random().toString(36).substring(2, 11); // Longer ID for less collision chance
+}
+
+export function shuffleDeck(deck) {
+    // Fisher-Yates (Knuth) Shuffle
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]]; // Swap elements
+    }
+    return deck;
+}
+
+// --- Turn Management ---
+
+export function startTurn(playerId) {
+    if (isGameOver()) return;
+
+    incrementTurn();
+    setCurrentPlayerId(playerId);
+    const player = getCurrentPlayer();
+    const opponent = getOpponentPlayer();
+    console.log(`--- Turn ${getTurn()}: ${playerId} ---`);
+
+    // Reset selections and targeting mode
+    // deselectCard(); // Handled by UI/Action interactions
+    // deselectAttacker(); // Handled by UI/Action interactions
+    // setTargetingMode(null); // Handled by UI/Action interactions
+
+    // Increase Max Mana (up to MAX_MANA)
+    if (player.maxMana < MAX_MANA) {
+        player.maxMana++;
+    }
+    // Refill Mana
+    player.currentMana = player.maxMana;
+
+    // --- Start of Turn Effects & Resets ---
+    // 1. Reset attack state for player's creatures
+    // 2. Remove summoning sickness ('justPlayed')
+    // 3. Unfreeze
+    // 4. TODO: Handle other start-of-turn effects (e.g., card triggers)
+    player.board.forEach(creature => {
+        creature.hasAttacked = false;
+        if (creature.isFrozen) {
+            creature.isFrozen = false; // Unfreeze at start of turn
+            creature.canAttack = !creature.justPlayed; // Can attack if not just played
+        } else if (creature.justPlayed) {
+            creature.justPlayed = false; // Remove summoning sickness
+            creature.canAttack = true; // Can attack now (unless frozen, handled above)
+        } else {
+            creature.canAttack = true; // Already on board, can attack
+        }
+        // Ensure Swift creatures that were just played can still attack
+        if (creature.isSwift) creature.canAttack = true;
+        // Ensure frozen creatures definitely cannot attack
+        if (creature.isFrozen) creature.canAttack = false;
+    });
+
+    // TODO: Handle opponent's start-of-turn effects if any apply during player's turn (unlikely)
+
+    // Draw a card
+    drawCard(player);
+
+    // Update UI
+    setMessageState(`${playerId}'s turn.`);
+    renderGame(); // Render after state updates but before AI turn
+
+    // Enable/disable button
+    const endTurnButton = getDOMElement('endTurnButton');
+    if (endTurnButton) endTurnButton.disabled = playerId !== 'player';
+
+    // If it's the AI's turn, run its logic
+    if (playerId === 'opponent') {
+        setMessage("Opponent's turn..."); // Show message while AI thinks
+        // Disable player actions during AI turn (already handled by button disable and event checks)
+        setTimeout(runAITurn, 1000); // Add delay for visibility
+    }
+}
+
+export function endTurn() {
+    if (isGameOver()) return;
+
+    const currentPlayerId = getState().currentPlayerId;
+    const currentPlayer = getCurrentPlayer();
+    console.log(`${currentPlayerId} ends turn.`);
+
+    // --- End of Turn Effects ---
+    // TODO: Implement end-of-turn triggers (e.g., Poison, card effects)
+    // Example: Clear temporary buffs
+    // currentPlayer.board.forEach(c => {
+    //     c.effects = c.effects?.filter(effect => {
+    //         if (effect.type === 'tempBuff') {
+    //             c.currentAttack -= effect.attack;
+    //             c.currentHealth -= effect.health; // Be careful with health reduction
+    //             // Handle duration decrement if implemented
+    //             return false; // Remove effect
+    //         }
+    //         return true; // Keep other effects
+    //     });
+    // });
+
+    // Check win condition *before* starting next turn (e.g., if end-of-turn effect was lethal)
+    if (checkWinCondition()) return;
+
+    // Start the next player's turn
+    const nextPlayerId = getOpponentId(currentPlayerId);
+    startTurn(nextPlayerId);
+}
+
+// --- Card Drawing ---
+
+export function drawCard(player) {
+    if (player.hand.length >= MAX_HAND_SIZE) {
+        const burnedCard = player.deck.pop(); // Remove card from deck
+        console.log(`${player.id} hand full! Card burned: ${burnedCard?.name || 'Unknown'}`);
+        setMessage(`${player.id}'s hand is full! Card burned.`);
+        // Optionally show burned card briefly?
+    } else if (player.deck.length > 0) {
+        const card = player.deck.pop();
+        player.hand.push(card);
+        console.log(`${player.id} drew ${card.name}`);
+        // TODO: Trigger draw effects if any
+    } else {
+        // Fatigue damage
+        player.fatigue++;
+        console.log(`${player.id} deck empty! Taking ${player.fatigue} fatigue damage.`);
+        setMessage(`${player.id} is out of cards and takes ${player.fatigue} fatigue damage!`);
+        dealDamage(player.heroElement, player.fatigue); // dealDamage handles visuals and health update
+        // Check win condition after fatigue damage
+        checkWinCondition();
+    }
+    // No need to re-render here, startTurn/endTurn calls renderGame
+    // But update player info immediately if not part of start/end turn?
+    // renderPlayerInfo(player); // Maybe needed if called outside turn sequence
+}
+
+
+// --- Win Condition & Game Over ---
+
+export function checkWinCondition() {
+    if (isGameOver()) return true; // Already over
+
+    const player = getPlayer('player');
+    const opponent = getPlayer('opponent');
+
+    if (player.heroHealth <= 0 && opponent.heroHealth <= 0) {
+        gameOver("Draw!"); // Or decide winner based on who reached 0 first if tracked
+        return true;
+    }
+    if (player.heroHealth <= 0) {
+        gameOver("Opponent Wins!");
+        return true;
+    }
+    if (opponent.heroHealth <= 0) {
+        gameOver("Player Wins!");
+        return true;
+    }
+    return false; // Game continues
+}
+
+export function gameOver(message) {
+    console.log("Game Over:", message);
+    setGameOver(true, message);
+    setMessage(message); // Update message bar immediately
+    showGameOverScreen(message); // Show the overlay
+}
