@@ -1,10 +1,15 @@
 /* --- Main area to hold the game board/hands/etc. --- */
 #game-main-area {
     flex-grow: 1; /* Takes up most space */
+    position: relative; /* Ensure positioning context for potential future overlays */
     display: flex;
     flex-direction: column;
     height: 100%; /* Fill the container height */
     overflow: hidden; /* Prevent internal elements from breaking layout */
+    background-image: url('../img/areas/bg01.png');
+    background-size: cover; /* Cover the entire area */
+    background-repeat: no-repeat; /* Do not tile the image */
+    background-position: center center; /* Center the image */
 }
 
 /* --- Player Areas --- */
