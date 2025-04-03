@@ -1,6 +1,6 @@
 import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
-import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, setGameOver, setMessageState, isGameOver } from './state.js';
+import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver } from './state.js';
 import { renderGame, updatePlayableCards, setMessage, logMessage, showGameOverScreen, hideGameOverScreen, cacheDOMElements, getDOMElement } from './ui.js';
 import { dealDamage } from './actions.js'; // Needed for fatigue
 import { runAITurn } from './ai.js';
@@ -37,9 +37,9 @@ export function initGame() {
     }
 
     // Start the first turn (Player 1)
-    // Player 1 gets 0 mana crystal on turn 0, then starts turn 1 properly
-    player.maxMana = 0;
-    player.currentMana = 0;
+    // Player 1 gets 1 mana crystal on turn 0, then starts turn 1 properly
+    player.maxMana = 1;
+    player.currentMana = 1;
     opponent.maxMana = 0;
     opponent.currentMana = 0;
 
