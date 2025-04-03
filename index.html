@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/log.css">
     <link rel="stylesheet" href="css/mulligan.css">
     <link rel="stylesheet" href="css/deckSelection.css">
+    <link rel="stylesheet" href="css/deckEditor.css">
 </head>
 <body>
 
@@ -22,6 +23,7 @@
         <h1>AceBattler</h1>
         <button id="start-game-button" class="menu-button">START</button>
         <button id="start-debug-button" class="menu-button">START DEBUG</button>
+        <button id="deck-editor-button" class="menu-button">DECK EDITOR</button>
         <button id="settings-button" class="menu-button">SETTINGS</button>
     </div>
 
@@ -43,6 +45,33 @@
                 <h3>Default Deck</h3>
                 <button class="select-deck-button">Choose Deck & Start</button>
             </div> -->
+        </div>
+    </div>
+
+    <!-- Deck Editor Screen -->
+    <div id="deck-editor-screen" class="hidden">
+        <div class="deck-editor-header">
+            <h2>Deck Editor</h2>
+            <div class="deck-editor-controls">
+                <label for="deck-editor-hero-select">Hero:</label>
+                <select id="deck-editor-hero-select">
+                    <!-- Hero options populated by JS -->
+                </select>
+                <label for="deck-editor-deck-select">Deck:</label>
+                <select id="deck-editor-deck-select">
+                    <option value="new">-- New Deck --</option>
+                    <!-- Saved deck options populated by JS -->
+                </select>
+                <input type="text" id="deck-editor-deck-name" placeholder="Enter Deck Name">
+                <button id="deck-editor-save-button">Save</button>
+                <button id="deck-editor-delete-button">Delete</button>
+                <button id="deck-editor-exit-button">Exit Editor</button>
+            </div>
+            <div id="deck-editor-card-count">Cards: 0/30</div>
+        </div>
+        <div class="deck-editor-main">
+            <div id="deck-editor-collection" class="card-list-container">Collection</div>
+            <div id="deck-editor-current-deck" class="card-list-container">Current Deck</div>
         </div>
     </div>
 

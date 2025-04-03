@@ -48,10 +48,23 @@ export function cacheDOMElements() {
         startGameButtonEl: document.getElementById('start-game-button'),
         startDebugButtonEl: document.getElementById('start-debug-button'),
         settingsButtonEl: document.getElementById('settings-button'),
+        deckEditorButtonEl: document.getElementById('deck-editor-button'), // Added Deck Editor button element
 
         // Hero Selection Elements
         heroSelectionScreenEl: document.getElementById('hero-selection-screen'),
         heroOptionsContainerEl: document.getElementById('hero-options-container'),
+
+        // Deck Editor Elements
+        deckEditorScreenEl: document.getElementById('deck-editor-screen'),
+        deckEditorHeroSelectEl: document.getElementById('deck-editor-hero-select'),
+        deckEditorDeckSelectEl: document.getElementById('deck-editor-deck-select'),
+        deckEditorDeckNameEl: document.getElementById('deck-editor-deck-name'),
+        deckEditorSaveButtonEl: document.getElementById('deck-editor-save-button'),
+        deckEditorDeleteButtonEl: document.getElementById('deck-editor-delete-button'),
+        deckEditorExitButtonEl: document.getElementById('deck-editor-exit-button'),
+        deckEditorCardCountEl: document.getElementById('deck-editor-card-count'),
+        deckEditorCollectionEl: document.getElementById('deck-editor-collection'),
+        deckEditorCurrentDeckEl: document.getElementById('deck-editor-current-deck'),
     };
     console.log("DOM elements cached.");
 }

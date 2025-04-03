@@ -6,10 +6,12 @@ let openingMenuEl = null;
 let startButtonEl = null;
 let startDebugButtonEl = null;
 let settingsButtonEl = null;
+let deckEditorButtonEl = null; // Added Deck Editor button element
 
 export function initMenu() {
     console.log("Initializing Opening Menu...");
     openingMenuEl = getDOMElement('openingMenuEl');
+    deckEditorButtonEl = getDOMElement('deckEditorButtonEl'); // Get Deck Editor button
     startButtonEl = getDOMElement('startGameButtonEl');
     startDebugButtonEl = getDOMElement('startDebugButtonEl');
     settingsButtonEl = getDOMElement('settingsButtonEl');
@@ -18,10 +20,12 @@ export function initMenu() {
         console.error("Menu elements not found!");
         return;
     }
+    if (!deckEditorButtonEl) console.warn("Deck Editor button not found in DOM!");
 
     startButtonEl.addEventListener('click', handleStartClick);
     startDebugButtonEl.addEventListener('click', handleStartDebugClick);
     settingsButtonEl.addEventListener('click', handleSettingsClick);
+    deckEditorButtonEl?.addEventListener('click', handleDeckEditorClick); // Add listener
 
     showOpeningMenu();
 }
@@ -42,6 +46,13 @@ function handleSettingsClick() {
     console.log("Settings button clicked (Placeholder)");
     alert("Settings screen not implemented yet!");
     // Later: hideOpeningMenu(); showSettingsScreen();
+}
+
+function handleDeckEditorClick() {
+    console.log("Deck Editor button clicked");
+    hideOpeningMenu();
+    // Assuming deckEditor.js exports showDeckEditor()
+    import('./deckEditor.js').then(module => module.showDeckEditor());
 }
 
 export function showOpeningMenu() {

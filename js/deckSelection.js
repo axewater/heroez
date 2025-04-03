@@ -10,6 +10,8 @@ let deckSelectionHeroNameEl = null;
 let currentHero = null;
 let isDebugMode = false;
 
+const LOCAL_STORAGE_KEY_PREFIX = 'customDecks_';
+
 export function initDeckSelection() {
     console.log("Initializing Deck Selection...");
     deckSelectionScreenEl = getDOMElement('deckSelectionScreenEl'); // Use getDOMElement
@@ -58,13 +60,13 @@ function populateDeckOptions(hero) {
     const defaultDeckOptionEl = createDeckOptionElement('Default Deck', defaultDeckId);
     deckOptionsContainerEl.appendChild(defaultDeckOptionEl);
 
-    // --- Add Custom Deck Options (Placeholder) ---
-    // Later, load custom decks associated with the hero
-    // const customDecks = loadCustomDecksForHero(hero.id);
-    // customDecks.forEach(deck => {
-    //     const customDeckOptionEl = createDeckOptionElement(deck.name, deck.id);
-    //     deckOptionsContainerEl.appendChild(customDeckOptionEl);
-    // });
+    // --- Add Custom Deck Options ---
+    const customDecks = loadCustomDecksForHero(hero.id);
+    console.log(`Found custom decks for ${hero.id}:`, customDecks);
+    for (const deckName in customDecks) {
+        const customDeckOptionEl = createDeckOptionElement(deckName, deckName); // Use deck name as ID for simplicity here
+        deckOptionsContainerEl.appendChild(customDeckOptionEl);
+    }
 }
 
 function createDeckOptionElement(deckName, deckId) {
@@ -94,11 +96,13 @@ function handleDeckSelection(deckId) {
             console.error(`Default deck not found for hero ID: ${currentHero.id}`);
             return;
         }
-    } else {
-        // Handle custom deck loading here later
-        console.error(`Custom deck loading not implemented yet (deckId: ${deckId})`);
-        // selectedDeckList = loadCustomDeck(deckId);
-        return; // Exit if custom deck loading fails or isn't implemented
+    } else { // deckId is the custom deck name
+        const customDecks = loadCustomDecksForHero(currentHero.id);
+        selectedDeckList = customDecks[deckId];
+        if (!selectedDeckList) {
+            console.error(`Custom deck "${deckId}" not found for hero ID: ${currentHero.id}`);
+            return;
+        }
     }
 
     if (!selectedDeckList || selectedDeckList.length !== 30) {
@@ -107,41 +111,25 @@ function handleDeckSelection(deckId) {
          return;
     }
 
-    // Convert list of card IDs to list of card instances
-    const deckCardInstances = selectedDeckList.map(cardId => {
-        const cardData = cardLibrary.find(c => c.id === cardId);
-        if (!cardData) {
-            console.error(`Card data not found in library for ID: ${cardId} while building deck.`);
-            return null; // Handle missing card data
-        }
-        // Create a basic instance structure; gameLogic will create full instances
-        // We pass the IDs to gameLogic now.
-        return cardId;
-    }).filter(id => id !== null); // Filter out any nulls if card data was missing
+    // Validate card IDs exist in library (optional but good practice)
+    const invalidCardIds = selectedDeckList.filter(cardId => !cardLibrary.find(c => c.id === cardId));
+    if (invalidCardIds.length > 0) {
+        console.error(`Deck "${deckId}" contains invalid card IDs: ${invalidCardIds.join(', ')}`);
+        alert(`Error: Deck "${deckId}" contains invalid card IDs. Cannot start game.`);
+        return;
+    }
 
-     if (deckCardInstances.length !== 30) {
-         console.error(`Error creating deck instances. Expected 30, got ${deckCardInstances.length}.`);
-         alert("Error: Could not prepare the selected deck. Cannot start game.");
-         return;
-     }
-
+    // Pass the validated list of card IDs directly to startGameWithHero
+    const deckCardIds = selectedDeckList;
 
     hideDeckSelection();
     // Call the actual game start function with the hero and the list of card IDs
-    startGameWithHero(currentHero, deckCardInstances, isDebugMode);
+    startGameWithHero(currentHero, deckCardIds, isDebugMode);
 }
 
-// --- Helper Functions (for future custom deck implementation) ---
-// function loadCustomDecksForHero(heroId) {
-//     // Placeholder: Load deck names/ids from localStorage or a server
-//     return [
-//         // { name: "My Custom Warrior Deck", id: "custom_warrior_1" },
-//     ];
-// }
-
-// function loadCustomDeck(deckId) {
-//     // Placeholder: Load the actual card list for a custom deck
-//     // const deckData = localStorage.getItem(deckId);
-//     // return deckData ? JSON.parse(deckData) : null;
-//     return null;
-// }
+// --- Helper Functions ---
+function loadCustomDecksForHero(heroId) {
+    const key = `${LOCAL_STORAGE_KEY_PREFIX}${heroId}`;
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : {};
+}

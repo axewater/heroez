@@ -10,6 +10,7 @@ import { renderGame } from './render.js';
 import { initCardZoomListeners } from './cardZoom.js';
 import { initMulligan } from './mulligan.js';
 import { initDeckSelection, showDeckSelection } from './deckSelection.js';
+import { initDeckEditor } from './deckEditor.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -112,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroSelection(); // Initialize elements, but don't show yet
     initDeckSelection(); // Initialize deck selection elements
     initMulligan(); // Initialize mulligan elements
+    initDeckEditor(); // Initialize deck editor elements
     initCardZoomListeners(); // Initialize card zoom hover listeners (can be done once)
     setupEventListeners(); // Setup general game event listeners
 });

@@ -8,6 +8,7 @@ import { cacheDOMElements, getDOMElement, assignElementsToPlayerState } from './
 import { dealDamage } from './cardEffects.js'; // Needed for fatigue
 import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
+import { defaultDecks } from './decks.js'; // Import default deck data
 
 // --- Game Setup ---
 
@@ -21,39 +22,27 @@ export function initGame() {
     // The actual game start logic is now in startGameWithHero
 }
 
-export function startGameWithHero(selectedHero, isDebug = false) {
+export function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = false) {
     console.log("[GameLogic] startGameWithHero called for:", selectedHero?.name);
-    console.log(`Starting game with hero: ${selectedHero.name}`);
+    console.log(`Starting game with hero: ${selectedHero.name}, Deck size: ${playerDeckCardIds.length}`);
     console.log(`[GameLogic] Debug mode: ${isDebug}`);
 
     cacheDOMElements(); // Ensure elements are cached
     hideGameOverScreen(); // Ensure overlay is hidden
 
-    // --- Build Decks (Needed before resetState) ---
-    const commonCards = cardLibrary.filter(c => c.collectible !== false && !c.heroSpecific);
-    const heroSpecificCards = cardLibrary.filter(c => selectedHero.uniqueCardIds.includes(c.id));
+    // --- Create Player Draw Pile Instances ---
+    const playerDrawPileInstances = playerDeckCardIds.map(cardId => createCardInstanceById(cardId, 'player')).filter(Boolean);
 
-    const playerDrawPileList = [];
-    const allOpponentDrawPileCards = [];
-
-    // Add two copies of each common card
-    commonCards.forEach(card => {
-        playerDrawPileList.push(createCardInstance(card, 'player'));
-        playerDrawPileList.push(createCardInstance(card, 'player'));
-        allOpponentDrawPileCards.push(createCardInstance(card, 'opponent'));
-        allOpponentDrawPileCards.push(createCardInstance(card, 'opponent'));
-    });
-
-    // Add one copy of each hero-specific card
-    heroSpecificCards.forEach(card => {
-        playerDrawPileList.push(createCardInstance(card, 'player'));
-        // Opponent doesn't get hero cards for now
-    });
+    // --- Create Opponent Draw Pile (Using Default Deck for now) ---
+    // TODO: Allow selecting opponent deck or use a smarter default based on player hero?
+    const opponentHeroId = selectedHero.id; // For simplicity, opponent uses same class default deck
+    const opponentDefaultDeckIds = defaultDecks[opponentHeroId] || defaultDecks.warrior; // Fallback to warrior
+    const opponentDrawPileInstances = opponentDefaultDeckIds.map(cardId => createCardInstanceById(cardId, 'opponent')).filter(Boolean);
 
     // Shuffle the draw pile lists before passing to resetState
-    const initialPlayerDrawPile = shuffleDeck(playerDrawPileList);
-    const initialOpponentDrawPile = shuffleDeck(allOpponentDrawPileCards);
-
+    const initialPlayerDrawPile = shuffleDeck(playerDrawPileInstances);
+    const initialOpponentDrawPile = shuffleDeck(opponentDrawPileInstances);
+    console.log(`[GameLogic] Initial Player Draw Pile Size: ${initialPlayerDrawPile.length}, Opponent: ${initialOpponentDrawPile.length}`);
 
     // --- Initialize State First ---
     resetState(initialPlayerDrawPile, initialOpponentDrawPile); // Initialize/reset the state object, pass draw piles
@@ -89,12 +78,24 @@ export function startGameWithHero(selectedHero, isDebug = false) {
     // The first turn will start after the mulligan is confirmed.
 }
 
+/**
+ * Creates a card instance from card data, assigning a unique instance ID and owner.
+ * @param {object} cardData - The card data object from the card library.
+ * @param {string} ownerId - 'player' or 'opponent'.
+ * @returns {object|null} The created card instance or null if cardData is invalid.
+ */
 export function createCardInstance(cardData, ownerId) {
     // Create a unique instance of a card from the library
-    const libraryCard = cardLibrary.find(c => c.id === cardData.id); // Get fresh data
+    // Ensure we're using the base data from the library if cardData might be an instance already
+    const libraryCard = cardLibrary.find(c => c.id === cardData.id);
     if (!libraryCard) {
-        console.error(`Card data not found in library for id: ${cardData.id}`);
-        return null; // Or handle error appropriately
+        console.error(`Card data not found in library for id: ${cardData?.id}`);
+        return null;
+    }
+    // If the input *was* already an instance, we still want to create a *new* instance
+    // based on the library definition for the draw pile.
+    if (cardData.instanceId) {
+        console.warn(`createCardInstance called with an existing instance (${cardData.name}, ${cardData.instanceId}). Creating new instance from library data.`);
     }
     return {
         ...libraryCard, // Copy properties from library
@@ -120,6 +121,17 @@ export function createCardInstance(cardData, ownerId) {
         appliedAuraAttackBonus: 0, // Initialize aura bonus tracking
         frenzyActionParams: libraryCard.frenzyActionParams || {},
     };
+}
+
+/**
+ * Helper function to create a card instance directly from a card ID.
+ * @param {string} cardId - The ID of the card in the card library.
+ * @param {string} ownerId - 'player' or 'opponent'.
+ * @returns {object|null} The created card instance or null if ID is invalid.
+ */
+function createCardInstanceById(cardId, ownerId) {
+    const cardData = cardLibrary.find(c => c.id === cardId);
+    return cardData ? createCardInstance(cardData, ownerId) : null;
 }
 
 export function generateId() {

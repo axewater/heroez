@@ -1,0 +1,149 @@
+#deck-editor-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #6d6027, #d3cbb8);
+    display: none;
+    flex-direction: column;
+    z-index: 1800;
+    color: #333;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+#deck-editor-screen.visible {
+    display: flex;
+}
+
+.deck-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #555;
+    flex-wrap: wrap;
+}
+
+.deck-editor-header h2 {
+    color: white;
+    text-shadow: 1px 1px 2px black;
+    margin: 0 20px 0 0;
+}
+
+.deck-editor-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    flex-wrap: wrap;
+}
+
+.deck-editor-controls label {
+    color: white;
+    font-weight: bold;
+}
+
+.deck-editor-controls select,
+.deck-editor-controls input,
+.deck-editor-controls button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.9em;
+}
+
+.deck-editor-controls button {
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+.deck-editor-controls button:hover {
+    background-color: #45a049;
+}
+#deck-editor-delete-button {
+    background-color: #f44336;
+}
+#deck-editor-delete-button:hover {
+    background-color: #da190b;
+}
+#deck-editor-exit-button {
+    background-color: #aaa;
+}
+#deck-editor-exit-button:hover {
+    background-color: #888;
+}
+
+
+#deck-editor-card-count {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 1px black;
+    margin-left: 20px;
+}
+
+.deck-editor-main {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.card-list-container {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+}
+
+.card-list-container h3 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #eee;
+    text-shadow: 1px 1px 1px black;
+}
+
+.card-list-container .card {
+    position: relative;
+    cursor: pointer;
+}
+
+.card-list-container .card.cannot-add {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(80%);
+}
+.card-list-container .card.cannot-add:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.card-in-deck-count {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: gold;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    border: 1px solid gold;
+}
