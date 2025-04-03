@@ -162,29 +162,31 @@ export function createCardElement(card, location, indexInHand = -1) {
         cardEl.classList.add('debug-visible'); // Add class for CSS override
     }
 
-    // --- Add Card Image ---
-    const specificImageUrl = `img/cards/${card.id}.png`;
-    const rarityImageUrl = `img/cards/${card.rarity}.png`;
+    // --- Add Card Image (only if details should be shown) ---
+    if (shouldShowDetails) {
+        const specificImageUrl = `img/cards/${card.id}.png`;
+        const rarityImageUrl = `img/cards/${card.rarity}.png`;
 
-    const imageDiv = document.createElement('div');
-    imageDiv.classList.add('card-image');
+        const imageDiv = document.createElement('div');
+        imageDiv.classList.add('card-image');
 
-    // Set fallback image initially
-    imageDiv.style.backgroundImage = `url('${rarityImageUrl}')`;
+        // Set fallback image initially
+        imageDiv.style.backgroundImage = `url('${rarityImageUrl}')`;
 
-    // Try to load specific image
-    const img = new Image();
-    img.onload = () => {
-        // If specific image loads, use it
-        imageDiv.style.backgroundImage = `url('${specificImageUrl}')`;
-    };
-    img.onerror = () => {
-        // Specific image failed, keep the fallback (already set)
-        console.warn(`Failed to load specific image for ${card.name} (${card.id}). Using ${card.rarity} fallback.`);
-    };
-    img.src = specificImageUrl; // Trigger load attempt
+        // Try to load specific image
+        const img = new Image();
+        img.onload = () => {
+            // If specific image loads, use it
+            imageDiv.style.backgroundImage = `url('${specificImageUrl}')`;
+        };
+        img.onerror = () => {
+            // Specific image failed, keep the fallback (already set)
+            console.warn(`Failed to load specific image for ${card.name} (${card.id}). Using ${card.rarity} fallback.`);
+        };
+        img.src = specificImageUrl; // Trigger load attempt
 
-    cardEl.appendChild(imageDiv); // Append image div to card element
+        cardEl.appendChild(imageDiv); // Append image div to card element
+    }
 
     return cardEl;
 }
