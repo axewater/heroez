@@ -6,7 +6,7 @@ export const cardLibrary = [
     { id: "c4", name: "Nimble Scout", cost: 2, attack: 2, health: 2, type: "Creature", mechanics: ["Swift"] },
     { id: "c5", name: "Stone Defender", cost: 3, attack: 2, health: 4, type: "Creature", mechanics: [] },
     { id: "c6", name: "Healing Acolyte", cost: 2, attack: 1, health: 2, type: "Creature", mechanics: ["Deploy"], deployActionId: 'restoreHealthToSelf', deployParams: { amount: 2 }, effectText: "Deploy: Restore 2 health to your hero." },
-    // { id: "c7", name: "Raging Berserker", cost: 3, attack: 3, health: 3, type: "Creature", mechanics: ["Frenzy"], effectText: "Frenzy: Gains +2 Atk when damaged." }, // Frenzy not implemented
+    { id: "c7", name: "Raging Berserker", cost: 3, attack: 3, health: 3, type: "Creature", mechanics: ["Frenzy"], frenzyActionId: 'gainAttack', frenzyActionParams: { amount: 2 }, effectText: "Frenzy: Gains +2 Attack the first time it survives damage." },
     // { id: "c8", name: "Shadow Stalker", cost: 4, attack: 3, health: 3, type: "Creature", mechanics: ["Stealth"], effectText: "Stealth (1 turn)" }, // Stealth not implemented
 
     // --- New Common Creatures ---
@@ -15,6 +15,7 @@ export const cardLibrary = [
     { id: "c11", name: "Spider Tank", cost: 3, attack: 3, health: 4, type: "Creature", mechanics: [] },
     { id: "c12", name: "Stormwind Knight", cost: 4, attack: 2, health: 5, type: "Creature", mechanics: ["Swift"] },
     { id: "c13", name: "Murloc Raider", cost: 1, attack: 2, health: 1, type: "Creature", mechanics: [] },
+    { id: "c14", name: "Enraged Gryphon", cost: 4, attack: 3, health: 4, type: "Creature", mechanics: ["Frenzy"], frenzyActionId: 'gainAttack', frenzyActionParams: { amount: 3 }, effectText: "Frenzy: Gains +3 Attack the first time it survives damage." },
 
 
     // --- Existing Rare Creatures ---

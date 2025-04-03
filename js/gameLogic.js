@@ -86,6 +86,11 @@ export function createCardInstance(cardData, ownerId) {
         isTaunt: !!libraryCard.mechanics?.includes("Taunt"),
         isSwift: !!libraryCard.mechanics?.includes("Swift"),
         // Add more state as needed (isStealthed, poisonCounters, etc.)
+        // Frenzy specific state
+        frenzyTriggered: false,
+        frenzyActionId: libraryCard.frenzyActionId || null,
+        appliedAuraAttackBonus: 0, // Initialize aura bonus tracking
+        frenzyActionParams: libraryCard.frenzyActionParams || {},
     };
 }
 

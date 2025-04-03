@@ -81,6 +81,7 @@ export function createCardElement(card, location, indexInHand = -1) {
     if (card.canAttack && location === 'board' && card.owner === state.currentPlayerId) cardEl.classList.add('can-attack');
     if (card.hasAttacked) cardEl.classList.add('has-attacked');
     if (card.isFrozen) cardEl.classList.add('is-frozen');
+    if (card.mechanics?.includes("Frenzy") && !card.frenzyTriggered) cardEl.classList.add('has-frenzy'); // Add class if Frenzy is ready
 
     // Selection / Attacking highlights (applied during render based on state)
     const selectedCard = getSelectedCard();

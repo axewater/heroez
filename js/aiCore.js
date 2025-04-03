@@ -1,4 +1,4 @@
-/js/aiCore.js
+// /js/aiCore.js
 import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, isGameOver } from './state.js';
 import { playCard } from './playerActions.js';
 import { creatureAttack } from './combat.js';

@@ -1,27 +1,8 @@
 import { getPlayer, getOpponentPlayer } from './state.js';
-import { actionImplementations } from './cardEffects.js'; // Import the map
+// Removed import of actionImplementations
+// Removed triggerCardEffect function
 
 // --- Helper Functions ---
-
-// Triggers the actual function associated with a card's actionId
-export function triggerCardEffect(casterPlayer, sourceCard, actionId, params, target) {
-    const actionFn = actionImplementations[actionId];
-    if (actionFn) {
-        try {
-            console.log(`Triggering effect ${actionId} from ${sourceCard.name} on target:`, target);
-            actionFn(target, params, casterPlayer); // Pass caster context if needed
-            return true; // Indicate success
-        } catch (e) {
-            console.error(`Error executing action ${actionId} for card ${sourceCard.name}:`, e);
-            return false; // Indicate failure
-        }
-    } else {
-        console.warn(`Action ID ${actionId} not found in implementations.`);
-        // Optionally treat as success or failure depending on game rules
-        return false; // Treat unknown action as failure for safety
-    }
-}
-
 
 // Determines the actual target object (card instance or hero element) based on click event target
 export function getTargetFromElement(element, targetType, caster) {
@@ -50,12 +31,24 @@ export function getTargetFromElement(element, targetType, caster) {
             return targetCard; // Return the card instance object
         } else {
              console.log(`Invalid target: Card element found (id: ${cardInstanceId}), but spell requires ${targetType} or card not found on board.`);
-            return "invalid";
+             return "invalid";
         }
     }
 
     // If no specific element target was needed (e.g., 'self', 'opponent-board', 'none'), those cases are handled above.
     // If we reach here, it means a specific target was expected but not found or invalid.
-    console.log("Invalid target: Could not determine target from element:", element);
+    // Also handle cases where targetType implies no element needed, like 'opponent-board' or 'self' already handled above.
+    if (targetType === 'self' || targetType === 'opponent-board' || targetType === 'none') {
+        // These were handled earlier or don't require an element.
+        // If getTargetFromElement was called with an element for these, it's likely an error in the caller.
+        // Let's assume the earlier returns handled valid cases, so reaching here means something is wrong if element exists.
+        if(element) console.warn(`getTargetFromElement called with element for targetType ${targetType}`);
+        // However, if no element was passed and targetType is one of these, it's valid, handled above.
+        // This path might be reached if element is null AND targetType is specific like 'creature'.
+        // The initial check `if (!element && ...)` should catch this.
+    }
+
+
+    console.log(`Invalid target: Could not determine target from element: ${element?.id || element?.tagName}, targetType: ${targetType}`);
     return "invalid";
 }
