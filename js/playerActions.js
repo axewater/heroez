@@ -8,8 +8,8 @@ import { MAX_BOARD_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { getTargetFromElement } from './actionUtils.js';
 import { triggerCardEffect } from './cardEffects.js';
-import { animateCardMovement, animateSpellEffect } from './animations.js'; // Import animation helpers
-import { getDOMElement } from './dom.js'; // Need access to board/hand elements
+import { animateCardMovement, animateSpellEffect, animateDrawCard } from './animations.js';
+import { getDOMElement } from './dom.js';
 
 export async function playCard(player, card, cardIndexInHand, targetElement = null) {
     console.log(`${player.id} attempts to play ${card.name}`);
@@ -114,7 +114,13 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
                     // Pass the actual target element (card or hero) or null if target is board/self
                     spellAnimationPromise = animateSpellEffect(casterHeroElement, targetElement, playedCard.visualEffectType);
                 }
+                // Trigger the effect logic (which might be async itself, e.g., drawCards)
+                // Ensure triggerCardEffect returns a promise if the action is async
                 success = triggerCardEffect(player, playedCard, playedCard.actionId, playedCard.actionParams || {}, target);
+                // If the effect is async (like drawCards), we need to await it here
+                if (success instanceof Promise) {
+                    success = await success; // Wait for the async effect to complete
+                }
             } else {
                 console.log("Invalid target for spell.");
                 if (handCardElement) handCardElement.style.opacity = '1'; // Make original card visible again

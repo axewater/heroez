@@ -101,6 +101,62 @@ export function animateCardMovement(cardData, startRect, endRect, animationType,
 }
 
 /**
+ * Animates a card being drawn from the deck to the hand area.
+ *
+ * @param {object} player - The player object who is drawing.
+ * @param {number} [duration=500] - Animation duration in ms.
+ * @returns {Promise<void>} A promise that resolves when the animation completes.
+ */
+export function animateDrawCard(player, duration = 500) {
+    return new Promise(resolve => {
+        const gameContainer = getDOMElement('gameContainer');
+        const drawPileEl = player.drawPileElement; // e.g., 'player-draw-count' element
+        const handEl = player.handElement; // e.g., 'player-hand' element
+
+        if (!gameContainer || !drawPileEl || !handEl) {
+            console.warn("Draw animation prerequisites not met.");
+            resolve();
+            return;
+        }
+
+        const startRect = drawPileEl.getBoundingClientRect();
+        const handRect = handEl.getBoundingClientRect();
+
+        // Create a temporary card back element
+        const tempCardEl = document.createElement('div');
+        tempCardEl.classList.add('card', 'card-draw-animating'); // Style as a card back
+
+        // --- Initial Setup ---
+        const startX = startRect.left + startRect.width / 2 - 40; // Center horizontally, adjust for card width (80px / 2)
+        const startY = startRect.top + startRect.height / 2 - 60; // Center vertically, adjust for card height (120px / 2)
+        // End position: Roughly center of the hand area, slightly above
+        const endX = handRect.left + handRect.width / 2 - 40;
+        const endY = handRect.top + handRect.height / 2 - 80; // End slightly higher than exact center
+
+        tempCardEl.style.left = `${startX}px`;
+        tempCardEl.style.top = `${startY}px`;
+
+        gameContainer.appendChild(tempCardEl);
+
+        // --- Trigger Animation ---
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                tempCardEl.style.transform = `translate(${endX - startX}px, ${endY - startY}px) scale(1.1) rotate(5deg)`; // Move, scale up slightly, rotate
+                tempCardEl.style.opacity = '0'; // Fade out at the end
+            });
+        });
+
+        // --- Cleanup ---
+        setTimeout(() => {
+            if (tempCardEl.parentNode) {
+                tempCardEl.remove();
+            }
+            resolve();
+        }, duration); // Remove after animation duration
+    });
+}
+
+/**
  * Creates and animates a simple visual effect for a spell.
  * The effect appears near the target (or caster if no target) and fades out.
  *

@@ -6,6 +6,7 @@ import { updateBoardStats } from './boardLogic.js';
 import { drawCard as drawCardLogic, createCardInstance } from './gameLogic.js';
 import { STARTING_HEALTH, MAX_BOARD_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
+import { animateDrawCard } from './animations.js'; // Import draw animation
 
 // --- Action Implementations Map ---
 // Maps actionId from card data to actual functions
@@ -16,9 +17,20 @@ export const actionImplementations = {
     permanentBuff: (target, params, caster) => permanentBuff(target, params.attack, params.health),
     freezeBoard: (target, params, caster) => freezeBoard(target),
     freezeCreature: (target, params, caster) => freezeCreature(target), // Added for single target freeze
-    drawCards: (target, params, caster) => {
-        for (let i = 0; i < params.amount; i++) {
-            drawCardLogic(caster);
+    drawCards: async (target, params, caster) => { // Target is the caster player object
+        const numToDraw = params.amount;
+        console.log(`${caster.id} attempts to draw ${numToDraw} cards.`);
+
+        // Trigger animations concurrently
+        const animationPromises = [];
+        for (let i = 0; i < numToDraw; i++) {
+            animationPromises.push(animateDrawCard(caster));
+        }
+        await Promise.all(animationPromises); // Wait for all animations
+
+        // After animations, update the state by actually drawing
+        for (let i = 0; i < numToDraw; i++) {
+            drawCardLogic(caster); // Use the imported gameLogic function
         }
     },
     dealDamageToSelf: (target, params, caster) => dealDamage(caster.heroElement, params.amount),
@@ -33,8 +45,8 @@ export function triggerCardEffect(casterPlayer, sourceCard, actionId, params, ta
     if (actionFn) {
         try {
             console.log(`Triggering effect ${actionId} from ${sourceCard.name} on target:`, target);
-            actionFn(target, params, casterPlayer); // Pass caster context if needed
-            return true; // Indicate success
+            const result = actionFn(target, params, casterPlayer); // Pass caster context if needed
+            return result; // Return the result, which might be a Promise
         } catch (e) {
             console.error(`Error executing action ${actionId} for card ${sourceCard.name}:`, e);
             return false; // Indicate failure
