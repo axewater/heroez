@@ -1,3 +1,4 @@
+// /js/main.js
 import { initGame, startGameWithHero, endTurn } from './gameLogic.js';
 import { getState, isGameOver } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
@@ -5,6 +6,7 @@ import { getDOMElement } from './dom.js';
 import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
 import { initMenu } from './menu.js';
 import { initHeroSelection, confirmHeroSelection, hideHeroSelection } from './heroSelection.js';
+import { renderGame } from './render.js'; // Added renderGame import
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -88,6 +90,7 @@ function setupEventListeners() {
                  console.log("Clicked outside interactive area, deselecting...");
                  deselectCard();
                  deselectAttacker();
+                 renderGame(); // <-- Added this line to update the UI
              }
          }
      }, true);

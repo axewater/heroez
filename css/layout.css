@@ -54,7 +54,9 @@
     gap: 5px;
     padding: 5px;
     overflow-x: auto; /* Allow scrolling if many cards */
-     overflow-y: hidden;
+    overflow-y: hidden;
+    position: relative; /* Allow z-index control */
+    z-index: 5; /* Lift hand above adjacent board area */
 }
 
 #opponent-hand { order: 0; background: rgba(0,0,0,0.05); }

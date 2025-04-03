@@ -20,7 +20,7 @@
 /* Hover effect for cards NOT in opponent's hand */
 .player-area .card:hover, /* Player hand/board */
 #opponent-board .card:hover { /* Opponent board */
-    transform: scale(1.3); /* Zoom effect */
+    transform: scale(1.7); /* Zoom effect - Increased */
     z-index: 100; /* Bring hovered card to front */
 }
 
