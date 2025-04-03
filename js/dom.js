@@ -27,6 +27,7 @@ export function cacheDOMElements() {
         messageLogPanelEl: document.getElementById('message-log-panel'),
 
         gameContainer: document.getElementById('game-container'),
+        cardZoomContainerEl: document.getElementById('card-zoom-container'), // Zoom container
     };
     console.log("DOM elements cached.");
 

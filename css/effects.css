@@ -35,3 +35,55 @@
 .stat-change-flash {
     animation: flash-bright 0.3s ease-out;
 }
+
+/* --- Card Zoom Container --- */
+#card-zoom-container {
+    position: fixed; /* Position relative to the viewport */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the element */
+    width: 240px; /* Larger width */
+    height: 360px; /* Larger height */
+    background-color: rgba(255, 255, 255, 0.98); /* Slightly transparent white */
+    border: 3px solid #555;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Prominent shadow */
+    z-index: 2000; /* Ensure it's above everything else */
+    pointer-events: none; /* Prevent interaction with the zoom container itself */
+    display: flex; /* Use flex for internal layout */
+    flex-direction: column;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 16px; /* Larger base font */
+    /* overflow: hidden; Let internal elements handle overflow */
+    transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out; /* Smooth fade */
+}
+
+#card-zoom-container.hidden {
+    display: none; /* Use display none for complete removal */
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Styles for elements INSIDE the zoom container */
+#card-zoom-container .card-cost { font-size: 24px; width: 40px; height: 40px; top: 5px; left: 5px; position: absolute; z-index: 1; }
+#card-zoom-container .card-name { font-size: 20px; margin-top: 5px; margin-bottom: 10px; padding-top: 35px; text-align: center; font-weight: bold; position: relative; z-index: 2; white-space: normal; overflow-wrap: break-word; }
+#card-zoom-container .card-effect {
+    font-size: 14px;
+    line-height: 1.3;
+    position: static; /* Override absolute positioning */
+    display: block !important; /* Ensure it's always visible, override potential .card hiding */
+    flex-grow: 1; /* Take remaining space */
+    margin: 10px 0;
+    overflow-y: auto; /* Allow vertical scrolling */
+    max-height: 180px; /* Limit height to prevent overflow */
+    text-align: center; padding: 5px; background: rgba(0,0,0,0.03); border-radius: 5px; }
+#card-zoom-container .card-attack, #card-zoom-container .card-health { font-size: 24px; width: 40px; height: 40px; bottom: 5px; position: absolute; z-index: 1; display: flex; justify-content: center; align-items: center; font-weight: bold; border-radius: 50%; color: white; border: 1px solid white; }
+#card-zoom-container .card-attack { left: 5px; background-color: orange; }
+#card-zoom-container .card-health { right: 5px; background-color: red; }
+#card-zoom-container .is-taunt { border: 3px solid brown; }
+#card-zoom-container .is-frozen { box-shadow: inset 0 0 10px 3px rgba(173, 216, 230, 0.8); filter: saturate(0.5) brightness(0.9); border-color: lightblue; }
+#card-zoom-container .has-frenzy { border: 2px solid darkred; }
+#card-zoom-container .is-stealthed { opacity: 0.8; box-shadow: inset 0 0 10px 3px rgba(50, 50, 50, 0.5); }
+#card-zoom-container.Creature { background-color: #c8e6c9; }
+#card-zoom-container.Spell { background-color: #bbdefb; }

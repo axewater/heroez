@@ -7,6 +7,7 @@ import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiStat
 import { initMenu } from './menu.js';
 import { initHeroSelection, confirmHeroSelection, hideHeroSelection, showHeroSelection } from './heroSelection.js';
 import { renderGame } from './render.js';
+import { initCardZoomListeners } from './cardZoom.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -105,6 +106,7 @@ export function startGame(selectedHero, isDebug = false) {
     console.log(`Main: Debug mode is ${isDebug ? 'ON' : 'OFF'}`);
     setDebugMode(isDebug); // Set the debug mode flag in the state
     startGameWithHero(selectedHero, isDebug); // Pass debug flag to game logic start function
+    initCardZoomListeners(); // Initialize card zoom hover listeners
     setupEventListeners(); // Set up game-specific listeners only when the game starts
 }
 

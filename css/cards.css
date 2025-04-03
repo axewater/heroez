@@ -12,16 +12,10 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease, opacity 0.2s ease, border 0.2s ease, z-index 0s ease 0.2s; /* Delay z-index change */
     font-size: 11px; /* Smaller base font for cards */
+    z-index: 1; /* Base z-index for cards in hand/board */
     position: relative; /* For pseudo-elements like cost/attack/health */
     overflow: hidden; /* Hide overflowing text */
     flex-shrink: 0; /* Prevent cards from shrinking in flex containers */
-}
-
-/* Hover effect for cards NOT in opponent's hand */
-.player-area .card:hover, /* Player hand/board */
-#opponent-board .card:hover { /* Opponent board */
-    transform: scale(1.7); /* Zoom effect - Increased */
-    z-index: 100; /* Bring hovered card to front */
 }
 
 /* Card positioning elements */
@@ -131,14 +125,6 @@
     cursor: default;
 }
 
-/* Disable hover zoom for hidden opponent hand cards */
- #opponent-hand .card:not(.debug-visible):hover {
-    /* Explicitly disable transform/shadow for opponent hand */
-    transform: none;
-    box-shadow: none;
-    z-index: auto; /* Reset z-index */
- }
-
 /* Hide details on hidden opponent hand cards (when NOT in debug mode) */
 #opponent-hand .card:not(.debug-visible) .card-cost,
 #opponent-hand .card:not(.debug-visible) .card-attack,
@@ -169,27 +155,6 @@
     text-shadow: 1px 1px 1px black; /* Add shadow for contrast */
 }
 
-/* Hover style for opponent hand cards IN debug mode */
-#opponent-hand .card.debug-visible:hover {
-    transform: scale(1.7); /* Same zoom as player cards */
-    z-index: 100;
-    /* Restore original background based on type or default white */
-    /* This requires more complex logic if we want original colors. */
-    /* For simplicity, let's just make it white on hover for now. */
-    background-color: white; /* Show as white when hovered */
-}
-
-/* Show ALL details on hover in debug mode */
-#opponent-hand .card.debug-visible:hover .card-cost,
-#opponent-hand .card.debug-visible:hover .card-attack,
-#opponent-hand .card.debug-visible:hover .card-health,
-#opponent-hand .card.debug-visible:hover .card-name,
-#opponent-hand .card.debug-visible:hover .card-effect {
-    visibility: visible;
-    color: initial; /* Reset color from default debug style */
-    text-shadow: none; /* Reset shadow from default debug style */
-}
-
 /* Ensure effect text block is displayed on hover */
 #opponent-hand .card.debug-visible:hover .card-effect {
     display: block;
@@ -201,13 +166,6 @@
     box-shadow: 0 0 10px 3px gold; /* Highlight playable cards */
 }
 
-/* Show text only on hovered cards (that are allowed to be hovered) */
-.player-area .card:hover .card-effect,
-#opponent-board .card:hover .card-effect,
-#opponent-hand .card.debug-visible:hover .card-effect { /* Added for debug hover */
-    display: block; /* Show effect text */
-    z-index: 101; /* Ensure text is above the zoomed card's siblings */
-}
 .card.selected {
      box-shadow: 0 0 15px 5px blue;
      transform: scale(1.05) translateY(-10px);
@@ -236,6 +194,13 @@
     border-color: lightblue; /* Add a light blue border */
 }
 .card.has-frenzy {
+    /* Subtle hover zoom for cards in hand or on board */
+.hand .card:hover,
+.board .card:hover {
+    transform: scale(1.05);
+    z-index: 100; /* Bring hovered card above siblings */
+}
+
     /* Example: Add a subtle red glow or border */
     border: 2px solid darkred;
 }
