@@ -1,0 +1,29 @@
+/* --- Message Log Panel --- */
+#message-log-panel {
+    width: 250px; /* Fixed width for the log */
+    height: 100%; /* Full height of the container */
+    border-left: 2px solid #333;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+#message-log-content {
+    flex-grow: 1;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.log-message {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #ccc;
+}
+.log-message.log-error { color: red; font-weight: bold; }
+.log-message.log-info { color: blue; }
+.log-message.log-action { color: #333; }
+.log-message.log-turn { color: green; font-weight: bold; margin-top: 10px; }

@@ -130,24 +130,35 @@ export function startTurn(playerId) {
     // --- Start of Turn Effects & Resets ---
     // 1. Reset attack state for player's creatures
     // 2. Remove summoning sickness ('justPlayed')
-    // 3. Unfreeze
+    // 3. Unfreeze OPPONENT's creatures
     // 4. TODO: Handle other start-of-turn effects (e.g., card triggers)
-    player.board.forEach(creature => {
-        creature.hasAttacked = false; // Reset attack status
+
+    // 1. Unfreeze the OPPONENT'S creatures (they thaw at the start of this player's turn)
+    opponent.board.forEach(creature => {
         if (creature.isFrozen) {
-            creature.isFrozen = false; // Unfreeze at start of turn
-            creature.canAttack = !creature.justPlayed; // Can attack now *unless* it still has summoning sickness (was played last turn)
+            creature.isFrozen = false; // Remove frozen status
             logMessage(`${creature.name} unfreezes.`);
-        } else if (creature.justPlayed) {
-            creature.justPlayed = false; // Remove summoning sickness
-            creature.canAttack = true; // Can attack now (unless frozen, handled above)
+            // Its canAttack status will be determined when its owner's turn starts.
         }
-        // Ensure Swift creatures that were just played can still attack
-        if (creature.isSwift) creature.canAttack = true;
-        // Ensure frozen creatures definitely cannot attack
-        if (creature.isFrozen) creature.canAttack = false;
-        // Ensure 0 attack creatures cannot attack
-        if (creature.currentAttack <= 0) creature.canAttack = false;
+    });
+
+    // 2. Reset CURRENT player's creatures' state for the new turn
+    player.board.forEach(creature => {
+        creature.hasAttacked = false; // Can attack again
+        const wasJustPlayed = creature.justPlayed; // Store status before reset
+        if (wasJustPlayed) {
+            creature.justPlayed = false; // Remove summoning sickness for next turn check
+        }
+
+        // Determine if it can attack THIS turn
+        // Can attack if: Not Frozen AND Attack > 0 AND (Was NOT Just Played entering this turn OR Has Swift)
+        let canAttackThisTurn = false;
+        if (!creature.isFrozen && creature.currentAttack > 0) {
+            if (!wasJustPlayed || creature.isSwift) {
+                 canAttackThisTurn = true;
+            }
+        }
+        creature.canAttack = canAttackThisTurn;
     });
 
     // TODO: Handle opponent's start-of-turn effects if any apply during player's turn (unlikely)

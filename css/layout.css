@@ -1,0 +1,97 @@
+/* --- Main area to hold the game board/hands/etc. --- */
+#game-main-area {
+    flex-grow: 1; /* Takes up most space */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Fill the container height */
+    overflow: hidden; /* Prevent internal elements from breaking layout */
+}
+
+/* --- Player Areas --- */
+.player-area {
+    flex-grow: 1;
+    min-height: 200px; /* Ensure areas don't collapse too much */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    position: relative; /* For absolute positioning of hero */
+}
+
+#opponent-area {
+    background-color: #c0c0c0;
+    border-bottom: 2px dashed #888;
+}
+
+#player-area {
+    background-color: #d0d0d0;
+}
+
+/* --- Board Area --- */
+.board {
+    height: 160px; /* Fixed height for creature cards */
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid #aaa;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    min-height: 150px; /* Ensure it doesn't collapse */
+    overflow-x: auto; /* Allow scrolling if many creatures */
+}
+
+#opponent-board { order: 1; }
+#player-board { order: 2; }
+
+
+/* --- Hand Area --- */
+.hand {
+    height: 150px; /* Fixed height for hand cards */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    overflow-x: auto; /* Allow scrolling if many cards */
+     overflow-y: hidden;
+}
+
+#opponent-hand { order: 0; background: rgba(0,0,0,0.05); }
+#player-hand { order: 3; background: rgba(0,0,0,0.05);}
+
+/* --- Hero/Player Info --- */
+.hero-info {
+    position: absolute;
+    bottom: 10px; /* Position relative to player-area */
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    min-width: 80px;
+    z-index: 10; /* Above board/hand */
+    cursor: pointer; /* Make heroes targetable */
+    transition: background-color 0.2s ease; /* For visual feedback */
+}
+#opponent-area .hero-info {
+    top: 10px;
+    bottom: auto;
+}
+.hero-health {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: red;
+}
+.hero-mana {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: blue;
+    margin-top: 4px;
+}
+.hero-deck {
+    font-size: 0.9em;
+    color: #333;
+    margin-top: 4px;
+}

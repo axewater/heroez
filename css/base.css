@@ -1,0 +1,24 @@
+/* --- General Styles --- */
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none; /* Prevent text selection during drags */
+}
+
+#game-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 800px;
+    background-color: #e0e0e0;
+    border: 2px solid #333;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row; /* Changed to row to accommodate log panel */
+    position: relative;
+    overflow: hidden;
+}
