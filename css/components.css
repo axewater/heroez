@@ -25,14 +25,31 @@
     cursor: not-allowed;
 }
 
+/* Container for Message Area and Turn Counter */
+#center-display-area {
+    display: flex;
+    justify-content: space-between; /* Space out turn and message */
+    align-items: center;
+    padding: 5px 15px; /* Add some padding */
+    height: 30px; /* Fixed height */
+    background-color: rgba(255, 255, 255, 0.7);
+    position: relative;
+    z-index: 5;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
 #message-area {
     text-align: center;
     font-size: 1.1em;
     font-weight: bold;
     color: #333;
-    padding: 5px;
-    height: 25px; /* Fixed height for message area */
-    background-color: rgba(255, 255, 255, 0.7);
+    flex-grow: 1; /* Allow message area to take available space */
+}
+
+#turn-counter-display {
+    font-size: 1.1em;
+    font-weight: bold;
     position: relative; /* Ensure it's above player areas if needed */
     z-index: 5;
 }
@@ -61,4 +78,18 @@
      padding: 15px 30px;
     font-size: 1.5em;
     cursor: pointer;
+}
+
+/* Mana Crystal Styles */
+.mana-crystal {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%; /* Make it round */
+    border: 2px solid #007bff; /* Blue outline */
+    background-color: transparent; /* Empty by default */
+    box-sizing: border-box;
+}
+
+.mana-crystal.available {
+    background-color: #007bff; /* Filled blue */
 }

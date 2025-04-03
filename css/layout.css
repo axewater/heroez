@@ -86,11 +86,11 @@
     font-weight: bold;
     color: red;
 }
-.hero-mana {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: blue;
-    margin-top: 4px;
+.mana-container {
+    display: flex; /* Arrange mana crystals horizontally */
+    gap: 3px; /* Space between crystals */
+    margin-top: 5px; /* Space above mana */
+    height: 15px; /* Fixed height for the container */
 }
 .hero-draw-pile, .hero-discard-pile {
     font-size: 0.9em;

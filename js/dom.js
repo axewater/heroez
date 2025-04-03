@@ -4,7 +4,7 @@ let domElements = {};
 export function cacheDOMElements() {
     domElements = {
         opponentHealthEl: document.getElementById('opponent-health'),
-        opponentManaEl: document.getElementById('opponent-mana'),
+        opponentManaContainerEl: document.getElementById('opponent-mana-container'),
         opponentDrawCountEl: document.getElementById('opponent-draw-count'),
         opponentDiscardCountEl: document.getElementById('opponent-discard-count'),
         opponentHandEl: document.getElementById('opponent-hand'),
@@ -12,7 +12,7 @@ export function cacheDOMElements() {
         opponentHeroEl: document.getElementById('opponent-hero'),
 
         playerHealthEl: document.getElementById('player-health'),
-        playerManaEl: document.getElementById('player-mana'),
+        playerManaContainerEl: document.getElementById('player-mana-container'),
         playerDrawCountEl: document.getElementById('player-draw-count'),
         playerDiscardCountEl: document.getElementById('player-discard-count'),
         playerHandEl: document.getElementById('player-hand'),
@@ -20,6 +20,7 @@ export function cacheDOMElements() {
         playerHeroEl: document.getElementById('player-hero'),
 
         messageAreaEl: document.getElementById('message-area'),
+        turnCounterDisplayEl: document.getElementById('turn-counter-display'),
         endTurnButton: document.getElementById('end-turn-button'),
         gameOverOverlay: document.getElementById('game-over-overlay'),
         gameOverMessage: document.getElementById('game-over-message'),
@@ -50,7 +51,7 @@ export function assignElementsToPlayerState(getPlayer) {
     if (player) {
         player.heroElement = domElements.playerHeroEl;
         player.healthElement = domElements.playerHealthEl;
-        player.manaElement = domElements.playerManaEl;
+        player.manaElement = domElements.playerManaContainerEl;
         player.drawPileElement = domElements.playerDrawCountEl;
         player.discardPileElement = domElements.playerDiscardCountEl;
         player.handElement = domElements.playerHandEl;
@@ -61,7 +62,7 @@ export function assignElementsToPlayerState(getPlayer) {
      if (opponent) {
         opponent.heroElement = domElements.opponentHeroEl;
         opponent.healthElement = domElements.opponentHealthEl;
-        opponent.manaElement = domElements.opponentManaEl;
+        opponent.manaElement = domElements.opponentManaContainerEl;
         opponent.drawPileElement = domElements.opponentDrawCountEl;
         opponent.discardPileElement = domElements.opponentDiscardCountEl;
         opponent.handElement = domElements.opponentHandEl;

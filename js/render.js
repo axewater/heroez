@@ -39,6 +39,12 @@ export function renderGame() {
         endTurnButton.disabled = state.currentPlayerId !== 'player' || state.targetingMode !== null;
     }
 
+    // Update Turn Counter
+    const turnCounterEl = getDOMElement('turnCounterDisplayEl');
+    if (turnCounterEl) {
+        turnCounterEl.textContent = `Turn: ${state.turn}`;
+    }
+
     // Highlight playable cards for the current player
     updatePlayableCards(getCurrentPlayer());
 
@@ -53,9 +59,23 @@ function renderPlayerInfo(player) {
         return;
     }
     player.healthElement.textContent = player.heroHealth;
-    player.manaElement.textContent = `${player.currentMana}/${player.maxMana}`;
     player.drawPileElement.textContent = `Draw: ${player.drawPile.length}`;
+    console.log(`[Render ${player.id}] Draw Pile Count: ${player.drawPile.length}`); // Added log
     player.discardPileElement.textContent = `Discard: ${player.discardPile.length}`;
+
+    // Render Mana Crystals
+    player.manaElement.innerHTML = ''; // Clear previous crystals
+    for (let i = 1; i <= player.maxMana; i++) {
+        const crystalEl = document.createElement('div');
+        crystalEl.classList.add('mana-crystal');
+        console.log(`[Render ${player.id}] Creating crystal ${i}. Current Mana: ${player.currentMana}, Max Mana: ${player.maxMana}`); // Added log
+        if (i <= player.currentMana) {
+            crystalEl.classList.add('available');
+        }
+        player.manaElement.appendChild(crystalEl);
+    }
+    // Hide opponent mana if needed (e.g., always show 0/0 unless debug?)
+    // For now, it shows the actual mana state.
 }
 
 function renderHand(player) {
