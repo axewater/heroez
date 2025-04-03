@@ -1,6 +1,8 @@
 import { initGame, endTurn } from './gameLogic.js';
 import { getState, isGameOver } from './state.js';
-import { handleHandCardClick, handleBoardCardClick, handleTargetClick, getDOMElement } from './ui.js';
+import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
+import { getDOMElement } from './dom.js';
+import { deselectCard, deselectAttacker } from './uiState.js'; // For click outside deselect
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -78,6 +80,8 @@ function setupEventListeners() {
              const clickedInteractive = e.target.closest('.card, .hero-info, button');
              if (!clickedInteractive) {
                  console.log("Clicked outside interactive area, deselecting...");
+                 deselectCard();
+                 deselectAttacker();
              }
          }
      }, true);

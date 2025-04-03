@@ -1,11 +1,10 @@
 import { STARTING_HEALTH, MAX_MANA } from './constants.js';
-import { getDOMElement } from './ui.js';
 
 // Centralized game state
 let state = {};
 
 // Function to initialize or reset the state
-export function resetState() {
+export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
     state = {
         players: {
             player: {
@@ -13,7 +12,7 @@ export function resetState() {
                 heroHealth: STARTING_HEALTH,
                 maxMana: 0,
                 currentMana: 0,
-                deck: [],
+                deck: [...initialPlayerDeck], // Use initial decks if provided
                 hand: [],
                 board: [],
                 fatigue: 0,
@@ -30,7 +29,7 @@ export function resetState() {
                 heroHealth: STARTING_HEALTH,
                 maxMana: 0,
                 currentMana: 0,
-                deck: [],
+                deck: [...initialOpponentDeck], // Use initial decks if provided
                 hand: [],
                 board: [],
                 fatigue: 0,

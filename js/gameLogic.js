@@ -1,34 +1,44 @@
 import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver } from './state.js';
-import { renderGame, updatePlayableCards, setMessage, logMessage, showGameOverScreen, hideGameOverScreen, cacheDOMElements, getDOMElement } from './ui.js';
-import { dealDamage } from './actions.js'; // Needed for fatigue
-import { runAITurn } from './ai.js';
+import { renderGame, updatePlayableCards } from './render.js';
+import { setMessage, logMessage } from './messaging.js';
+import { showGameOverScreen, hideGameOverScreen } from './uiState.js';
+import { cacheDOMElements, getDOMElement, assignElementsToPlayerState } from './dom.js';
+import { dealDamage } from './cardEffects.js'; // Needed for fatigue
+import { runAITurn } from './aiCore.js';
 
 // --- Game Setup ---
 
 export function initGame() {
     console.log("Initializing game...");
-    resetState(); // Initialize/reset the state object
-    cacheDOMElements(); // Find and store DOM elements, assign to player state
+    cacheDOMElements(); // Find and store DOM elements
     hideGameOverScreen();
 
-    const player = getPlayer('player');
-    const opponent = getPlayer('opponent');
-
-    // Build decks
-    // Simplistic deck building: 2 copies of each card
+    // --- Build Decks (Needed before resetState) ---
     const allPlayerCards = [];
     const allOpponentCards = [];
     cardLibrary.filter(c => c.collectible !== false).forEach(card => {
+        // Create temporary instances just for the deck list; owner will be set properly by resetState if needed or by draw
         allPlayerCards.push(createCardInstance(card, 'player'));
         allPlayerCards.push(createCardInstance(card, 'player'));
         allOpponentCards.push(createCardInstance(card, 'opponent'));
         allOpponentCards.push(createCardInstance(card, 'opponent'));
     });
 
-    player.deck = shuffleDeck([...allPlayerCards]);
-    opponent.deck = shuffleDeck([...allOpponentCards]);
+    // --- Initialize State First ---
+    resetState(allPlayerCards, allOpponentCards); // Initialize/reset the state object, pass decks
+
+    // --- Now Access Player Data ---
+    const player = getPlayer('player');
+    const opponent = getPlayer('opponent');
+
+    // Assign DOM elements after state is initialized and players exist
+    assignElementsToPlayerState(getPlayer);
+
+    // Shuffle the decks that are now in the state
+    player.deck = shuffleDeck([...player.deck]); // Shuffle the deck copies from state
+    opponent.deck = shuffleDeck([...opponent.deck]);
 
     // Draw initial hands
     for (let i = 0; i < STARTING_HAND_SIZE; i++) {
@@ -37,10 +47,9 @@ export function initGame() {
     }
 
     // Start the first turn (Player 1)
-    // Player 1 gets 1 mana crystal on turn 0, then starts turn 1 properly
     player.maxMana = 1;
     player.currentMana = 1;
-    opponent.maxMana = 0;
+    opponent.maxMana = 0; // Opponent starts with 0 mana crystals available on Player 1's turn 1
     opponent.currentMana = 0;
 
     logMessage("Game Starting...", 'log-info');
@@ -51,6 +60,7 @@ export function initGame() {
          startTurn('player');
          console.log("Game Initialized:", getState());
     }, 500);
+
 }
 
 export function createCardInstance(cardData, ownerId) {
@@ -104,11 +114,6 @@ export function startTurn(playerId) {
     console.log(`--- Turn ${getTurn()}: ${playerId} ---`);
     logMessage(`--- Turn ${getTurn()} (${playerId}) ---`, 'log-turn');
 
-    // Reset selections and targeting mode
-    // deselectCard(); // Handled by UI/Action interactions
-    // deselectAttacker(); // Handled by UI/Action interactions
-    // setTargetingMode(null); // Handled by UI/Action interactions
-
     // Increase Max Mana (up to MAX_MANA)
     if (player.maxMana < MAX_MANA) {
         player.maxMana++;
@@ -136,6 +141,8 @@ export function startTurn(playerId) {
         if (creature.isSwift) creature.canAttack = true;
         // Ensure frozen creatures definitely cannot attack
         if (creature.isFrozen) creature.canAttack = false;
+        // Ensure 0 attack creatures cannot attack
+        if (creature.currentAttack <= 0) creature.canAttack = false;
     });
 
     // TODO: Handle opponent's start-of-turn effects if any apply during player's turn (unlikely)
