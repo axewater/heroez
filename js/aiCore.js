@@ -127,6 +127,7 @@ export function runAITurn() {
 
                 // Find best target for this attacker
                 const attackTargetElement = findBestAttackTarget(attacker, humanPlayer);
+                console.log(`[AI Attack Attempt] AI considering attack with ${attacker.name} (${attacker.instanceId}). Status: canAttack=${attacker.canAttack}, hasAttacked=${attacker.hasAttacked}, isFrozen=${attacker.isFrozen}, justPlayed=${attacker.justPlayed}, currentAttack=${attacker.currentAttack}`);
 
                 if (attackTargetElement) {
                     console.log(`AI ${attacker.name} initiates attack on target:`, attackTargetElement);

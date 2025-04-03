@@ -144,21 +144,20 @@ export function startTurn(playerId) {
 
     // 2. Reset CURRENT player's creatures' state for the new turn
     player.board.forEach(creature => {
-        creature.hasAttacked = false; // Can attack again
-        const wasJustPlayed = creature.justPlayed; // Store status before reset
-        if (wasJustPlayed) {
-            creature.justPlayed = false; // Remove summoning sickness for next turn check
-        }
+        // Store the 'justPlayed' status from the *previous* turn before resetting it
+        const wasJustPlayedLastTurn = creature.justPlayed;
+        console.log(`[Start Turn ${getTurn()}] ${player.id}'s ${creature.name} (${creature.instanceId}) - Before update: justPlayed=${wasJustPlayedLastTurn}, isFrozen=${creature.isFrozen}, canAttack=${creature.canAttack}, hasAttacked=${creature.hasAttacked}`);
+
+        // Reset turn-based states
+        creature.hasAttacked = false;
+        creature.justPlayed = false; // Summoning sickness wears off now
 
         // Determine if it can attack THIS turn
-        // Can attack if: Not Frozen AND Attack > 0 AND (Was NOT Just Played entering this turn OR Has Swift)
-        let canAttackThisTurn = false;
-        if (!creature.isFrozen && creature.currentAttack > 0) {
-            if (!wasJustPlayed || creature.isSwift) {
-                 canAttackThisTurn = true;
-            }
-        }
-        creature.canAttack = canAttackThisTurn;
+        // A creature can attack if it's not frozen and has > 0 attack.
+        // The 'justPlayed' status only prevents attack on the turn it is played (handled in playCard),
+        // unless it has Swift. By the start of the *next* turn, the sickness is gone.
+        creature.canAttack = !creature.isFrozen && creature.currentAttack > 0;
+        console.log(`[Start Turn ${getTurn()}] ${player.id}'s ${creature.name} (${creature.instanceId}) - After update: justPlayed=${creature.justPlayed}, isFrozen=${creature.isFrozen}, canAttack=${creature.canAttack}, hasAttacked=${creature.hasAttacked} (wasJustPlayedLastTurn=${wasJustPlayedLastTurn})`);
     });
 
     // TODO: Handle opponent's start-of-turn effects if any apply during player's turn (unlikely)

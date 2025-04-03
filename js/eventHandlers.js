@@ -99,6 +99,7 @@ export function handleBoardCardClick(card) {
         } else {
             deselectAttacker(); // Deselect previous attacker if any
             if (card.canAttack && !card.hasAttacked && !card.isFrozen && card.currentAttack > 0) {
+                console.log(`[Player Attack Attempt] Selecting ${card.name} (${card.instanceId}) to attack. Status: canAttack=${card.canAttack}, hasAttacked=${card.hasAttacked}, isFrozen=${card.isFrozen}, justPlayed=${card.justPlayed}, currentAttack=${card.currentAttack}`);
                 const cardEl = player.boardElement?.querySelector(`.card[data-instance-id="${card.instanceId}"]`);
                 if (cardEl) {
                     // Don't add 'attacking' class here, renderGame will do it based on state

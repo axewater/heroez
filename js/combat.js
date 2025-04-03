@@ -1,5 +1,5 @@
-import { getState, getPlayer, getOpponentId, getSelectedAttacker, setSelectedAttacker, setTargetingMode, getTargetingMode, isGameOver } from './state.js'; // Added getOpponentId and isGameOver
-import { renderGame, updatePlayableCards } from './render.js'; // Corrected import path for render functions
+import { getState, getPlayer, getOpponentId, getSelectedAttacker, setSelectedAttacker, setTargetingMode, getTargetingMode, isGameOver } from './state.js';
+import { renderGame, updatePlayableCards } from './render.js';
 import { deselectAttacker } from './uiState.js';
 import { setMessage, logMessage } from './messaging.js';
 import { checkWinCondition } from './gameLogic.js';
@@ -7,6 +7,7 @@ import { getTargetFromElement } from './actionUtils.js';
 import { dealDamage } from './cardEffects.js';
 
 export function creatureAttack(attackerCard, targetElement) {
+    console.log(`[Execute Attack] ${attackerCard.name} (${attackerCard.instanceId}) attacking. Status: canAttack=${attackerCard.canAttack}, hasAttacked=${attackerCard.hasAttacked}, isFrozen=${attackerCard.isFrozen}, justPlayed=${attackerCard.justPlayed}, currentAttack=${attackerCard.currentAttack}`);
     const attackerPlayer = getPlayer(attackerCard.owner);
     const opponentPlayer = getPlayer(getOpponentId(attackerPlayer.id)); // Assumes attacker is current player
 
