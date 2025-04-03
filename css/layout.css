@@ -23,18 +23,15 @@
 }
 
 #opponent-area {
-    background-color: #c0c0c0;
     border-bottom: 2px dashed #888;
 }
 
 #player-area {
-    background-color: #d0d0d0;
 }
 
 /* --- Board Area --- */
 .board {
     height: 160px; /* Fixed height for creature cards */
-    background-color: rgba(0, 0, 0, 0.1);
     border: 1px solid #aaa;
     margin: 10px 0;
     display: flex;
@@ -64,8 +61,8 @@
     z-index: 5; /* Lift hand above adjacent board area */
 }
 
-#opponent-hand { order: 0; background: rgba(0,0,0,0.05); }
-#player-hand { order: 3; background: rgba(0,0,0,0.05);}
+#opponent-hand { order: 0; }
+#player-hand { order: 3; }
 
 /* --- Hero/Player Info --- */
 .hero-info {
@@ -73,7 +70,7 @@
     bottom: 10px; /* Position relative to player-area */
     left: 10px;
     background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #555;
+    border: 2px solid #333; /* Make border slightly thicker */
     border-radius: 5px;
     padding: 5px 10px;
     text-align: center;
