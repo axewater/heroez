@@ -415,3 +415,13 @@ body {
 .log-message.log-info { color: blue; }
 .log-message.log-action { color: #333; }
 .log-message.log-turn { color: green; font-weight: bold; margin-top: 10px; }
+
+
+@keyframes flash-bright {
+    0% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+.stat-change-flash {
+    animation: flash-bright 0.3s ease-out;
+}

@@ -1,3 +1,4 @@
+// /js/cardEffects.js
 import { getState, getPlayer, getOpponentPlayer, getSelectedCard, getSelectedAttacker, setSelectedCard, setSelectedAttacker, setTargetingMode, getTargetingMode, getOpponentId } from './state.js';
 import { flashElement } from './render.js'; // Assuming render.js is correct, ui.js had it before merge? Let's use render.js as per file structure
 import { logMessage, setMessage } from './messaging.js'; // Assuming messaging.js is correct
@@ -90,9 +91,9 @@ export function dealDamage(target, amount) {
                 targetInstance.frenzyTriggered = true; // Mark as triggered
                 logMessage(`${targetInstance.name}'s Frenzy triggers!`, 'log-info');
                 // Use the locally defined triggerCardEffect
-                triggerCardEffect(getPlayer(targetInstance.owner), targetInstance, targetInstance.frenzyActionId, targetInstance.frenzyActionParams || {}, targetInstance); // Target of Frenzy is usually self
-                // Add class via render update or directly? Let's rely on render for now.
-                // if(cardEl) cardEl.classList.remove('has-frenzy'); // Or add a 'frenzy-triggered' class
+                // Pass the creature instance itself as the target for the Frenzy effect (e.g., gainAttack targets self)
+                triggerCardEffect(getPlayer(targetInstance.owner), targetInstance, targetInstance.frenzyActionId, targetInstance.frenzyActionParams || {}, targetInstance);
+                // Remove 'has-frenzy' class visually via render update
             }
         }
     } else {
@@ -145,7 +146,15 @@ function restoreHealth(target, amount) {
 
 function permanentBuff(targetCard, attackBuff, healthBuff) {
     if (targetCard && targetCard.type === 'Creature') {
+        const cardEl = document.querySelector(`.card[data-instance-id="${targetCard.instanceId}"]`);
+
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + attackBuff);
+        // Update attack display immediately
+        if (cardEl) {
+            const attackEl = cardEl.querySelector('.card-attack');
+            if (attackEl) attackEl.textContent = targetCard.currentAttack;
+        }
+
         // If health is buffed, increase both current and max health
         if (healthBuff > 0) {
              targetCard.health += healthBuff;
@@ -154,6 +163,12 @@ function permanentBuff(targetCard, attackBuff, healthBuff) {
              targetCard.currentHealth += healthBuff;
              // Max health remains the same unless explicitly stated otherwise by effect
         }
+         // Update health display immediately
+         if (cardEl) {
+            const healthEl = cardEl.querySelector('.card-health');
+            if (healthEl) healthEl.textContent = targetCard.currentHealth;
+        }
+
 
         logMessage(`${targetCard.name} gets permanently ${attackBuff >= 0 ? '+' : ''}${attackBuff}/${healthBuff >= 0 ? '+' : ''}${healthBuff}.`);
         console.log(`${targetCard.name} gets permanently +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth} (Max: ${targetCard.health})`);
@@ -169,8 +184,19 @@ function temporaryBuff(targetCard, attackBuff, healthBuff) {
     // TODO: Implement proper temporary effect tracking and removal at end of turn
     console.warn("Temporary buff applied - currently lasts forever!");
     if (targetCard && targetCard.type === 'Creature') {
+         const cardEl = document.querySelector(`.card[data-instance-id="${targetCard.instanceId}"]`);
+
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + attackBuff);
+         if (cardEl) {
+             const attackEl = cardEl.querySelector('.card-attack');
+             if (attackEl) attackEl.textContent = targetCard.currentAttack;
+         }
+
         targetCard.currentHealth += healthBuff;
+         if (cardEl) {
+             const healthEl = cardEl.querySelector('.card-health');
+             if (healthEl) healthEl.textContent = targetCard.currentHealth;
+         }
         // DO NOT increase max health (targetCard.health) for temporary buffs
         logMessage(`${targetCard.name} gets temporarily ${attackBuff >= 0 ? '+' : ''}${attackBuff}/${healthBuff >= 0 ? '+' : ''}${healthBuff}.`);
         console.log(`${targetCard.name} gets temporarily +${attackBuff}/+${healthBuff}. Stats: ${targetCard.currentAttack}/${targetCard.currentHealth}`);
@@ -192,9 +218,13 @@ function freezeBoard(board) { // Expects the array of creatures
                 creature.canAttack = false; // Frozen creatures cannot attack
                 logMessage(`${creature.name} is frozen.`);
                 console.log(`${creature.name} is frozen.`);
+                 // Optionally update class immediately
+                 // const cardEl = document.querySelector(`.card[data-instance-id="${creature.instanceId}"]`);
+                 // if (cardEl) cardEl.classList.add('is-frozen');
             }
         });
-        setMessageState("Enemy creatures frozen!"); // Update message state
+        setMessageState("Enemy creatures frozen!"); // Update message state // This seems unused, setMessage is used instead
+        setMessage("Enemy creatures frozen!");
     } else {
          console.warn("freezeBoard target is not a board array:", board);
     }
@@ -206,6 +236,20 @@ function gainAttack(targetCard, amount) {
         targetCard.currentAttack = Math.max(0, targetCard.currentAttack + amount);
         logMessage(`${targetCard.name} gains +${amount} Attack.`);
         console.log(`${targetCard.name} gains +${amount} Attack. New Attack: ${targetCard.currentAttack}`);
+
+        // --- Immediate Visual Update ---
+        const cardEl = document.querySelector(`.card[data-instance-id="${targetCard.instanceId}"]`);
+        if (cardEl) {
+            const attackEl = cardEl.querySelector('.card-attack');
+            if (attackEl) {
+                attackEl.textContent = targetCard.currentAttack;
+                // Optional: Add a visual flash to the stat
+                attackEl.classList.add('stat-change-flash');
+                attackEl.addEventListener('animationend', () => attackEl.classList.remove('stat-change-flash'), { once: true });
+            }
+        }
+        // --- End Immediate Visual Update ---
+
         // Re-check board stats if this interacts with Auras (unlikely for currentAttack)
     } else {
         console.warn("gainAttack target is not a creature:", targetCard);
@@ -260,4 +304,3 @@ function removeCreatureFromBoard(creature) {
     }
      // Visual update happens in renderGame called by the action that caused removal
 }
-
