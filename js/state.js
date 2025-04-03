@@ -54,6 +54,8 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
         targetingMode: null, // 'spell', 'attack', null
         spellTargetType: null, // 'any', 'creature', 'opponent-board', 'self', etc.
         activeEffects: [], // For tracking temporary effects, auras etc.
+        mulliganActive: false, // Is the mulligan phase currently active?
+        mulliganSelectedIndices: [], // Array of hand indices selected for mulligan
     };
     console.log("Game state reset.");
 }
@@ -129,6 +131,14 @@ export function setDebugMode(isDebug) {
 
 export function isGameOver() {
     return state.gameOver;
+}
+
+export function isMulliganActive() {
+    return state.mulliganActive;
+}
+
+export function getMulliganSelectedIndices() {
+    return state.mulliganSelectedIndices;
 }
 
 export function getCurrentMessage() {

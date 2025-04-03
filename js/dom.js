@@ -30,6 +30,12 @@ export function cacheDOMElements() {
 
         gameContainer: document.getElementById('game-container'),
         cardZoomContainerEl: document.getElementById('card-zoom-container'), // Zoom container
+
+        // Mulligan UI Elements
+        mulliganOverlayEl: document.getElementById('mulligan-overlay'),
+        mulliganHandContainerEl: document.getElementById('mulligan-hand-container'),
+        confirmMulliganButtonEl: document.getElementById('confirm-mulligan-button'),
+        mulliganInstructionsEl: document.getElementById('mulligan-instructions'),
     };
     console.log("DOM elements cached.");
 

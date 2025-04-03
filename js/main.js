@@ -1,13 +1,14 @@
 // /js/main.js
 import { initGame, startGameWithHero, endTurn } from './gameLogic.js';
-import { getState, isGameOver, setDebugMode } from './state.js';
+import { getState, isGameOver, setDebugMode, isMulliganActive } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
 import { getDOMElement } from './dom.js';
 import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
 import { initMenu } from './menu.js';
-import { initHeroSelection, confirmHeroSelection, hideHeroSelection, showHeroSelection } from './heroSelection.js';
+import { initHeroSelection } from './heroSelection.js';
 import { renderGame } from './render.js';
 import { initCardZoomListeners } from './cardZoom.js';
+import { showMulliganUI, hideMulliganUI } from './mulligan.js';
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -15,7 +16,7 @@ function setupEventListeners() {
     const endTurnButton = getDOMElement('endTurnButton');
     if (endTurnButton) {
         endTurnButton.addEventListener('click', () => {
-            if (getState().currentPlayerId === 'player' && !getState().targetingMode && !isGameOver()) {
+            if (getState().currentPlayerId === 'player' && !getState().targetingMode && !isGameOver() && !isMulliganActive()) {
                 endTurn();
             } else {
                 console.log("Cannot end turn now.");
@@ -119,4 +120,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize the pre-game UI modules
     initMenu();
     initHeroSelection(); // Initialize elements, but don't show yet
+    // Mulligan init might happen here or within startGame if needed
 });

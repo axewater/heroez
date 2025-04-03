@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/heroSelection.css">
     <link rel="stylesheet" href="css/effects.css">
     <link rel="stylesheet" href="css/log.css">
+    <link rel="stylesheet" href="css/mulligan.css">
 </head>
 <body>
 
@@ -29,6 +30,16 @@
         <div id="hero-options-container">
             <!-- Hero options will be populated by JS -->
         </div>
+    </div>
+
+    <!-- Mulligan Phase Overlay -->
+    <div id="mulligan-overlay">
+        <h2>Mulligan Phase</h2>
+        <p id="mulligan-instructions">Select cards to replace (up to 3), then confirm.</p>
+        <div id="mulligan-hand-container">
+            <!-- Player's starting hand for mulligan shown here -->
+        </div>
+        <button id="confirm-mulligan-button">Confirm Mulligan</button>
     </div>
 
     <div id="game-container" class="hidden"> <!-- Initially hidden -->

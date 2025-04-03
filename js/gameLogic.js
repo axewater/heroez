@@ -7,6 +7,7 @@ import { showGameOverScreen, hideGameOverScreen, showGameUI, hideGameUI } from '
 import { cacheDOMElements, getDOMElement, assignElementsToPlayerState } from './dom.js';
 import { dealDamage } from './cardEffects.js'; // Needed for fatigue
 import { runAITurn } from './aiCore.js';
+import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 
 // --- Game Setup ---
 
@@ -80,16 +81,12 @@ export function startGameWithHero(selectedHero, isDebug = false) {
     opponent.maxMana = 0; // Opponent starts with 0 mana crystals available on Player 1's turn 1
     opponent.currentMana = 0;
 
-    logMessage("Game Starting...", 'log-info');
     showGameUI(); // Make the game UI visible now
-    renderGame(); // Initial render before first turn starts
+    renderGame(); // Initial render (will show board/empty hands before mulligan UI pops up)
 
-    // Delay slightly before starting the first turn for effect
-    setTimeout(() => {
-         startTurn('player');
-         console.log("Game Initialized:", getState());
-    }, 500);
-
+    // --- Trigger Mulligan Phase ---
+    showMulliganUI(); // Show the mulligan screen for the player
+    // The first turn will start after the mulligan is confirmed.
 }
 
 export function createCardInstance(cardData, ownerId) {
@@ -285,6 +282,7 @@ export function drawCard(player) {
     // No need to re-render here, startTurn/endTurn calls renderGame
     // But update player info immediately if not part of start/end turn?
     // renderPlayerInfo(player); // Maybe needed if called outside turn sequence
+    renderGame(); // Render immediately after draw during mulligan
 }
 
 
@@ -317,4 +315,40 @@ export function gameOver(message) {
     setMessage(message); // Update message bar immediately with final result
     logMessage(`--- Game Over: ${message} ---`, 'log-turn'); // Log final result
     showGameOverScreen(message); // Show the overlay
+}
+
+// --- Mulligan Logic ---
+
+export function confirmMulligan(selectedIndices) {
+    console.log("Confirming mulligan with indices:", selectedIndices);
+    const player = getPlayer('player');
+
+    // Sort indices descending to avoid issues when removing elements
+    selectedIndices.sort((a, b) => b - a);
+
+    const cardsToReplace = [];
+    selectedIndices.forEach(index => {
+        if (index >= 0 && index < player.hand.length) {
+            cardsToReplace.push(player.hand.splice(index, 1)[0]);
+        }
+    });
+
+    console.log("Cards removed from hand:", cardsToReplace.map(c => c.name));
+
+    // Add replaced cards back to the draw pile
+    player.drawPile.push(...cardsToReplace);
+    console.log("Cards added back to draw pile. New size:", player.drawPile.length);
+
+    // Shuffle the draw pile
+    shuffleDeck(player.drawPile);
+    console.log("Draw pile shuffled.");
+
+    // Draw the same number of new cards
+    for (let i = 0; i < cardsToReplace.length; i++) {
+        drawCard(player);
+    }
+    console.log("Drew replacement cards. New hand size:", player.hand.length);
+
+    hideMulliganUI(); // Hide the mulligan screen
+    startTurn('player'); // Start the actual first turn
 }

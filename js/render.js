@@ -1,14 +1,23 @@
-import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getSelectedCard, getSelectedAttacker, getTargetingMode } from './state.js';
+import { getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getSelectedCard, getSelectedAttacker, getTargetingMode, isMulliganActive, getMulliganSelectedIndices } from './state.js';
 import { MAX_BOARD_SIZE } from './constants.js';
 import { getDOMElement } from './dom.js';
 import { handleHandCardClick, handleBoardCardClick } from './eventHandlers.js';
+import { renderMulliganUI } from './mulligan.js';
 
 // --- Rendering Functions ---
 
 export function renderGame() {
     const state = getState();
     console.log("Rendering game state...");
-    if (state.gameOver) return; // Don't render if game over is showing
+
+    // Check for Mulligan phase first
+    if (isMulliganActive()) {
+        // Mulligan UI rendering is handled by mulligan.js show/update functions
+        // We might just need to ensure player info (like deck count) is updated if needed
+        renderPlayerInfo(getPlayer('player')); // Render player info even during mulligan
+        renderMulliganUI(); // Render the mulligan UI
+        return; // Don't render the main game board/hands during mulligan
+    }
 
     // Render Player Stats
     renderPlayerInfo(getPlayer('player'));
@@ -72,7 +81,7 @@ export function createCardElement(card, location, indexInHand = -1) {
     cardEl.classList.add('card', card.type);
     cardEl.dataset.instanceId = card.instanceId; // Store unique ID
     cardEl.dataset.cardId = card.id; // Store library ID
-    if (location === 'hand') cardEl.dataset.handIndex = indexInHand;
+    if (location === 'hand' || location === 'mulligan') cardEl.dataset.handIndex = indexInHand; // Store index for hand and mulligan
     if (location === 'board') cardEl.dataset.owner = card.owner;
     // Add location to dataset for easier CSS targeting (e.g., debug mode)
     cardEl.dataset.location = location;
@@ -118,7 +127,7 @@ export function createCardElement(card, location, indexInHand = -1) {
     `;
 
     // Add event listeners only for the player's interactive elements
-    if (!state.gameOver) {
+    if (!state.gameOver && !isMulliganActive()) { // Don't add game listeners during mulligan
         if (location === 'hand' && card.owner === 'player') {
             cardEl.addEventListener('click', () => handleHandCardClick(card, indexInHand));
         } else if (location === 'board' && card.owner === 'player') {
@@ -126,6 +135,7 @@ export function createCardElement(card, location, indexInHand = -1) {
         }
         // Add targeting listeners for opponent's board cards (handled by delegation in main.js)
     }
+    // Mulligan listeners are added separately in mulligan.js
 
     // If it's an opponent hand card shown in debug mode, remove the default hidden style class
     if (showOpponentCard) {
