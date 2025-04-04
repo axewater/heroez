@@ -80,10 +80,6 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
             animationPromise = animateCardMovement(playedCard, startRect, endRect, 'play');
         }
 
-        // Add to board state *after* animation setup, before awaiting
-        player.board.push(playedCard);
-
-        // Handle Deploy effects AFTER the creature is on the board state
         if (playedCard.deployActionId) {
             // Effects will trigger after animation visually completes
         }
@@ -148,6 +144,13 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
 
     // --- Wait for Animation and Apply Effects ---
     await animationPromise;
+
+    // Add creature to board state *after* the animation finishes visually landing
+    if (success && playedCard.type === "Creature") {
+        player.board.push(playedCard);
+        updateBoardStats(player.id); // Update stats after adding to board
+        updateBoardStats(getOpponentId(player.id));
+    }
 
     // Apply deploy effects *after* the creature animation finishes visually landing
     if (success && playedCard.type === "Creature" && playedCard.deployActionId) {
