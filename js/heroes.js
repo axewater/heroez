@@ -1,30 +1,30 @@
 export const heroData = [
     {
-        id: "warrior",
-        name: "Garrosh",
-        description: "A fierce warrior focused on charging into battle and overwhelming opponents.",
-        portrait: "img/heroes/warrior.png",
-        uniqueCardIds: ["h_w1", "h_w2"]
+        id: "t1000",
+        name: "T-1000",
+        description: "Relentless mimetic polyalloy assassin. Adapts and overcomes.",
+        portrait: "img/heroes/t1000.png",
+        uniqueCardIds: ["h_t1", "h_t2"]
     },
     {
-        id: "mage",
-        name: "Jaina",
-        description: "A master of arcane arts, wielding powerful spells to control the board.",
-        portrait: "img/heroes/mage.png",
-        uniqueCardIds: ["h_m1", "h_m2"]
+        id: "indy",
+        name: "Indiana Jones",
+        description: "Adventurous archaeologist. Fortune and glory, kid.",
+        portrait: "img/heroes/indy.png",
+        uniqueCardIds: ["h_i1", "h_i2"]
     },
     {
-        id: "rogue",
-        name: "Valeera",
-        description: "A cunning assassin using stealth and combo attacks to gain the upper hand.",
-        portrait: "img/heroes/rogue.png",
-        uniqueCardIds: ["h_r1", "h_r2"]
+        id: "dracula",
+        name: "Count Dracula",
+        description: "Ancient vampire lord. Commands the night and drains life.",
+        portrait: "img/heroes/dracula.png",
+        uniqueCardIds: ["h_d1", "h_d2"]
     },
     {
-        id: "priest",
-        name: "Anduin",
-        description: "A devoted priest using holy magic to heal allies and smite foes.",
-        portrait: "img/heroes/priest.png",
-        uniqueCardIds: ["h_p1", "h_p2"]
+        id: "docbrown",
+        name: "Dr. Emmett Brown",
+        description: "Eccentric inventor. Great Scott! Where we're going, we don't need roads.",
+        portrait: "img/heroes/docbrown.png",
+        uniqueCardIds: ["h_db1", "h_db2"]
     }
 ];

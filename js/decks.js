@@ -4,93 +4,89 @@
 // Using card IDs from cardLibrary in cards.js
 
 export const defaultDecks = {
-    warrior: [
-        // Creatures (Focus on Taunt, Swift, some direct damage)
-        "c1", // Eager Recruit
-        "c2", "c2", // Forest Guardian (Taunt)
-        "c4", "c4", // Nimble Scout (Swift)
-        "c5", "c5", // Stone Defender
-        "c9", "c9", // Shield Bearer (Taunt)
-        "c10", "c10", // River Crocolisk
-        "c11", "c11", // Spider Tank
-        "c12", "c12", // Stormwind Knight (Swift)
-        "r5", "r5", // Knight Protector (Taunt)
-        "r7", // Booty Bay Bodyguard (Taunt)
-        "e1", // Lord of the Arena (Taunt)
-        // Spells (Focus on buffs, removal)
-        "s6", "s6", // Shield Wall (+Health)
-        "s7", "s7", // Lightning Bolt (Creature Damage)
-        "s9", "s9", // Reinforce (+Atk/+Health)
-        "s14", // Blessing of Kings (+Atk/+Health)
+    t1000: [ // Terminator T-1000 Deck (Resilience, Damage, Stealth)
+        // Creatures
+        "mc_c1", // Security Guard
+        "mc_c3", "mc_c3", // Lab Experiment (Self Damage)
+        "mc_c4", "mc_c4", // Motorcycle Courier (Swift)
+        "mc_c5", "mc_c5", // Armored Truck
+        "mc_c7", "mc_c7", // Enraged Test Subject (Frenzy)
+        "mc_c8", "mc_c8", // Hidden Operative (Stealth)
+        "mc_c11", "mc_c11", // Hunter Drone
+        "mc_c14", "mc_c14", // Damaged Cyborg (Frenzy)
+        "mc_r2", // SWAT Captain (Aura)
+        "mc_e2", // T-800 Endoskeleton
+        // Spells
+        "mc_s1", "mc_s1", // Explosion (Damage)
+        "mc_s5", "mc_s5", // Short Circuit (Damage)
+        "mc_s6", "mc_s6", // Reinforcements (Buff)
+        "mc_s9", // Laser Blast (Creature Damage)
         // Hero Specific
-        "h_w1", "h_w1", // Charge! (Temp Attack)
-        "h_w2", "h_w2", // Armored Raider (Swift)
+        "h_t1", "h_t1", // Liquid Metal Form (Temp Attack)
+        "h_t2", "h_t2", // Police Disguise (Stealth)
     ],
-    mage: [
-        // Creatures (Focus on value, some spell synergy placeholders)
-        "c1", "c1", // Eager Recruit
-        "c10", // River Crocolisk
-        "c6", "c6", // Healing Acolyte (Deploy Heal)
-        "c10", "c10", // River Crocolisk
-        "c11", "c11", // Spider Tank
-        "r6", "r6", // Cult Adept (Deploy Draw)
-        "r8", // Priestess of Elune (Deploy Heal)
-        "e2", // War Golem Veteran
-        // Spells (Focus on damage, draw, control)
-        "s1", "s1", // Fireball (Damage)
-        "s4", "s4", // Frost Nova (Freeze Board)
-        "s5", "s5", // Arcane Intellect (Draw)
-        "s8", "s8", // Holy Smite (Damage)
-        "s11", "s11", // Starfire (Damage)
-        "s12", // Pyroblast (Damage)
-        "s13", "s13", // Frost Shock (Freeze Creature)
+    indy: [ // Indiana Jones Deck (Value, Swift, Artifacts/Traps)
+        // Creatures
+        "mc_c1", "mc_c1", // Security Guard
+        "mc_c4", "mc_c4", // Motorcycle Courier (Swift)
+        "mc_c10", "mc_c10", // Giant Spider
+        "mc_c11", "mc_c11", // Hunter Drone
+        "mc_c12", "mc_c12", // Escape Vehicle (Swift)
+        "mc_r3", "mc_r3", // Temple Guard (Taunt)
+        "mc_r4", "mc_r4", // Mad Scientist (Draw)
+        "mc_r7", // Jungle Predator (Stealth)
+        "mc_l2", // Rolling Boulder (Legendary)
+        // Spells
+        "mc_s1", "mc_s1", // Explosion (Damage)
+        "mc_s4", "mc_s4", // Research Notes (Draw)
+        "mc_s6", "mc_s6", // Reinforcements (Buff)
+        "mc_s10", // Top Secret Files (Draw)
+        "mc_s12", // Ancient Curse (Buff)
         // Hero Specific
-        "h_m1", "h_m1", // Arcane Blast (Damage)
-        "h_m2", "h_m2", // Mana Wyrm (Placeholder effect)
+        "h_i1", "h_i1", // Whip Crack (Damage)
+        "h_i2", "h_i2", // Adventurous Assistant (Spell Synergy)
     ],
-    rogue: [
-        // Creatures (Focus on Swift, Stealth, Deploy effects)
-        "c1", "c1", // Eager Recruit
-        "c3", "c3", // Flame Imp (Deploy Damage Self)
-        "c10", // River Crocolisk
-        "c4", "c4", // Nimble Scout (Swift)
-        "c10", "c10", // River Crocolisk
-        "c11", "c11", // Spider Tank
-        "c15", "c15", // Shadow Panther (Stealth)
-        "r6", "r6", // Cult Adept (Deploy Draw)
-        "r9", "r9", // Jungle Stalker (Stealth)
-        "e2", // War Golem Veteran
-        // Spells (Focus on cheap removal, draw, buffs)
-        "s1", "s1", // Fireball (Damage)
-        "s5", // Arcane Intellect (Draw)
-        "s7", "s7", // Lightning Bolt (Creature Damage)
-        "s8", "s8", // Holy Smite (Damage)
-        "s10", // Sprint (Draw)
+    dracula: [ // Count Dracula Deck (Swift, Stealth, Life Drain/Heal)
+        // Creatures
+        "mc_c3", "mc_c3", // Lab Experiment (Self Damage)
+        "mc_c6", "mc_c6", // Field Medic (Heal)
+        "mc_c8", "mc_c8", // Hidden Operative (Stealth)
+        "mc_c9", "mc_c9", // Riot Police (Taunt)
+        "mc_c13", "mc_c13", // Zombie
+        "mc_r5", "mc_r5", // Hired Muscle (Taunt)
+        "mc_r6", "mc_r6", // Renfield (Heal)
+        "mc_r7", "mc_r7", // Jungle Predator (Stealth)
+        "mc_e3", // Ancient Mummy (Taunt)
+        // Spells
+        "mc_s2", "mc_s2", // First Aid (Heal)
+        "mc_s5", "mc_s5", // Short Circuit (Damage)
+        "mc_s7", "mc_s7", // Cryo Grenade (Freeze)
+        "mc_s8", // Flash Freeze (Freeze Board)
+        "mc_s9", // Laser Blast (Creature Damage)
         // Hero Specific
-        "h_r1", "h_r1", // Backstab (Conditional Damage)
-        "h_r2", "h_r2", // Silent Assassin (Stealth)
+        "h_d1", "h_d1", // Blood Drain (Damage)
+        "h_d2", "h_d2", // Vampire Bat (Swift)
     ],
-    priest: [
-        // Creatures (Focus on Health, Taunt, Healing synergy placeholders)
-        "c2", "c2", // Forest Guardian (Taunt)
-        "c5", "c5", // Stone Defender
-        "c10", // River Crocolisk
-        "c6", "c6", // Healing Acolyte (Deploy Heal)
-        "c9", "c9", // Shield Bearer (Taunt)
-        "c11", "c11", // Spider Tank
-        "r5", "r5", // Knight Protector (Taunt)
-        "r8", "r8", // Priestess of Elune (Deploy Heal)
-        "e1", // Lord of the Arena (Taunt)
-        "e3", // Ironbark Protector (Taunt)
-        // Spells (Focus on Healing, Buffs, Removal)
-        "s2", "s2", // Healing Touch (Heal)
-        "s6", "s6", // Shield Wall (+Health)
-        "s8", "s8", // Holy Smite (Damage)
-        "s9", "s9", // Reinforce (+Atk/+Health)
-        "s14", // Blessing of Kings (+Atk/+Health)
+    docbrown: [ // Dr. Emmett Brown Deck (Draw, Buffs, Tech/Control)
+        // Creatures
+        "mc_c2", "mc_c2", // Barricade (Taunt)
+        "mc_c6", "mc_c6", // Field Medic (Heal)
+        "mc_c10", "mc_c10", // Giant Spider
+        "mc_c11", "mc_c11", // Hunter Drone
+        "mc_c12", "mc_c12", // Escape Vehicle (Swift)
+        "mc_r1", // Xenomorph Drone
+        "mc_r4", "mc_r4", // Mad Scientist (Draw)
+        "mc_e1", // Heavy Mech Suit (Taunt)
+        // Spells
+        "mc_s2", "mc_s2", // First Aid (Heal)
+        "mc_s3", "mc_s3", // Adrenaline Rush (Buff)
+        "mc_s4", "mc_s4", // Research Notes (Draw)
+        "mc_s7", "mc_s7", // Cryo Grenade (Freeze)
+        "mc_s10", // Top Secret Files (Draw)
+        "mc_s11", // Plasma Rifle (Damage)
         // Hero Specific
-        "h_p1", "h_p1", // Power Word: Shield (+Health)
-        "h_p2", "h_p2", // Northshire Cleric (Placeholder effect)
+        "h_db1", "h_db1", // Flux Capacitor Charge (Buff)
+        "h_db2", "h_db2", // Lab Assistant (Heal Synergy)
     ]
 };
 
