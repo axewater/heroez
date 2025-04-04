@@ -1,4 +1,6 @@
-/* --- Visual Effects --- */
+/* --- Visual Feedback Effects --- */
+
+/* Damage/Heal Flashes */
 .damage-flash {
     animation: flash-red 0.3s ease-out;
 }
@@ -17,6 +19,7 @@
     100% { background-color: rgba(255, 255, 255, 0.8); } /* Assuming default hero bg */
 }
 
+/* Card Shakes */
 .card-damage-shake {
     animation: shake 0.2s ease-in-out;
 }
@@ -25,6 +28,16 @@
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-3px) rotate(-1deg); }
   75% { transform: translateX(3px) rotate(1deg); }
+}
+
+/* Stat/Effect Flashes */
+@keyframes flash-bright {
+    0% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+.stat-change-flash {
+    animation: flash-bright 0.3s ease-out;
 }
 
 /* --- Card Movement Animations --- */
@@ -69,17 +82,6 @@
     0% { transform: translate(0, 0) scale(1.05); }
     50% { transform: translate(var(--attack-dx, 0px), var(--attack-dy, 0px)) scale(1.15); } /* Move towards target */
     100% { transform: translate(0, 0) scale(1.05); } /* Return to start */
-}
-
-/* --- Stat/Effect Flashes --- */
-
-@keyframes flash-bright {
-    0% { filter: brightness(1.5); }
-    100% { filter: brightness(1); }
-}
-
-.stat-change-flash {
-    animation: flash-bright 0.3s ease-out;
 }
 
 /* --- Card Zoom Container --- */

@@ -1,0 +1,43 @@
+/* --- Card Movement Animations --- */
+
+/* Class applied to the card *during* animation */
+.card-animating {
+    position: fixed; /* Take out of flow, position relative to viewport */
+    z-index: 1500; /* Ensure it's above most other elements */
+    pointer-events: none; /* Prevent interaction during animation */
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth transition */
+    /* Size should match the card */
+    width: 80px;
+    height: 120px;
+    /* Will be populated with card content by JS */
+    background-color: white; /* Fallback */
+    border: 1px solid #333;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Class applied to the card *during* draw animation */
+.card-draw-animating {
+    position: fixed;
+    z-index: 1550; /* Above card-animating, below zoom */
+    pointer-events: none;
+    width: 80px; /* Standard card size */
+    height: 120px;
+    background-color: #555; /* Dark grey for card back */
+    border: 3px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    /* Add a simple pattern or image for card back if desired */
+    background-image: linear-gradient(45deg, #666 25%, transparent 25%), linear-gradient(-45deg, #666 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #666 75%), linear-gradient(-45deg, transparent 75%, #666 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.4, 1.1), opacity 0.5s ease-out; /* Smooth curve, allow overshoot */
+}
+
+/* Specific animation keyframes (optional, could do all with JS transform) */
+/* Example: Attack lunge (could be refined) */
+@keyframes attack-lunge {
+    0% { transform: translate(0, 0) scale(1.05); }
+    50% { transform: translate(var(--attack-dx, 0px), var(--attack-dy, 0px)) scale(1.15); } /* Move towards target */
+    100% { transform: translate(0, 0) scale(1.05); } /* Return to start */
+}

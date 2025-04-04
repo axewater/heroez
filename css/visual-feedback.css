@@ -1,0 +1,41 @@
+/* --- Visual Feedback Effects --- */
+
+/* Damage/Heal Flashes */
+.damage-flash {
+    animation: flash-red 0.3s ease-out;
+}
+
+@keyframes flash-red {
+    0% { background-color: rgba(255, 0, 0, 0.5); }
+    100% { background-color: rgba(255, 255, 255, 0.8); } /* Assuming default hero bg */
+}
+
+.heal-flash {
+     animation: flash-green 0.3s ease-out;
+}
+
+@keyframes flash-green {
+    0% { background-color: rgba(0, 255, 0, 0.5); }
+    100% { background-color: rgba(255, 255, 255, 0.8); } /* Assuming default hero bg */
+}
+
+/* Card Shakes */
+.card-damage-shake {
+    animation: shake 0.2s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px) rotate(-1deg); }
+  75% { transform: translateX(3px) rotate(1deg); }
+}
+
+/* Stat/Effect Flashes */
+@keyframes flash-bright {
+    0% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+.stat-change-flash {
+    animation: flash-bright 0.3s ease-out;
+}

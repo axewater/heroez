@@ -1,0 +1,129 @@
+/* --- Card Base Styles --- */
+.card {
+    width: 80px;
+    height: 120px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease, opacity 0.2s ease, border 0.2s ease, z-index 0s ease 0.2s; /* Delay z-index change */
+    font-size: 11px; /* Smaller base font for cards */
+    z-index: 1; /* Base z-index for cards in hand/board */
+    position: relative; /* For pseudo-elements like cost/attack/health */
+    overflow: hidden; /* Hide overflowing text */
+    flex-shrink: 0; /* Prevent cards from shrinking in flex containers */
+}
+
+/* Card positioning elements */
+.card-cost {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background-color: blue;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1; /* Above background */
+}
+
+.card-name {
+    font-weight: bold;
+    text-align: left; /* Align to the left */
+    font-size: 9px; /* Even smaller name */
+    white-space: normal; /* Allow wrapping */
+    overflow-wrap: break-word; /* Break long words if necessary */
+    word-wrap: break-word; /* Older browsers */
+    position: absolute; /* Position relative to card */
+    z-index: 2; /* Above cost */
+    top: 4px; /* Align vertically with cost */
+    left: 25px; /* Position right of cost */
+    right: 4px; /* Constrain width */
+}
+
+.card-image {
+    position: absolute;
+    top: 25px; /* Position below cost/name area */
+    left: 15px; /* Centered horizontally (80 - 50) / 2 */
+    width: 50px;
+    height: 50px;
+    background-size: cover; /* Scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 3px;
+    z-index: 0; /* Behind text/stats */
+}
+
+.card-effect {
+    font-size: 9px; /* Even smaller font for effect text */
+    flex-grow: 1;
+    margin: 2px 0;
+    overflow: hidden; /* Hide overflowing text */
+    line-height: 1.2;
+    text-align: center;
+    position: absolute; /* Take out of flow */
+    top: 80px; /* Position below image */
+    left: 4px; right: 4px; bottom: 22px; /* Position above stats */
+    background: rgba(255, 255, 255, 0.9); /* Slightly opaque background */
+    border-radius: 3px;
+    padding: 3px;
+    display: block; /* Show by default, hide overflow */
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto; /* Push stats to the bottom */
+    padding: 0 2px; /* Spacing from edges */
+}
+
+.card-attack {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    background-color: orange;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1;
+}
+
+.card-health {
+     position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    z-index: 1;
+}
+
+/* Card Types */
+.card.Creature { background-color: #c8e6c9; } /* Light green */
+.card.Spell { background-color: #bbdefb; } /* Light blue */

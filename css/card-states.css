@@ -1,0 +1,50 @@
+/* --- Card States & Hover Effects --- */
+
+/* Hover Effects */
+.hand .card:hover,
+.board .card:hover {
+    transform: scale(1.05);
+    z-index: 100; /* Bring hovered card above siblings */
+}
+
+/* States */
+.card.playable {
+    box-shadow: 0 0 10px 3px gold; /* Highlight playable cards */
+}
+
+.card.selected {
+     box-shadow: 0 0 15px 5px blue;
+     transform: scale(1.05) translateY(-10px);
+}
+ .card.attacking {
+     box-shadow: 0 0 15px 5px orange;
+     transform: scale(1.05) translateY(-10px);
+ }
+.targetable { /* Apply to cards AND hero-info */
+    outline: 3px dashed green !important; /* Use important to override other outlines/borders */
+    outline-offset: 2px;
+}
+.card.has-attacked {
+     opacity: 0.7;
+}
+ .card.can-attack {
+     outline: 2px solid orange;
+     outline-offset: 1px;
+ }
+.card.is-taunt {
+    border: 3px solid brown;
+}
+.card.is-frozen {
+    box-shadow: inset 0 0 10px 3px rgba(173, 216, 230, 0.8); /* Lightblue inset shadow */
+    filter: saturate(0.5) brightness(0.9); /* Slightly desaturated and darker */
+    border-color: lightblue; /* Add a light blue border */
+}
+.card.has-frenzy {
+    /* Example: Add a subtle red glow or border */
+    border: 2px solid darkred;
+}
+.card.is-stealthed {
+    opacity: 0.65; /* Make slightly transparent */
+    box-shadow: inset 0 0 10px 3px rgba(50, 50, 50, 0.5); /* Add a subtle inner shadow */
+    /* Prevent hover zoom while stealthed? Optional */
+}

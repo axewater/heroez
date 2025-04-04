@@ -1,0 +1,44 @@
+/* --- Opponent Hand Card Styles --- */
+
+/* Default hidden style for opponent hand cards */
+#opponent-hand .card:not(.debug-visible) {
+    background-color: #888;
+    color: transparent;
+    cursor: default;
+}
+
+/* Hide details on hidden opponent hand cards (when NOT in debug mode) */
+#opponent-hand .card:not(.debug-visible) .card-cost,
+#opponent-hand .card:not(.debug-visible) .card-attack,
+#opponent-hand .card:not(.debug-visible) .card-health,
+#opponent-hand .card:not(.debug-visible) .card-name,
+#opponent-hand .card:not(.debug-visible) .card-effect {
+     visibility: hidden;
+}
+
+/* --- Debug Mode Opponent Hand Styling --- */
+
+/* Default style for opponent hand cards IN debug mode (NOT hovered) */
+#opponent-hand .card.debug-visible {
+    background-color: #888; /* Keep the grey back */
+    cursor: pointer; /* Allow hover */
+}
+
+/* Hide most details by default in debug mode, but show name */
+#opponent-hand .card.debug-visible .card-cost,
+#opponent-hand .card.debug-visible .card-attack,
+#opponent-hand .card.debug-visible .card-health,
+#opponent-hand .card.debug-visible .card-effect {
+    visibility: hidden;
+}
+#opponent-hand .card.debug-visible .card-name {
+    visibility: visible; /* Show the name */
+    color: white; /* Make name readable on grey */
+    text-shadow: 1px 1px 1px black; /* Add shadow for contrast */
+}
+
+/* Ensure effect text block is displayed on hover */
+#opponent-hand .card.debug-visible:hover .card-effect {
+    display: block;
+    z-index: 101; /* Ensure text is above the zoomed card's siblings */
+}
