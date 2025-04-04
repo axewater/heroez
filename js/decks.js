@@ -3,6 +3,8 @@
 // Default 30-card decks for each hero class
 // Using card IDs from cardLibrary in cards.js
 
+import { MIN_DECK_SIZE, MAX_DECK_SIZE } from './constants.js';
+
 export const defaultDecks = {
     t1000: [ // Terminator T-1000 Deck (Resilience, Damage, Stealth)
         // Creatures
@@ -90,9 +92,10 @@ export const defaultDecks = {
     ]
 };
 
-// Validate deck sizes (Optional but recommended)
+// Validate default deck sizes against the allowed range
 for (const heroId in defaultDecks) {
-    if (defaultDecks[heroId].length !== 30) {
-        console.warn(`Warning: Default deck for ${heroId} has ${defaultDecks[heroId].length} cards, expected 30.`);
+    const deckSize = defaultDecks[heroId].length;
+    if (deckSize < MIN_DECK_SIZE || deckSize > MAX_DECK_SIZE) {
+        console.warn(`Warning: Default deck for ${heroId} has ${deckSize} cards, expected between ${MIN_DECK_SIZE} and ${MAX_DECK_SIZE}.`);
     }
 }

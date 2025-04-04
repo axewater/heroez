@@ -3,6 +3,7 @@ import { getDOMElement } from './dom.js';
 import { startGameWithHero } from './gameLogic.js';
 import { defaultDecks } from './decks.js';
 import { cardLibrary } from './cards.js'; // Needed to create card instances for the deck
+import { MIN_DECK_SIZE, MAX_DECK_SIZE } from './constants.js'; // Import size constants
 
 let deckSelectionScreenEl = null;
 let deckOptionsContainerEl = null;
@@ -105,9 +106,9 @@ function handleDeckSelection(deckId) {
         }
     }
 
-    if (!selectedDeckList || selectedDeckList.length !== 30) {
-         console.error(`Invalid deck list selected or loaded for deckId: ${deckId}. Expected 30 cards, got ${selectedDeckList?.length}.`);
-         alert("Error: Invalid deck selected. Cannot start game."); // User feedback
+    if (!selectedDeckList || selectedDeckList.length < MIN_DECK_SIZE || selectedDeckList.length > MAX_DECK_SIZE) {
+         console.error(`Invalid deck list selected or loaded for deckId: ${deckId}. Expected ${MIN_DECK_SIZE}-${MAX_DECK_SIZE} cards, got ${selectedDeckList?.length}.`);
+         alert(`Error: Invalid deck selected. Deck must have between ${MIN_DECK_SIZE} and ${MAX_DECK_SIZE} cards. Cannot start game.`); // User feedback
          return;
     }
 
