@@ -65,13 +65,20 @@ function renderPlayerInfo(player) {
 
     // Render Mana Crystals
     player.manaElement.innerHTML = ''; // Clear previous crystals
-    for (let i = 1; i <= player.maxMana; i++) {
+    const maxVisibleCrystals = Math.max(player.maxMana, player.currentMana); // Determine how many slots to potentially show
+
+    for (let i = 1; i <= maxVisibleCrystals; i++) {
         const crystalEl = document.createElement('div');
         crystalEl.classList.add('mana-crystal');
-        console.log(`[Render ${player.id}] Creating crystal ${i}. Current Mana: ${player.currentMana}, Max Mana: ${player.maxMana}`); // Added log
-        if (i <= player.currentMana) {
+
+        if (i > player.maxMana && i <= player.currentMana) {
+            // This is a temporary mana crystal (e.g., from The Coin)
+            crystalEl.classList.add('available', 'temporary-mana');
+        } else if (i <= player.currentMana) {
+            // This is a regular available mana crystal
             crystalEl.classList.add('available');
         }
+        // If i > player.currentMana, it remains an empty crystal (up to maxMana) or isn't drawn (if > maxMana)
         player.manaElement.appendChild(crystalEl);
     }
     // Hide opponent mana if needed (e.g., always show 0/0 unless debug?)

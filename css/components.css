@@ -92,3 +92,11 @@
 .mana-crystal.available {
     background-color: #007bff; /* Filled blue */
 }
+
+/* Style for temporary mana crystals (e.g., from The Coin) */
+.mana-crystal.temporary-mana {
+    background-color: gold; /* Make it gold */
+    border-color: darkorange; /* Darker orange border */
+    /* Optional: Add a subtle glow */
+    box-shadow: 0 0 5px 1px gold;
+}

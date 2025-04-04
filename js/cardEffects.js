@@ -3,8 +3,8 @@ import { getState, getPlayer, getOpponentPlayer, getSelectedCard, getSelectedAtt
 import { flashElement } from './render.js'; // Assuming render.js is correct, ui.js had it before merge? Let's use render.js as per file structure
 import { logMessage, setMessage } from './messaging.js'; // Assuming messaging.js is correct
 import { updateBoardStats } from './boardLogic.js';
-import { drawCard as drawCardLogic, createCardInstance } from './gameLogic.js';
-import { STARTING_HEALTH, MAX_BOARD_SIZE } from './constants.js';
+import { drawCard as drawCardLogic, createCardInstance, generateId } from './gameLogic.js';
+import { STARTING_HEALTH, MAX_BOARD_SIZE, MAX_MANA } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { animateDrawCard } from './animations.js'; // Import draw animation
 
@@ -36,6 +36,7 @@ export const actionImplementations = {
     dealDamageToSelf: (target, params, caster) => dealDamage(caster.heroElement, params.amount),
     restoreHealthToSelf: (target, params, caster) => restoreHealth(caster.heroElement, params.amount),
     summonCreature: (target, params, caster) => summonCreature(caster, params.cardId, params.count),
+    gainTemporaryMana: (target, params, caster) => gainTemporaryMana(caster, params.amount), // Added Coin action
     gainAttack: (target, params, caster) => gainAttack(target, params.amount),
 };
 
@@ -282,6 +283,16 @@ function gainAttack(targetCard, amount) {
     }
 }
 
+function gainTemporaryMana(casterPlayer, amount) {
+    if (!casterPlayer) return;
+    const manaGained = Math.min(amount, MAX_MANA - casterPlayer.currentMana); // Cannot exceed max mana
+    if (manaGained > 0) {
+        casterPlayer.currentMana += manaGained;
+        logMessage(`${casterPlayer.id} gains ${manaGained} temporary Mana Crystal.`, 'log-info');
+        console.log(`${casterPlayer.id} gains ${manaGained} mana. Current: ${casterPlayer.currentMana}/${casterPlayer.maxMana}`);
+    }
+}
+
 function summonCreature(player, cardIdToSummon, count) {
     const cardData = cardLibrary.find(c => c.id === cardIdToSummon);
     if (!cardData) {
@@ -330,9 +341,4 @@ function removeCreatureFromBoard(creature) {
         console.error(`Could not find owner (${creature.owner}) for creature ${creature.name}`);
     }
      // Visual update happens in renderGame called by the action that caused removal
-}
-
-// Helper to generate unique IDs for effects
-function generateId() {
-    return Math.random().toString(36).substring(2, 11);
 }

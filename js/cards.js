@@ -63,6 +63,9 @@ export const cardLibrary = [
     // Definition for the summoned Scarab
     { id: "scarab", name: "Scarab", cost: 0, attack: 1, health: 1, type: "Creature", rarity: "token", mechanics: ["Taunt"], collectible: false },
 
+    // --- Special Cards ---
+    { id: "coin", name: "The Coin", cost: 0, type: "Spell", rarity: "token", target: "self", mechanics: [], actionId: 'gainTemporaryMana', actionParams: { amount: 1 }, effectText: "Gain 1 Mana Crystal this turn only.", collectible: false, visualEffectType: 'physical' },
+
     // --- Hero Specific Cards (Not collectible in general pool) ---
     // Warrior
     { id: "h_w1", name: "Charge!", cost: 1, type: "Spell", rarity: "basic", target: "creature", mechanics: [], actionId: 'temporaryBuff', actionParams: { attack: 2, health: 0 }, effectText: "Give a friendly creature +2 Attack this turn.", collectible: false, heroSpecific: true, visualEffectType: 'physical' },

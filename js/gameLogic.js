@@ -1,6 +1,6 @@
 import { MAX_MANA, STARTING_HEALTH, STARTING_HAND_SIZE, MAX_BOARD_SIZE, MAX_HAND_SIZE, AI_TURN_START_DELAY } from './constants.js';
 import { cardLibrary } from './cards.js';
-import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver, setDebugMode } from './state.js';
+import { resetState, getState, getPlayer, getCurrentPlayer, getOpponentPlayer, getOpponentId, setCurrentPlayerId, incrementTurn, getTurn, setGameOver, setMessageState, isGameOver, setDebugMode, setFirstPlayerId } from './state.js';
 import { renderGame, updatePlayableCards } from './render.js';
 import { setMessage, logMessage } from './messaging.js';
 import { showGameOverScreen, hideGameOverScreen, showGameUI, hideGameUI } from './uiState.js';
@@ -9,6 +9,9 @@ import { dealDamage } from './cardEffects.js'; // Needed for fatigue
 import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
+
+const STARTING_DRAW_DELAY = 1500; // Delay after showing who goes first before mulligan
+const STARTING_DRAW_VISUAL_PAUSE = 1000; // Pause to see the result
 
 // --- Game Setup ---
 
@@ -55,27 +58,45 @@ export function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = fal
     // Assign DOM elements after state is initialized and players exist
     assignElementsToPlayerState(getPlayer);
 
-    // Draw piles are already shuffled and passed to resetState
-    console.log("Player Draw Pile Size:", player.drawPile.length);
+    // --- Determine Starting Player ---
+    setMessage("Determining who goes first..."); // Initial message
+    showGameUI(); // Make the game UI visible now (shows message)
+    renderGame(); // Render initial empty state with message
 
-    // Draw initial hands
-    for (let i = 0; i < STARTING_HAND_SIZE; i++) {
-        drawCard(player);
-        drawCard(opponent);
-    }
+    // Short delay for visual effect (e.g., coin flip animation placeholder)
+    setTimeout(() => {
+        const firstPlayerRoll = Math.random();
+        const firstPlayerId = firstPlayerRoll < 0.5 ? 'player' : 'opponent';
+        setFirstPlayerId(firstPlayerId); // Store who goes first in state
+        const secondPlayerId = getOpponentId(firstPlayerId);
 
-    // Start the first turn (Player 1)
-    player.maxMana = 1;
-    player.currentMana = 1;
-    opponent.maxMana = 0; // Opponent starts with 0 mana crystals available on Player 1's turn 1
-    opponent.currentMana = 0;
+        console.log(`[GameLogic] ${firstPlayerId} goes first.`);
+        logMessage(`${firstPlayerId} will go first!`, 'log-info');
+        setMessage(`${firstPlayerId} goes first!`); // Update message
 
-    showGameUI(); // Make the game UI visible now
-    renderGame(); // Initial render (will show board/empty hands before mulligan UI pops up)
+        // Set initial mana based on who goes first
+        const player1 = getPlayer(firstPlayerId);
+        const player2 = getPlayer(secondPlayerId);
+        player1.maxMana = 1;
+        player1.currentMana = 1;
+        player2.maxMana = 0;
+        player2.currentMana = 0;
 
-    // --- Trigger Mulligan Phase ---
-    showMulliganUI(); // Show the mulligan screen for the player
-    // The first turn will start after the mulligan is confirmed.
+        renderGame(); // Re-render to show initial mana (optional)
+
+        // Pause so player can see the result
+        setTimeout(() => {
+            // Draw initial hands
+            console.log("[GameLogic] Drawing initial hands...");
+            for (let i = 0; i < STARTING_HAND_SIZE; i++) {
+                drawCard(player);
+                drawCard(opponent);
+            }
+            renderGame(); // Render hands before mulligan UI
+            // --- Trigger Mulligan Phase ---
+            showMulliganUI(); // Show the mulligan screen for the player
+        }, STARTING_DRAW_VISUAL_PAUSE); // Pause to see who goes first
+    }, 500); // Short delay before showing result
 }
 
 /**
@@ -157,6 +178,7 @@ export function startTurn(playerId) {
     const player = getCurrentPlayer();
     const opponent = getOpponentPlayer();
     console.log(`--- Turn ${getTurn()}: ${playerId} ---`);
+    setMessage(`${playerId}'s turn.`); // Update prompt bar
     logMessage(`--- Turn ${getTurn()} (${playerId}) ---`, 'log-turn');
 
     // Increase Max Mana (up to MAX_MANA)
@@ -205,7 +227,6 @@ export function startTurn(playerId) {
     drawCard(player);
 
     // Update UI
-    // setMessageState(`${playerId}'s turn.`); // State message is less useful now
     setMessage(`${playerId}'s turn.`); // Update prompt bar
     renderGame(); // Render after state updates but before AI turn
 
@@ -333,6 +354,7 @@ export function gameOver(message) {
 
 export function confirmMulligan(selectedIndices) {
     console.log("Confirming mulligan with indices:", selectedIndices);
+    const state = getState();
     const player = getPlayer('player');
 
     // Sort indices descending to avoid issues when removing elements
@@ -361,6 +383,24 @@ export function confirmMulligan(selectedIndices) {
     }
     console.log("Drew replacement cards. New hand size:", player.hand.length);
 
+    // --- Add The Coin to the second player's hand ---
+    const secondPlayerId = getOpponentId(state.firstPlayerId);
+    const secondPlayer = getPlayer(secondPlayerId);
+    const coinCardData = cardLibrary.find(c => c.id === 'coin');
+
+    if (coinCardData && secondPlayer) {
+        if (secondPlayer.hand.length < MAX_HAND_SIZE) {
+            const coinInstance = createCardInstance(coinCardData, secondPlayerId);
+            secondPlayer.hand.push(coinInstance);
+            logMessage(`${secondPlayerId} receives The Coin.`, 'log-info');
+            console.log(`Added The Coin to ${secondPlayerId}'s hand.`);
+        } else {
+            logMessage(`${secondPlayerId}'s hand is full, cannot receive The Coin!`, 'log-error');
+            console.log(`${secondPlayerId}'s hand full, Coin burned.`);
+        }
+    }
+
     hideMulliganUI(); // Hide the mulligan screen
-    startTurn('player'); // Start the actual first turn
+    renderGame(); // Render the final hands (including the coin)
+    startTurn(state.firstPlayerId); // Start the actual first turn with the determined player
 }

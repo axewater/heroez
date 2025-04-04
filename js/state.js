@@ -44,6 +44,7 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 boardElement: null,
             }
         },
+        firstPlayerId: null, // Added to store who goes first
         isDebugMode: false, // Added debug mode flag
         currentPlayerId: 'player',
         turn: 0,
@@ -80,6 +81,10 @@ export function getOpponentId(playerId) {
 
 export function setCurrentPlayerId(playerId) {
     state.currentPlayerId = playerId;
+}
+
+export function setFirstPlayerId(playerId) {
+    state.firstPlayerId = playerId;
 }
 
 export function incrementTurn() {
