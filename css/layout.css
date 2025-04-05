@@ -10,6 +10,7 @@
     background-size: cover; /* Cover the entire area */
     background-repeat: no-repeat; /* Do not tile the image */
     background-position: center center; /* Center the image */
+    perspective: 1000px; /* Add perspective for 3D animations like coin spin */
 }
 
 /* --- Player Areas --- */

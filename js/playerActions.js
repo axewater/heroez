@@ -8,7 +8,7 @@ import { MAX_BOARD_SIZE } from './constants.js';
 import { cardLibrary } from './cards.js';
 import { getTargetFromElement } from './actionUtils.js';
 import { triggerCardEffect } from './cardEffects.js';
-import { animateCardMovement, animateSpellEffect, animateDrawCard } from './animations.js';
+import { animateCardMovement, animateSpellEffect, animateDrawCard, animateCoinEffect } from './animations.js';
 import { getDOMElement } from './dom.js';
 
 export async function playCard(player, card, cardIndexInHand, targetElement = null) {
@@ -104,11 +104,17 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
             if (target !== "invalid") {
                 console.log(`Executing spell action ${playedCard.actionId} on target:`, target);
 
-                // --- Trigger Spell Visual Effect ---
-                if (playedCard.visualEffectType) {
+                // --- Trigger Spell Visual Effect (or custom Coin effect) ---
+                if (playedCard.id === 'coin') {
+                    // Use custom coin animation
+                    spellAnimationPromise = animateCoinEffect(player);
+                } else if (playedCard.visualEffectType) {
+                    // Use generic spell effect animation
                     const casterHeroElement = getDOMElement(`${player.id}HeroEl`);
                     // Pass the actual target element (card or hero) or null if target is board/self
                     spellAnimationPromise = animateSpellEffect(casterHeroElement, targetElement, playedCard.visualEffectType);
+                } else {
+                    // No visual effect defined for this spell
                 }
                 // Trigger the effect logic (which might be async itself, e.g., drawCards)
                 // Ensure triggerCardEffect returns a promise if the action is async

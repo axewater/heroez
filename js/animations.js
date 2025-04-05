@@ -200,3 +200,46 @@ export function animateSpellEffect(casterElement, targetElement, effectType, dur
         }, duration); // Remove after the CSS animation duration
     });
 }
+
+/**
+ * Creates and animates a spinning coin effect over the player's board area.
+ *
+ * @param {object} player - The player object who played the coin.
+ * @param {number} [duration=1000] - Duration of the effect in ms (should match CSS animation).
+ * @returns {Promise<void>} A promise that resolves when the effect finishes.
+ */
+export function animateCoinEffect(player, duration = 1000) {
+    return new Promise(resolve => {
+        const gameContainer = getDOMElement('gameContainer');
+        const boardEl = player.boardElement; // Get the player's board element
+
+        if (!gameContainer || !boardEl) {
+            console.warn("Coin effect prerequisites not met (container or board missing).");
+            resolve();
+            return;
+        }
+
+        // Determine position: Center of the player's board
+        const rect = boardEl.getBoundingClientRect();
+        const effectX = rect.left + rect.width / 2;
+        const effectY = rect.top + rect.height / 2;
+
+        // Create effect element
+        const effectEl = document.createElement('div');
+        effectEl.classList.add('coin-spin-effect'); // Use the specific class for coin animation
+
+        // Position the effect (centered on the calculated point)
+        effectEl.style.left = `${effectX}px`;
+        effectEl.style.top = `${effectY}px`;
+
+        // Append and automatically remove after animation
+        gameContainer.appendChild(effectEl);
+
+        setTimeout(() => {
+            if (effectEl.parentNode) {
+                effectEl.remove();
+            }
+            resolve();
+        }, duration); // Remove after the CSS animation duration
+    });
+}
