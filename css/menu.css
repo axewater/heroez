@@ -32,7 +32,9 @@
     flex-direction: column; /* Stack items vertically */
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
-    background: linear-gradient(to bottom right, #2c3e50, #34495e); /* Match intro screen gradient */
+    background-image: url('../img/other/menu.png'); /* New background image */
+    background-size: cover; /* Cover the entire area */
+    background-repeat: no-repeat; /* Prevent tiling */
     z-index: 2000; /* Ensure it's above game, below intro if needed */
     opacity: 0; /* Start hidden */
     transition: opacity 0.5s ease-out;
