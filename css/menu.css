@@ -1,15 +1,18 @@
 /* /css/menu.css */
 #intro-screen {
-
+    background-image: url('../img/other/startscreen.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain; /* Scale image to fit within container, maintain aspect ratio */
+    z-index: 2000; /* Ensure it's above game container */
+    cursor: pointer; /* Keep the pointer cursor */
+    transition: opacity 0.5s ease-out;
+    /* Ensure the div itself takes full viewport height/width */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('../img/other/startscreen.png') no-repeat center center;
-    background-size: cover; /* Ensure the image covers the entire screen */
-    z-index: 2000; /* Ensure it's above game container */
-    cursor: pointer; /* Keep the pointer cursor */
-    transition: opacity 0.5s ease-out;
 }
 
 #intro-screen h1 {

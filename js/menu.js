@@ -29,7 +29,7 @@ export function initMenu() {
     settingsButtonEl.addEventListener('click', handleSettingsClick);
     deckEditorButtonEl?.addEventListener('click', handleDeckEditorClick);
 
-    showOpeningMenu();
+    // Do not show the menu initially; wait for intro interaction or return from other screens.
 }
 
 function handleStartClick() {
