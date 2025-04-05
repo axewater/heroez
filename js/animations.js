@@ -243,3 +243,40 @@ export function animateCoinEffect(player, duration = 1000) {
         }, duration); // Remove after the CSS animation duration
     });
 }
+
+/**
+ * Creates and animates a spinning card effect in the center of the screen,
+ * typically used during the "determining who goes first" phase.
+ *
+ * @param {number} [duration=1500] - Duration of the effect in ms (should match CSS animation).
+ * @returns {Promise<void>} A promise that resolves when the effect finishes.
+ */
+export function animateStartGameCoinFlip(duration = 1500) {
+    return new Promise(resolve => {
+        const gameArea = getDOMElement('gameMainArea'); // Target the main game area
+        if (!gameArea) {
+            console.warn("Start game coin flip: Game main area not found.");
+            resolve();
+            return;
+        }
+
+        // Create effect element
+        const effectEl = document.createElement('div');
+        effectEl.classList.add('start-game-coin-spin-effect'); // Use the specific class for the start game animation
+
+        // Position the effect in the center of the game area
+        const rect = gameArea.getBoundingClientRect(); // Get dimensions relative to viewport
+        effectEl.style.left = `${rect.left + rect.width / 2}px`;
+        effectEl.style.top = `${rect.top + rect.height / 2}px`;
+
+        // Append and automatically remove after animation
+        document.body.appendChild(effectEl); // Append to body to ensure viewport positioning works correctly
+
+        setTimeout(() => {
+            if (effectEl.parentNode) {
+                effectEl.remove();
+            }
+            resolve();
+        }, duration); // Remove after the CSS animation duration
+    });
+}

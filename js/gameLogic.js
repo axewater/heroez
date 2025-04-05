@@ -9,9 +9,11 @@ import { dealDamage } from './cardEffects.js'; // Needed for fatigue
 import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
+import { animateStartGameCoinFlip } from './animations.js'; // Import the new coin flip animation function
 
 const AVAILABLE_BACKGROUNDS = ['bg01.png', 'bg02.png', 'bg03.png', 'bg04.png'];
 const STARTING_DRAW_DELAY = 1500; // Delay after showing who goes first before mulligan
+const COIN_FLIP_DURATION = 1500; // Duration of the coin flip animation in ms
 const STARTING_DRAW_VISUAL_PAUSE = 1000; // Pause to see the result
 
 // --- Game Setup ---
@@ -26,7 +28,7 @@ export function initGame() {
     // The actual game start logic is now in startGameWithHero
 }
 
-export function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = false) {
+export async function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = false) {
     console.log("[GameLogic] startGameWithHero called for:", selectedHero?.name);
     console.log(`Starting game with hero: ${selectedHero.name}, Deck size: ${playerDeckCardIds.length}`);
     console.log(`[GameLogic] Debug mode: ${isDebug}`);
@@ -73,40 +75,45 @@ export function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = fal
     showGameUI(); // Make the game UI visible now (shows message)
     renderGame(); // Render initial empty state with message
 
-    // Short delay for visual effect (e.g., coin flip animation placeholder)
+    // --- Coin Flip Animation ---
+    try {
+        await animateStartGameCoinFlip(COIN_FLIP_DURATION);
+    } catch (error) {
+        console.error("Coin flip animation failed:", error);
+    }
+    // --- End Coin Flip Animation ---
+
+    const firstPlayerRoll = Math.random();
+    const firstPlayerId = firstPlayerRoll < 0.5 ? 'player' : 'opponent';
+    setFirstPlayerId(firstPlayerId); // Store who goes first in state
+    const secondPlayerId = getOpponentId(firstPlayerId);
+
+    console.log(`[GameLogic] ${firstPlayerId} goes first.`);
+    logMessage(`${firstPlayerId} will go first!`, 'log-info');
+    setMessage(`${firstPlayerId} goes first!`); // Update message
+
+    // Set initial mana based on who goes first
+    const player1 = getPlayer(firstPlayerId);
+    const player2 = getPlayer(secondPlayerId);
+    player1.maxMana = 1;
+    player1.currentMana = 1;
+    player2.maxMana = 0;
+    player2.currentMana = 0;
+
+    renderGame(); // Re-render to show initial mana (optional)
+
+    // Pause so player can see the result
     setTimeout(() => {
-        const firstPlayerRoll = Math.random();
-        const firstPlayerId = firstPlayerRoll < 0.5 ? 'player' : 'opponent';
-        setFirstPlayerId(firstPlayerId); // Store who goes first in state
-        const secondPlayerId = getOpponentId(firstPlayerId);
-
-        console.log(`[GameLogic] ${firstPlayerId} goes first.`);
-        logMessage(`${firstPlayerId} will go first!`, 'log-info');
-        setMessage(`${firstPlayerId} goes first!`); // Update message
-
-        // Set initial mana based on who goes first
-        const player1 = getPlayer(firstPlayerId);
-        const player2 = getPlayer(secondPlayerId);
-        player1.maxMana = 1;
-        player1.currentMana = 1;
-        player2.maxMana = 0;
-        player2.currentMana = 0;
-
-        renderGame(); // Re-render to show initial mana (optional)
-
-        // Pause so player can see the result
-        setTimeout(() => {
-            // Draw initial hands
-            console.log("[GameLogic] Drawing initial hands...");
-            for (let i = 0; i < STARTING_HAND_SIZE; i++) {
-                drawCard(player);
-                drawCard(opponent);
-            }
-            renderGame(); // Render hands before mulligan UI
-            // --- Trigger Mulligan Phase ---
-            showMulliganUI(); // Show the mulligan screen for the player
-        }, STARTING_DRAW_VISUAL_PAUSE); // Pause to see who goes first
-    }, 500); // Short delay before showing result
+        // Draw initial hands
+        console.log("[GameLogic] Drawing initial hands...");
+        for (let i = 0; i < STARTING_HAND_SIZE; i++) {
+            drawCard(player);
+            drawCard(opponent);
+        }
+        renderGame(); // Render hands before mulligan UI
+        // --- Trigger Mulligan Phase ---
+        showMulliganUI(); // Show the mulligan screen for the player
+    }, STARTING_DRAW_VISUAL_PAUSE); // Pause to see who goes first
 }
 
 /**

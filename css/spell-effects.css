@@ -87,7 +87,37 @@
     animation: spell-fade-in-out 0.4s ease-out forwards;
 }
 
-/* --- Coin Spin Effect --- */
+/* --- Start Game Coin Flip Effect --- */
+@keyframes start-game-coin-spin {
+    from {
+        transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+    }
+    to {
+        transform: translate(-50%, -50%) rotateY(1440deg) scale(1); /* Spin 4 times */
+    }
+}
+
+.start-game-coin-spin-effect {
+    position: fixed; /* Position relative to viewport initially */
+    z-index: 2000; /* High z-index to be on top */
+    pointer-events: none;
+    width: 100px; /* Slightly larger than a card */
+    height: 140px;
+    transform: translate(-50%, -50%); /* Center on target point */
+    /* Use card back styling from card-animations.css */
+    background-color: #555;
+    border: 3px solid #ccc;
+    border-radius: 8px; /* Slightly larger radius */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    background-image: linear-gradient(45deg, #666 25%, transparent 25%), linear-gradient(-45deg, #666 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #666 75%), linear-gradient(-45deg, transparent 75%, #666 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    /* Apply the specific spinning animation */
+    animation: start-game-coin-spin 1.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; /* 1.5 second duration */
+}
+
+/* --- Mana Coin Effect (Used by The Coin card) --- */
+/* Reusing the old coin-spin keyframes and styling for the mana coin */
 @keyframes coin-spin {
     from {
         transform: translate(-50%, -50%) rotateY(0deg);
@@ -104,7 +134,6 @@
     width: 80px; /* Size similar to a card */
     height: 80px;
     transform: translate(-50%, -50%); /* Center on target point */
-    /* Changed background from gold/yellow to blue */
     background: radial-gradient(circle, dodgerblue 40%, mediumblue 80%);
     border: 2px solid mediumblue;
     border-radius: 50px; /* Make it card-shaped or 50% for round coin */
