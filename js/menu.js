@@ -2,16 +2,18 @@ import { showHeroSelection } from './heroSelection.js';
 import { getDOMElement } from './dom.js';
 import { setDebugMode } from './state.js';
 
+import { stopBackgroundMusic } from './audioUtils.js';
+
 let openingMenuEl = null;
 let startButtonEl = null;
 let startDebugButtonEl = null;
 let settingsButtonEl = null;
-let deckEditorButtonEl = null; // Added Deck Editor button element
+let deckEditorButtonEl = null;
 
 export function initMenu() {
     console.log("Initializing Opening Menu...");
     openingMenuEl = getDOMElement('openingMenuEl');
-    deckEditorButtonEl = getDOMElement('deckEditorButtonEl'); // Get Deck Editor button
+    deckEditorButtonEl = getDOMElement('deckEditorButtonEl');
     startButtonEl = getDOMElement('startGameButtonEl');
     startDebugButtonEl = getDOMElement('startDebugButtonEl');
     settingsButtonEl = getDOMElement('settingsButtonEl');
@@ -25,25 +27,28 @@ export function initMenu() {
     startButtonEl.addEventListener('click', handleStartClick);
     startDebugButtonEl.addEventListener('click', handleStartDebugClick);
     settingsButtonEl.addEventListener('click', handleSettingsClick);
-    deckEditorButtonEl?.addEventListener('click', handleDeckEditorClick); // Add listener
+    deckEditorButtonEl?.addEventListener('click', handleDeckEditorClick);
 
     showOpeningMenu();
 }
 
 function handleStartClick() {
     console.log("Start button clicked");
+    stopBackgroundMusic(); // Stop music before starting game
     hideOpeningMenu();
     showHeroSelection(false); // Transition to hero selection (not in debug mode)
 }
 
 function handleStartDebugClick() {
     console.log("Start Debug button clicked");
+    stopBackgroundMusic(); // Stop music before starting game
     hideOpeningMenu();
     showHeroSelection(true); // Transition to hero selection (in debug mode)
 }
 
 function handleSettingsClick() {
     console.log("Settings button clicked (Placeholder)");
+    // Keep music playing for settings? Or stop? Decide later.
     alert("Settings screen not implemented yet!");
     // Later: hideOpeningMenu(); showSettingsScreen();
 }
@@ -51,6 +56,7 @@ function handleSettingsClick() {
 function handleDeckEditorClick() {
     console.log("Deck Editor button clicked");
     hideOpeningMenu();
+    stopBackgroundMusic(); // Stop music when going to deck editor
     // Assuming deckEditor.js exports showDeckEditor()
     import('./deckEditor.js').then(module => module.showDeckEditor());
 }

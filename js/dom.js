@@ -29,9 +29,9 @@ export function cacheDOMElements() {
         messageLogContentEl: document.getElementById('message-log-content'),
         messageLogPanelEl: document.getElementById('message-log-panel'),
 
-        gameMainArea: document.getElementById('game-main-area'), // Added game main area
+        gameMainArea: document.getElementById('game-main-area'),
         gameContainer: document.getElementById('game-container'),
-        cardZoomContainerEl: document.getElementById('card-zoom-container'), // Zoom container
+        cardZoomContainerEl: document.getElementById('card-zoom-container'),
 
         // Mulligan UI Elements
         mulliganOverlayEl: document.getElementById('mulligan-overlay'),
@@ -49,7 +49,7 @@ export function cacheDOMElements() {
         startGameButtonEl: document.getElementById('start-game-button'),
         startDebugButtonEl: document.getElementById('start-debug-button'),
         settingsButtonEl: document.getElementById('settings-button'),
-        deckEditorButtonEl: document.getElementById('deck-editor-button'), // Added Deck Editor button element
+        deckEditorButtonEl: document.getElementById('deck-editor-button'),
 
         // Hero Selection Elements
         heroSelectionScreenEl: document.getElementById('hero-selection-screen'),
@@ -58,6 +58,9 @@ export function cacheDOMElements() {
         // Deck Editor Elements
         deckEditorScreenEl: document.getElementById('deck-editor-screen'),
         deckEditorHeroSelectEl: document.getElementById('deck-editor-hero-select'),
+
+        // Intro Screen Element
+        introScreen: document.getElementById('intro-screen'),
         deckEditorDeckSelectEl: document.getElementById('deck-editor-deck-select'),
         deckEditorDeckNameEl: document.getElementById('deck-editor-deck-name'),
         deckEditorSaveButtonEl: document.getElementById('deck-editor-save-button'),

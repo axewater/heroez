@@ -11,6 +11,7 @@ import { initCardZoomListeners } from './cardZoom.js';
 import { initMulligan } from './mulligan.js';
 import { initDeckSelection, showDeckSelection } from './deckSelection.js';
 import { initDeckEditor } from './deckEditor.js';
+import { playMenuMusic } from './audioUtils.js'; // Import menu music function
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -102,6 +103,37 @@ function setupEventListeners() {
     console.log("Event listeners set up.");
 }
 
+// --- Intro Screen Logic ---
+function handleIntroInteraction() {
+    console.log("handleIntroInteraction triggered."); // Log function start
+    const introScreen = getDOMElement('introScreen');
+    const openingMenu = getDOMElement('openingMenuEl');
+
+    console.log("Intro Screen Element:", introScreen); // Log found intro screen element
+    console.log("Opening Menu Element:", openingMenu); // Log found opening menu element
+
+    if (introScreen && openingMenu) {
+        console.log("Intro interaction detected.");
+        // 1. Start Menu Music
+        playMenuMusic();
+
+        // 2. Hide Intro Screen
+        introScreen.style.opacity = '0';
+        setTimeout(() => {
+            introScreen.style.display = 'none';
+        }, 500); // Match potential CSS transition
+
+        // 3. Show Opening Menu
+        openingMenu.classList.remove('hidden'); // Remove hidden class
+        openingMenu.style.display = 'flex'; // Ensure display is flex
+        requestAnimationFrame(() => openingMenu.style.opacity = '1'); // Trigger fade-in
+
+        // 4. Remove listeners to prevent multiple triggers
+        document.removeEventListener('keydown', handleIntroInteraction);
+        introScreen.removeEventListener('click', handleIntroInteraction);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded.");
 
@@ -116,4 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeckEditor(); // Initialize deck editor elements
     initCardZoomListeners(); // Initialize card zoom hover listeners (can be done once)
     setupEventListeners(); // Setup general game event listeners
+
+    // Setup Intro Screen Listeners
+    const introScreen = getDOMElement('introScreen'); // <-- Uses cached element
+    if (introScreen) {
+        document.addEventListener('keydown', handleIntroInteraction, { once: true }); // <-- Listener added after cache
+        introScreen.addEventListener('click', handleIntroInteraction, { once: true }); // <-- Listener added after cache
+    }
 });

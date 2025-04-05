@@ -1,6 +1,6 @@
 /* /css/menu.css */
-#opening-menu {
-    position: absolute;
+#intro-screen {
+    position: fixed; /* Changed to fixed to work with intro screen */
     top: 0;
     left: 0;
     width: 100%;
@@ -17,7 +17,7 @@
     transition: opacity 0.5s ease-out;
 }
 
-#opening-menu h1 {
+#intro-screen h1 {
     font-size: 4em;
     margin-bottom: 30px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
