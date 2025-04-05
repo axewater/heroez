@@ -29,6 +29,7 @@ export function cacheDOMElements() {
         messageLogContentEl: document.getElementById('message-log-content'),
         messageLogPanelEl: document.getElementById('message-log-panel'),
 
+        gameMainArea: document.getElementById('game-main-area'), // Added game main area
         gameContainer: document.getElementById('game-container'),
         cardZoomContainerEl: document.getElementById('card-zoom-container'), // Zoom container
 

@@ -10,6 +10,7 @@ import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
 
+const AVAILABLE_BACKGROUNDS = ['bg01.png', 'bg02.png', 'bg03.png', 'bg04.png'];
 const STARTING_DRAW_DELAY = 1500; // Delay after showing who goes first before mulligan
 const STARTING_DRAW_VISUAL_PAUSE = 1000; // Pause to see the result
 
@@ -32,6 +33,15 @@ export function startGameWithHero(selectedHero, playerDeckCardIds, isDebug = fal
 
     cacheDOMElements(); // Ensure elements are cached
     hideGameOverScreen(); // Ensure overlay is hidden
+
+    // --- Set Random Background ---
+    const gameMainAreaEl = getDOMElement('gameMainArea');
+    if (gameMainAreaEl) {
+        const randomBackground = AVAILABLE_BACKGROUNDS[Math.floor(Math.random() * AVAILABLE_BACKGROUNDS.length)];
+        gameMainAreaEl.style.backgroundImage = `url('img/areas/${randomBackground}')`;
+        console.log(`[GameLogic] Set background to: ${randomBackground}`);
+    }
+    // --- End Set Random Background ---
 
     // --- Create Player Draw Pile Instances ---
     const playerDrawPileInstances = playerDeckCardIds.map(cardId => createCardInstanceById(cardId, 'player')).filter(Boolean);
