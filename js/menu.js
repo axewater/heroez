@@ -2,7 +2,7 @@ import { showHeroSelection } from './heroSelection.js';
 import { getDOMElement } from './dom.js';
 import { setDebugMode } from './state.js';
 
-import { stopBackgroundMusic } from './audioUtils.js';
+import { stopBackgroundMusic, playMenuMusic } from './audioUtils.js';
 
 let openingMenuEl = null;
 let startButtonEl = null;
@@ -47,8 +47,9 @@ function handleStartDebugClick() {
 
 function handleSettingsClick() {
     console.log("Settings button clicked (Placeholder)");
-    // Keep music playing for settings? Or stop? Decide later.
-    alert("Settings screen not implemented yet!");
+    hideOpeningMenu();
+    // Assuming settings.js exports showSettingsScreen()
+    import('./settings.js').then(module => module.showSettingsScreen());
     // Later: hideOpeningMenu(); showSettingsScreen();
 }
 
@@ -64,6 +65,7 @@ export function showOpeningMenu() {
         openingMenuEl.style.display = 'flex';
         openingMenuEl.style.opacity = '1';
         openingMenuEl.classList.remove('hidden');
+        playMenuMusic(); // Ensure menu music plays when menu is shown
     }
 }
 

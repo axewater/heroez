@@ -74,6 +74,14 @@ export function cacheDOMElements() {
         heroAnnouncementOverlayEl: document.getElementById('hero-announcement-overlay'),
         announcementPlayerPortraitEl: document.getElementById('announcement-player-portrait'),
         announcementOpponentPortraitEl: document.getElementById('announcement-opponent-portrait'),
+
+        // Settings Elements
+        settingsScreenEl: document.getElementById('settings-screen'),
+        musicToggleEl: document.getElementById('music-toggle'),
+        musicVolumeEl: document.getElementById('music-volume'),
+        sfxToggleEl: document.getElementById('sfx-toggle'),
+        sfxVolumeEl: document.getElementById('sfx-volume'),
+        settingsBackButtonEl: document.getElementById('settings-back-button'),
     };
     console.log("DOM elements cached.");
 }

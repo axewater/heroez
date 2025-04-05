@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/deckSelection.css">
     <link rel="stylesheet" href="css/deckEditor.css">
     <link rel="stylesheet" href="css/announcement.css">
+    <link rel="stylesheet" href="css/settings.css">
 </head>
 <body>
 
@@ -38,6 +39,24 @@
         <button id="start-debug-button" class="menu-button">DEBUG</button>
         <button id="deck-editor-button" class="menu-button">DECK EDITOR</button>
         <button id="settings-button" class="menu-button">SETTINGS</button>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="hidden">
+        <h2>Settings</h2>
+        <div class="settings-content">
+            <div class="setting-item">
+                <label for="music-toggle">Music:</label>
+                <input type="checkbox" id="music-toggle" class="toggle-switch">
+                <input type="range" id="music-volume" min="0" max="1" step="0.01" class="volume-slider">
+            </div>
+            <div class="setting-item">
+                <label for="sfx-toggle">Sound Effects:</label>
+                <input type="checkbox" id="sfx-toggle" class="toggle-switch">
+                <input type="range" id="sfx-volume" min="0" max="1" step="0.01" class="volume-slider">
+            </div>
+        </div>
+        <button id="settings-back-button" class="menu-button">Back</button>
     </div>
 
     <!-- Hero Selection Screen -->

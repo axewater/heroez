@@ -1,0 +1,127 @@
+/* /css/settings.css */
+
+#settings-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    background: linear-gradient(to bottom right, #4a6b96, #7890b3); /* Slightly darker blue gradient */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 2500; /* Above menu, below intro/announcement */
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+#settings-screen.hidden {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.95); /* Slightly move up and shrink when hiding */
+    pointer-events: none;
+}
+
+#settings-screen h2 {
+    font-size: 2.5em;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.settings-content {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item label {
+    font-size: 1.2em;
+    flex-basis: 30%; /* Allocate space for label */
+    text-align: left;
+}
+
+/* Basic Toggle Switch Styling */
+.toggle-switch {
+    appearance: none;
+    width: 50px;
+    height: 26px;
+    background-color: #ccc;
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 15px; /* Spacing around toggle */
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch:checked {
+    background-color: #4CAF50; /* Green when checked */
+}
+
+.toggle-switch:checked::before {
+    transform: translateX(24px); /* Move the handle */
+}
+
+/* Volume Slider Styling */
+.volume-slider {
+    flex-grow: 1; /* Take remaining space */
+    cursor: pointer;
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    appearance: none; /* Override default look */
+    outline: none;
+}
+
+/* Webkit (Chrome, Safari) */
+.volume-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Firefox */
+.volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none; /* Remove default border */
+}
+
+/* Back button styling (reuse menu button style if desired) */
+#settings-back-button {
+    /* Inherits .menu-button styles from menu.css */
+    margin-top: 10px;
+}

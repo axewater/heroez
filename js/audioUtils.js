@@ -1,9 +1,12 @@
+import { getState } from './state.js'; // Import getState to access settings
+
 const HERO_AUDIO_PATH = 'audio/heroes/';
 const MUSIC_AUDIO_PATH = 'audio/music/';
 let currentAnnouncementAudio = null; // Keep track of the currently playing announcement audio
 let currentBackgroundMusic = null; // Keep track of the background music Audio object
 const MENU_MUSIC_TRACKS = ['menumusictrack01.mp3', 'menumusictrack02.mp3'];
 const GAME_MUSIC_TRACKS = ['gamemusictrack01.mp3', 'gamemusictrack02.mp3']; // Added game music tracks
+let baseSfxVolume = 0.7; // Store the base SFX volume from settings
 
 /**
  * Plays a hero announcement audio file.
@@ -12,6 +15,12 @@ const GAME_MUSIC_TRACKS = ['gamemusictrack01.mp3', 'gamemusictrack02.mp3']; // A
  */
 export function playAudio(fileName) {
     return new Promise((resolve, reject) => {
+        const settings = getState().settings;
+        if (!settings.sfxEnabled) {
+            console.log(`SFX disabled, skipping audio: ${fileName}`);
+            resolve(); // Resolve immediately if SFX are off
+            return;
+        }
         // Stop any currently playing announcement audio to prevent overlap
         if (currentAnnouncementAudio) {
             currentAnnouncementAudio.pause();
@@ -23,6 +32,7 @@ export function playAudio(fileName) {
         console.log(`Attempting to play audio: ${audioPath}`);
         const audio = new Audio(audioPath);
         currentAnnouncementAudio = audio; // Track this audio instance
+        audio.volume = baseSfxVolume; // Use the stored base SFX volume
 
         audio.addEventListener('ended', () => {
             console.log(`Audio finished: ${fileName}`);
@@ -63,15 +73,22 @@ export function stopCurrentAudio() {
  * Plays a random menu music track on loop.
  */
 export function playMenuMusic() {
+    const settings = getState().settings;
+    if (!settings.musicEnabled) {
+        console.log("Music disabled, skipping menu music.");
+        stopBackgroundMusic(); // Ensure any previous music is stopped
+        return;
+    }
+
     stopBackgroundMusic(); // Stop any existing music first
 
     const randomTrack = MENU_MUSIC_TRACKS[Math.floor(Math.random() * MENU_MUSIC_TRACKS.length)];
     const audioPath = `${MUSIC_AUDIO_PATH}${randomTrack}`;
     console.log(`Attempting to play menu music: ${audioPath}`);
-
     currentBackgroundMusic = new Audio(audioPath);
     currentBackgroundMusic.loop = true; // Enable looping
-    currentBackgroundMusic.volume = 0.4; // Adjust volume as needed (0.0 to 1.0)
+    // Use volume from settings
+    currentBackgroundMusic.volume = settings.musicVolume;
 
     currentBackgroundMusic.play().then(() => {
         console.log(`Playing menu music: ${randomTrack}`);
@@ -87,6 +104,13 @@ export function playMenuMusic() {
  * Plays a random game music track on loop.
  */
 export function playGameMusic() {
+    const settings = getState().settings;
+    if (!settings.musicEnabled) {
+        console.log("Music disabled, skipping game music.");
+        stopBackgroundMusic(); // Ensure any previous music is stopped
+        return;
+    }
+
     stopBackgroundMusic(); // Stop any existing music first
 
     if (GAME_MUSIC_TRACKS.length === 0) {
@@ -100,7 +124,8 @@ export function playGameMusic() {
 
     currentBackgroundMusic = new Audio(audioPath);
     currentBackgroundMusic.loop = true; // Enable looping
-    currentBackgroundMusic.volume = 0.3; // Adjust volume (slightly lower than menu?)
+    // Use volume from settings
+    currentBackgroundMusic.volume = settings.musicVolume;
 
     currentBackgroundMusic.play().then(() => {
         console.log(`Playing game music: ${randomTrack}`);
@@ -123,6 +148,25 @@ export function stopBackgroundMusic() {
     }
 }
 
+/**
+ * Sets the volume for currently playing background music.
+ * @param {number} volume - Volume level from 0.0 to 1.0.
+ */
+export function setMusicVolume(volume) {
+    if (currentBackgroundMusic) {
+        currentBackgroundMusic.volume = volume;
+        console.log(`Music volume set to: ${volume}`);
+    }
+}
+
+/**
+ * Sets the base volume for future sound effects.
+ * @param {number} volume - Volume level from 0.0 to 1.0.
+ */
+export function setSfxVolume(volume) {
+    baseSfxVolume = volume;
+    console.log(`Base SFX volume set to: ${volume}`);
+}
 
 // Optional: Preload audio files if needed
 // export function preloadAudio(fileNames) {

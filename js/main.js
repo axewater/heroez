@@ -1,6 +1,6 @@
 // /js/main.js
 import { initGame, endTurn } from './gameLogic.js';
-import { getState, isGameOver, setDebugMode, isMulliganActive } from './state.js';
+import { getState, isGameOver, setDebugMode, isMulliganActive, loadSettings } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
 import { getDOMElement, cacheDOMElements } from './dom.js';
 import { deselectCard, deselectAttacker, showGameUI, hideGameUI } from './uiState.js';
@@ -11,7 +11,8 @@ import { initCardZoomListeners } from './cardZoom.js';
 import { initMulligan } from './mulligan.js';
 import { initDeckSelection, showDeckSelection } from './deckSelection.js';
 import { initDeckEditor } from './deckEditor.js';
-import { playMenuMusic } from './audioUtils.js'; // Import menu music function
+import { initSettings } from './settings.js'; // Added settings init
+import { playMenuMusic, setMusicVolume, setSfxVolume } from './audioUtils.js'; // Import audio functions
 
 function setupEventListeners() {
     console.log("Setting up event listeners...");
@@ -140,6 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Cache DOM elements FIRST
     cacheDOMElements();
 
+    // 2. Load Settings (before initializing modules that use them, like audio)
+    loadSettings();
+    setMusicVolume(getState().settings.musicVolume); // Apply initial music volume
+    setSfxVolume(getState().settings.sfxVolume);   // Apply initial SFX volume base
+
     // Initialize the pre-game UI modules
     initMenu();
     initHeroSelection(); // Initialize elements, but don't show yet
@@ -147,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMulligan(); // Initialize mulligan elements
     initDeckEditor(); // Initialize deck editor elements
     initCardZoomListeners(); // Initialize card zoom hover listeners (can be done once)
+    initSettings(); // Initialize settings screen elements and listeners
     setupEventListeners(); // Setup general game event listeners
 
     // Setup Intro Screen Listeners

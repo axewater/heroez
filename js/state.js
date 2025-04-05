@@ -1,8 +1,31 @@
 import { STARTING_HEALTH, MAX_MANA } from './constants.js';
 
 // Centralized game state
-let state = {};
+// --- Initialize state with default structure and settings ---
+let state = {
+    players: { player: null, opponent: null },
+    firstPlayerId: null,
+    isDebugMode: false,
+    currentPlayerId: 'player',
+    turn: 0,
+    gameOver: false,
+    message: "",
+    selectedCard: null,
+    selectedAttacker: null,
+    targetingMode: null,
+    spellTargetType: null,
+    activeEffects: [],
+    settings: { // Default settings defined here
+        musicEnabled: true,
+        musicVolume: 0.4,
+        sfxEnabled: true,
+        sfxVolume: 0.7,
+    },
+    mulliganActive: false,
+    mulliganSelectedIndices: [],
+};
 
+const SETTINGS_STORAGE_KEY = 'aceBattlerSettings';
 // Function to initialize or reset the state
 export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
     state = {
@@ -57,6 +80,7 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
         targetingMode: null, // 'spell', 'attack', null
         spellTargetType: null, // 'any', 'creature', 'opponent-board', 'self', etc.
         activeEffects: [], // For tracking temporary effects, auras etc.
+        settings: { ...state.settings }, // Copy initial default settings
         mulliganActive: false, // Is the mulligan phase currently active?
         mulliganSelectedIndices: [], // Array of hand indices selected for mulligan
     };
@@ -161,4 +185,34 @@ export function getTurn() {
 // Avoid direct mutation from outside state.js where possible.
 export function getState() {
     return state;
+}
+
+// --- Settings Load/Save ---
+export function loadSettings() {
+    // Define default settings structure here as well for fallback
+    const defaultSettings = {
+        musicEnabled: true,
+        musicVolume: 0.4,
+        sfxEnabled: true,
+        sfxVolume: 0.7,
+    };
+
+    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (savedSettings) {
+        try {
+            const parsed = JSON.parse(savedSettings);
+            // Merge saved settings with defaults (in case new settings were added)
+            state.settings = { ...defaultSettings, ...parsed }; // Use defaultSettings as base
+            console.log("Loaded settings:", state.settings);
+        } catch (e) {
+            console.error("Failed to parse saved settings:", e);
+            state.settings = { ...defaultSettings }; // Explicitly fall back to defaults on error
+        }
+    } else {
+        console.log("No saved settings found, using defaults.");
+    }
+}
+export function saveSettings() {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(state.settings));
+    console.log("Settings saved:", state.settings);
 }
