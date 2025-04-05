@@ -40,15 +40,23 @@ export function showCardZoom(cardElement) {
     const zoomContainer = getDOMElement('cardZoomContainerEl');
     const state = getState();
 
+    // --- Prevent Zoom for Hidden Opponent Hand Cards ---
+    // Check if it's an opponent's card in their hand and we are NOT in debug mode
+    const isOpponentHandCard = cardData?.owner === 'opponent' && cardElement.closest('#opponent-hand');
+    if (isOpponentHandCard && !state.isDebugMode) {
+        // Do nothing, effectively preventing the zoom from showing
+        return;
+    }
+    // --- End Prevent Zoom ---
+
     if (!cardData || !zoomContainer) {
         console.warn("Cannot show zoom: Card data or zoom container not found.");
         hideCardZoom(); // Ensure it's hidden if data is missing
-        return;
     }
 
     // Check if opponent hand card should be hidden
-    const isOpponentHandCard = cardData.owner === 'opponent' && cardElement.closest('.hand');
-    const shouldHideDetails = isOpponentHandCard && !state.isDebugMode;
+    const isOpponentHandCardToHide = cardData.owner === 'opponent' && cardElement.closest('.hand');
+    const shouldHideDetails = isOpponentHandCardToHide && !state.isDebugMode;
 
     // Use a timeout to delay showing the zoom
     zoomTimeout = setTimeout(() => {
