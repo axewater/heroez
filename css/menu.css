@@ -21,6 +21,23 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Style the container for the menu buttons */
+#opening-menu {
+    position: fixed; /* Keep it centered */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    background: linear-gradient(to bottom right, #2c3e50, #34495e); /* Match intro screen gradient */
+    z-index: 2000; /* Ensure it's above game, below intro if needed */
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.5s ease-out;
+}
+
 .menu-button {
     padding: 15px 40px;
     font-size: 1.8em;
