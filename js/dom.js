@@ -22,6 +22,7 @@ export function cacheDOMElements() {
         messageAreaEl: document.getElementById('message-area'),
         turnCounterDisplayEl: document.getElementById('turn-counter-display'),
         endTurnButton: document.getElementById('end-turn-button'),
+        forfeitButton: document.getElementById('forfeit-button'),
         gameOverOverlay: document.getElementById('game-over-overlay'),
         gameOverMessage: document.getElementById('game-over-message'),
         restartButton: document.getElementById('restart-button'),

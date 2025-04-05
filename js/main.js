@@ -1,5 +1,5 @@
 // /js/main.js
-import { initGame, endTurn } from './gameLogic.js';
+import { initGame, endTurn, gameOver } from './gameLogic.js';
 import { getState, isGameOver, setDebugMode, isMulliganActive, loadSettings } from './state.js';
 import { handleHandCardClick, handleBoardCardClick, handleTargetClick } from './eventHandlers.js';
 import { getDOMElement, cacheDOMElements } from './dom.js';
@@ -18,6 +18,16 @@ function setupEventListeners() {
     console.log("Setting up event listeners...");
 
     const endTurnButton = getDOMElement('endTurnButton');
+    const forfeitButton = getDOMElement('forfeitButton');
+    
+    if (forfeitButton) {
+        forfeitButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to forfeit the game?')) {
+                gameOver("Player Forfeited!", true);
+            }
+        });
+    }
+    
     if (endTurnButton) {
         endTurnButton.addEventListener('click', () => {
             if (getState().currentPlayerId === 'player' && !getState().targetingMode && !isGameOver() && !isMulliganActive()) {
@@ -33,8 +43,8 @@ function setupEventListeners() {
     const restartButton = getDOMElement('restartButton');
     if (restartButton) {
         restartButton.addEventListener('click', () => {
-            // Restarting should probably go back to the menu or hero select?
-            // For now, just re-init the menu flow.
+            // Hide the game over screen and show the hero selection screen
+            import('./uiState.js').then(module => module.hideGameOverScreen());
             initMenu();
         });
     } else {

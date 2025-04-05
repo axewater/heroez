@@ -410,14 +410,27 @@ export function checkWinCondition() {
     return false; // Game continues
 }
 
-export function gameOver(message) {
+/**
+ * Handles the end of the game, either through win/loss or forfeit.
+ * @param {string} message - The message to display (e.g., "Player Wins!", "Player Forfeited!").
+ * @param {boolean} [isForfeit=false] - Indicates if the game ended due to a forfeit.
+ */
+export function gameOver(message, isForfeit = false) {
     console.log("Game Over:", message);
     setGameOver(true, message);
     setMessage(message); // Update message bar immediately with final result
     logMessage(`--- Game Over: ${message} ---`, 'log-turn'); // Log final result
-    showGameOverScreen(message); // Show the overlay
     stopCurrentAudio(); // Stop any currently playing announcement audio
     stopBackgroundMusic(); // Stop any background music (menu or game)
+
+    if (isForfeit) {
+        hideGameUI(); // Hide the main game interface
+        // Directly transition back to hero selection
+        import('./heroSelection.js').then(module => module.showHeroSelection());
+        import('./audioUtils.js').then(module => module.playMenuMusic()); // Start menu music
+    } else {
+        showGameOverScreen(message); // Show the game over overlay for normal win/loss
+    }
 }
 
 // --- Mulligan Logic ---

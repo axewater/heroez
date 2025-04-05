@@ -1,4 +1,29 @@
 /* --- Game Controls & Messages --- */
+#forfeit-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 25;
+}
+
+#forfeit-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff4444;
+    color: white;
+    opacity: 0.8;
+    transition: background-color 0.2s ease;
+}
+
+#forfeit-button:hover {
+    opacity: 1;
+    background-color: #ff2222;
+}
+
 #game-controls {
     position: absolute;
     bottom: 10px;
