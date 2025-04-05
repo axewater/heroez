@@ -63,6 +63,14 @@ function renderPlayerInfo(player) {
     console.log(`[Render ${player.id}] Draw Pile Count: ${player.drawPile.length}`); // Added log
     player.discardPileElement.textContent = `Discard: ${player.discardPile.length}`;
 
+    // Render Hero Portrait
+    const portraitEl = player.heroElement?.querySelector('.hero-portrait');
+    if (portraitEl && player.heroData?.portrait) {
+        portraitEl.style.backgroundImage = `url('${player.heroData.portrait}')`;
+    } else if (portraitEl) {
+        portraitEl.style.backgroundImage = 'none'; // Clear if no portrait
+    }
+
     // Render Mana Crystals
     player.manaElement.innerHTML = ''; // Clear previous crystals
     const maxVisibleCrystals = Math.max(player.maxMana, player.currentMana); // Determine how many slots to potentially show

@@ -68,37 +68,56 @@
 /* --- Hero/Player Info --- */
 .hero-info {
     position: absolute;
-    bottom: 10px; /* Position relative to player-area */
+    bottom: 10px; /* Position relative to player-area bottom */
     left: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent */
     border: 2px solid #333; /* Make border slightly thicker */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add subtle shadow */
     border-radius: 5px;
-    padding: 5px 10px;
+    padding: 8px 5px; /* Adjusted padding */
     text-align: center;
-    min-width: 80px;
+    min-width: 60px; /* Made narrower */
     z-index: 10; /* Above board/hand */
     cursor: pointer; /* Make heroes targetable */
     transition: background-color 0.2s ease; /* For visual feedback */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    gap: 4px; /* Reduced gap for vertical layout */
 }
 #opponent-area .hero-info {
-    top: 10px;
+    top: 10px; /* Position relative to player-area top */
     bottom: auto;
 }
+
+/* Hero Portrait Styles */
+.hero-portrait {
+    width: 45px; /* Slightly smaller portrait */
+    height: 45px;
+    border-radius: 50%; /* Circular portrait */
+    border: 2px solid #555;
+    background-color: #ccc; /* Fallback color */
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 2px; /* Space below portrait */
+}
+/* Style for the Player/Opponent text */
+.hero-info > div:not(.hero-portrait):not(.mana-container):not(.hero-health):not(.hero-draw-pile):not(.hero-discard-pile) {
+    font-size: 0.9em;
+    font-weight: bold;
+}
 .hero-health {
-    font-size: 1.2em;
+    font-size: 1.1em; /* Slightly smaller health */
     font-weight: bold;
     color: red;
 }
 .mana-container {
     display: flex; /* Arrange mana crystals horizontally */
     gap: 3px; /* Space between crystals */
-    margin-top: 5px; /* Space above mana */
     height: 15px; /* Fixed height for the container */
 }
 .hero-draw-pile, .hero-discard-pile {
-    font-size: 0.9em;
+    font-size: 0.8em; /* Smaller font for counts */
     color: #333;
-    margin-top: 4px;
-    display: inline-block; /* Or block if preferred */
-    margin-right: 8px; /* Add some spacing between counts */
+    display: block; /* Stack the counts */
 }

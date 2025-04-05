@@ -10,6 +10,7 @@ import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
 import { animateStartGameCoinFlip } from './animations.js'; // Import the new coin flip animation function
+import { heroData } from './heroes.js'; // Import hero data to get opponent details
 
 const AVAILABLE_BACKGROUNDS = ['bg01.png', 'bg02.png', 'bg03.png', 'bg04.png'];
 const STARTING_DRAW_DELAY = 1500; // Delay after showing who goes first before mulligan
@@ -48,10 +49,15 @@ export async function startGameWithHero(selectedHero, playerDeckCardIds, isDebug
     // --- Create Player Draw Pile Instances ---
     const playerDrawPileInstances = playerDeckCardIds.map(cardId => createCardInstanceById(cardId, 'player')).filter(Boolean);
 
-    // --- Create Opponent Draw Pile (Using Default Deck for now) ---
-    // TODO: Allow selecting opponent deck or use a smarter default based on player hero?
-    const opponentHeroId = selectedHero.id; // For simplicity, opponent uses same class default deck
-    const opponentDefaultDeckIds = defaultDecks[opponentHeroId] || defaultDecks.warrior; // Fallback to warrior
+    // --- Determine Opponent Hero and Deck ---
+    // For now, pick a random hero that isn't the player's selected hero
+    const availableOpponentHeroes = heroData.filter(h => h.id !== selectedHero.id);
+    const opponentHero = availableOpponentHeroes.length > 0
+        ? availableOpponentHeroes[Math.floor(Math.random() * availableOpponentHeroes.length)]
+        : heroData.find(h => h.id !== selectedHero.id) || heroData[0]; // Fallback if only one hero exists
+
+    console.log(`[GameLogic] Opponent hero selected: ${opponentHero.name}`);
+    const opponentDefaultDeckIds = defaultDecks[opponentHero.id] || defaultDecks[Object.keys(defaultDecks)[0]]; // Use opponent's default deck or first available
     const opponentDrawPileInstances = opponentDefaultDeckIds.map(cardId => createCardInstanceById(cardId, 'opponent')).filter(Boolean);
 
     // Shuffle the draw pile lists before passing to resetState
@@ -66,6 +72,9 @@ export async function startGameWithHero(selectedHero, playerDeckCardIds, isDebug
     // --- Now Access Player Data ---
     const player = getPlayer('player');
     const opponent = getPlayer('opponent');
+
+    player.heroData = selectedHero; // Store selected hero data in state
+    opponent.heroData = opponentHero; // Store opponent hero data in state
 
     // Assign DOM elements after state is initialized and players exist
     assignElementsToPlayerState(getPlayer);

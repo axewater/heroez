@@ -17,6 +17,7 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 board: [],
                 discardPile: [], // Added discard pile
                 // DOM elements will be assigned in initGame after DOM is ready
+                heroData: null, // Added to store selected hero details
                 heroElement: null,
                 healthElement: null,
                 manaElement: null,
@@ -35,6 +36,7 @@ export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
                 board: [],
                 discardPile: [], // Added discard pile
                  // DOM elements will be assigned in initGame after DOM is ready
+                heroData: null, // Added to store selected hero details
                 heroElement: null,
                 healthElement: null,
                 manaElement: null,
