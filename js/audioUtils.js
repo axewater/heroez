@@ -3,6 +3,7 @@ const MUSIC_AUDIO_PATH = 'audio/music/';
 let currentAnnouncementAudio = null; // Keep track of the currently playing announcement audio
 let currentBackgroundMusic = null; // Keep track of the background music Audio object
 const MENU_MUSIC_TRACKS = ['menumusictrack01.mp3', 'menumusictrack02.mp3'];
+const GAME_MUSIC_TRACKS = ['gamemusictrack01.mp3', 'gamemusictrack02.mp3']; // Added game music tracks
 
 /**
  * Plays a hero announcement audio file.
@@ -58,8 +59,6 @@ export function stopCurrentAudio() {
     }
 }
 
-// --- Background Music Functions ---
-
 /**
  * Plays a random menu music track on loop.
  */
@@ -80,6 +79,33 @@ export function playMenuMusic() {
         console.error(`Error playing menu music ${randomTrack}:`, error);
         // Autoplay likely failed, user interaction needed first.
         // The intro screen should handle this.
+        currentBackgroundMusic = null;
+    });
+}
+
+/**
+ * Plays a random game music track on loop.
+ */
+export function playGameMusic() {
+    stopBackgroundMusic(); // Stop any existing music first
+
+    if (GAME_MUSIC_TRACKS.length === 0) {
+        console.warn("No game music tracks defined.");
+        return;
+    }
+
+    const randomTrack = GAME_MUSIC_TRACKS[Math.floor(Math.random() * GAME_MUSIC_TRACKS.length)];
+    const audioPath = `${MUSIC_AUDIO_PATH}${randomTrack}`;
+    console.log(`Attempting to play game music: ${audioPath}`);
+
+    currentBackgroundMusic = new Audio(audioPath);
+    currentBackgroundMusic.loop = true; // Enable looping
+    currentBackgroundMusic.volume = 0.3; // Adjust volume (slightly lower than menu?)
+
+    currentBackgroundMusic.play().then(() => {
+        console.log(`Playing game music: ${randomTrack}`);
+    }).catch(error => {
+        console.error(`Error playing game music ${randomTrack}:`, error);
         currentBackgroundMusic = null;
     });
 }
