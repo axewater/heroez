@@ -52,11 +52,11 @@ export const cardLibrary = [
     { id: "mc_l1", name: "Alien Queen", cost: 8, attack: 7, health: 7, type: "Creature", rarity: "legendary", mechanics: ["Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "mc_facehugger", count: 1 }, effectText: "Deploy: Summon a 3/3 Facehugger." },
     { id: "mc_facehugger", name: "Facehugger", cost: 0, attack: 3, health: 3, type: "Creature", rarity: "token", mechanics: [], collectible: false },
 
-    { id: "mc_l2", name: "Rolling Boulder", cost: 9, attack: 7, health: 7, type: "Creature", rarity: "legendary", mechanics: ["Taunt", "Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "mc_snake", count: 1 }, effectText: "Taunt. Deploy: Summon a 1/1 Snake with Taunt." },
-    { id: "mc_snake", name: "Snake", cost: 0, attack: 1, health: 1, type: "Creature", rarity: "token", mechanics: ["Taunt"], collectible: false },
+    { id: "mc_l2", name: "Rolling Boulder", cost: 9, attack: 7, health: 7, type: "Creature", rarity: "legendary", mechanics: ["Taunt", "Deploy"], deployActionId: 'summonCreature', deployParams: { cardId: "mc_snake", count: 1 }, effectText: "Taunt. Deploy: Summon a 1/1 Tiny Rockman with Taunt." },
+    { id: "mc_snake", name: "Tiny Rockman", cost: 0, attack: 1, health: 1, type: "Creature", rarity: "token", mechanics: ["Taunt"], collectible: false },
 
     // --- Special Cards ---
-    { id: "coin", name: "The Coin", cost: 0, type: "Spell", rarity: "token", target: "self", mechanics: [], actionId: 'gainTemporaryMana', actionParams: { amount: 1 }, effectText: "Gain 1 Mana Crystal this turn only.", collectible: false, visualEffectType: 'physical' },
+    { id: "coin", name: "Energy Disc", cost: 0, type: "Spell", rarity: "token", target: "self", mechanics: [], actionId: 'gainTemporaryMana', actionParams: { amount: 1 }, effectText: "Gain 1 Energy this turn only.", collectible: false, visualEffectType: 'physical' },
 
     // --- Hero Specific Cards (Not collectible in general pool) ---
     // T-1000

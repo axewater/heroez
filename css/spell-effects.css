@@ -104,9 +104,9 @@
     width: 80px; /* Size similar to a card */
     height: 80px;
     transform: translate(-50%, -50%); /* Center on target point */
-    /* Placeholder background - REPLACE with url('../img/cards/coin.png') when available */
-    background: radial-gradient(circle, gold 40%, darkgoldenrod 80%);
-    border: 2px solid darkgoldenrod;
+    /* Changed background from gold/yellow to blue */
+    background: radial-gradient(circle, dodgerblue 40%, mediumblue 80%);
+    border: 2px solid mediumblue;
     border-radius: 50px; /* Make it card-shaped or 50% for round coin */
     animation: coin-spin 1s cubic-bezier(0.34, 0.01, 0.66, 0.99) forwards; /* 1 second duration */
 }
