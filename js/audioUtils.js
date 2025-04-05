@@ -4,9 +4,9 @@ const HERO_AUDIO_PATH = 'audio/heroes/';
 const MUSIC_AUDIO_PATH = 'audio/music/';
 let currentAnnouncementAudio = null; // Keep track of the currently playing announcement audio
 let currentBackgroundMusic = null; // Keep track of the background music Audio object
+let baseSfxVolume = 0.7; // Store the base SFX volume from settings (initialized from state later)
 const MENU_MUSIC_TRACKS = ['menumusictrack01.mp3', 'menumusictrack02.mp3'];
 const GAME_MUSIC_TRACKS = ['gamemusictrack01.mp3', 'gamemusictrack02.mp3']; // Added game music tracks
-let baseSfxVolume = 0.7; // Store the base SFX volume from settings
 
 /**
  * Plays a hero announcement audio file.
@@ -32,7 +32,7 @@ export function playAudio(fileName) {
         console.log(`Attempting to play audio: ${audioPath}`);
         const audio = new Audio(audioPath);
         currentAnnouncementAudio = audio; // Track this audio instance
-        audio.volume = baseSfxVolume; // Use the stored base SFX volume
+        audio.volume = settings.sfxVolume; // Use volume directly from settings state
 
         audio.addEventListener('ended', () => {
             console.log(`Audio finished: ${fileName}`);
@@ -164,8 +164,35 @@ export function setMusicVolume(volume) {
  * @param {number} volume - Volume level from 0.0 to 1.0.
  */
 export function setSfxVolume(volume) {
-    baseSfxVolume = volume;
+    // Update the baseSfxVolume variable if it's still used elsewhere,
+    // but primarily, ensure the settings state is the source of truth.
+    // The playCardSound function will read directly from state.settings.
     console.log(`Base SFX volume set to: ${volume}`);
+}
+
+/**
+ * Plays a sound effect for a specific card being played.
+ * Respects SFX settings and handles missing files gracefully.
+ * @param {string} cardId - The ID of the card (e.g., 'mc_c1').
+ */
+export function playCardSound(cardId) {
+    const settings = getState().settings;
+    if (!settings.sfxEnabled) {
+        // console.log(`SFX disabled, skipping card sound: ${cardId}`);
+        return; // Do nothing if SFX are off
+    }
+
+    const audioPath = `audio/cards/${cardId}.mp3`;
+    // console.log(`Attempting to play card sound: ${audioPath}`);
+    const audio = new Audio(audioPath);
+    audio.volume = settings.sfxVolume; // Use current SFX volume from settings
+
+    audio.addEventListener('error', (e) => {
+        // Log quietly if file not found, don't throw an error
+        console.warn(`Card sound not found or error playing ${audioPath}:`, e.message);
+    });
+
+    audio.play().catch(error => console.warn(`Error playing card sound ${cardId}:`, error)); // Catch potential play errors
 }
 
 // Optional: Preload audio files if needed

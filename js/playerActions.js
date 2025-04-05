@@ -10,6 +10,7 @@ import { getTargetFromElement } from './actionUtils.js';
 import { triggerCardEffect } from './cardEffects.js';
 import { animateCardMovement, animateSpellEffect, animateDrawCard, animateCoinEffect } from './animations.js';
 import { getDOMElement } from './dom.js';
+import { playCardSound } from './audioUtils.js';
 
 export async function playCard(player, card, cardIndexInHand, targetElement = null) {
     console.log(`${player.id} attempts to play ${card.name}`);
@@ -45,6 +46,9 @@ export async function playCard(player, card, cardIndexInHand, targetElement = nu
     // Remove card from hand state *before* animation starts,
     // but keep the data for animation/effects.
     const playedCard = player.hand.splice(cardIndexInHand, 1)[0];
+
+    // --- Play Card Sound ---
+    playCardSound(playedCard.id); // Play the sound effect for the card
 
     let success = true;
     let animationPromise = Promise.resolve(); // Default to resolved promise if no animation
