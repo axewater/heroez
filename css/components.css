@@ -36,13 +36,15 @@
     z-index: 5;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    background-color: rgba(50, 50, 50, 0.3); /* Semi-transparent dark grey */
 }
 
 #message-area {
     text-align: center;
     font-size: 1.1em;
     font-weight: bold;
-    color: #333;
+    color: white; /* Make text white */
+    text-shadow: 1px 1px 3px black, -1px -1px 3px black, 1px -1px 3px black, -1px 1px 3px black; /* Thick black drop shadow */
     flex-grow: 1; /* Allow message area to take available space */
 }
 
@@ -51,6 +53,8 @@
     font-weight: bold;
     position: relative; /* Ensure it's above player areas if needed */
     z-index: 5;
+    color: white; /* Make text white */
+    text-shadow: 1px 1px 3px black, -1px -1px 3px black, 1px -1px 3px black, -1px 1px 3px black; /* Thick black drop shadow */
 }
 
 /* --- Game Over Screen --- */
