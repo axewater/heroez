@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="css/mulligan.css">
     <link rel="stylesheet" href="css/deckSelection.css">
     <link rel="stylesheet" href="css/deckEditor.css">
+    <link rel="stylesheet" href="css/announcement.css">
 </head>
 <body>
 
@@ -88,6 +89,17 @@
             <!-- Player's starting hand for mulligan shown here -->
         </div>
         <button id="confirm-mulligan-button">Confirm Mulligan</button>
+    </div>
+
+    <!-- Hero Announcement Overlay -->
+    <div id="hero-announcement-overlay" class="hidden">
+        <div id="announcement-opponent-hero" class="announcement-hero-display">
+            <img id="announcement-opponent-portrait" src="" alt="Opponent Hero">
+        </div>
+        <div id="announcement-vs-text">VS</div>
+        <div id="announcement-player-hero" class="announcement-hero-display">
+            <img id="announcement-player-portrait" src="" alt="Player Hero">
+        </div>
     </div>
 
     <div id="game-container" class="hidden"> <!-- Initially hidden -->

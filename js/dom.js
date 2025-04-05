@@ -66,6 +66,11 @@ export function cacheDOMElements() {
         deckEditorCardCountEl: document.getElementById('deck-editor-card-count'),
         deckEditorCollectionEl: document.getElementById('deck-editor-collection'),
         deckEditorCurrentDeckEl: document.getElementById('deck-editor-current-deck'),
+
+        // Announcement Elements
+        heroAnnouncementOverlayEl: document.getElementById('hero-announcement-overlay'),
+        announcementPlayerPortraitEl: document.getElementById('announcement-player-portrait'),
+        announcementOpponentPortraitEl: document.getElementById('announcement-opponent-portrait'),
     };
     console.log("DOM elements cached.");
 }

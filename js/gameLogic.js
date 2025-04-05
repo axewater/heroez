@@ -10,6 +10,7 @@ import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
 import { animateStartGameCoinFlip } from './animations.js'; // Import the new coin flip animation function
+import { playAudio, stopCurrentAudio } from './audioUtils.js'; // Import audio playback utility
 import { heroData } from './heroes.js'; // Import hero data to get opponent details
 
 const AVAILABLE_BACKGROUNDS = ['bg01.png', 'bg02.png', 'bg03.png', 'bg04.png'];
@@ -79,10 +80,45 @@ export async function startGameWithHero(selectedHero, playerDeckCardIds, isDebug
     // Assign DOM elements after state is initialized and players exist
     assignElementsToPlayerState(getPlayer);
 
+    // --- Hero Announcement Sequence ---
+    const announcementOverlay = getDOMElement('heroAnnouncementOverlayEl');
+    const announcementPlayerPortrait = getDOMElement('announcementPlayerPortraitEl');
+    const announcementOpponentPortrait = getDOMElement('announcementOpponentPortraitEl');
+
+    if (announcementOverlay && announcementPlayerPortrait && announcementOpponentPortrait && player.heroData?.portrait && opponent.heroData?.portrait) {
+        console.log("Starting hero announcement sequence...");
+        announcementPlayerPortrait.src = player.heroData.portrait;
+        announcementOpponentPortrait.src = opponent.heroData.portrait;
+
+        announcementOverlay.classList.remove('hidden'); // Make overlay visible
+
+        try {
+            // Wait briefly for CSS transition to start
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Play sounds sequentially
+            if (player.heroData.audioName) await playAudio(player.heroData.audioName);
+            await playAudio('versus.mp3');
+            if (opponent.heroData.audioName) await playAudio(opponent.heroData.audioName);
+
+            // Wait a bit after sounds finish before hiding
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+        } catch (error) {
+            console.error("Error during announcement audio playback:", error);
+        } finally {
+            announcementOverlay.classList.add('hidden'); // Hide overlay
+            console.log("Hero announcement sequence finished.");
+        }
+    } else {
+        console.warn("Skipping hero announcement: Elements or hero data missing.");
+    }
+    // --- End Hero Announcement Sequence ---
+
     // --- Determine Starting Player ---
-    setMessage("Determining who goes first..."); // Initial message
+    setMessage("Determining who goes first..."); // Set message for coin flip
     showGameUI(); // Make the game UI visible now (shows message)
-    renderGame(); // Render initial empty state with message
+    renderGame(); // Render initial empty state
 
     // --- Coin Flip Animation ---
     try {
@@ -374,6 +410,7 @@ export function gameOver(message) {
     setMessage(message); // Update message bar immediately with final result
     logMessage(`--- Game Over: ${message} ---`, 'log-turn'); // Log final result
     showGameOverScreen(message); // Show the overlay
+    stopCurrentAudio(); // Stop any currently playing announcement audio
 }
 
 // --- Mulligan Logic ---
