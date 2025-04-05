@@ -10,7 +10,7 @@ import { runAITurn } from './aiCore.js';
 import { showMulliganUI, hideMulliganUI } from './mulligan.js'; // Import mulligan UI functions
 import { defaultDecks } from './decks.js'; // Import default deck data
 import { animateStartGameCoinFlip } from './animations.js'; // Import the new coin flip animation function
-import { playAudio, stopCurrentAudio } from './audioUtils.js'; // Import audio playback utility
+import { playAudio, stopCurrentAudio, stopBackgroundMusic } from './audioUtils.js'; // Import audio playback utility
 import { heroData } from './heroes.js'; // Import hero data to get opponent details
 
 const AVAILABLE_BACKGROUNDS = ['bg01.png', 'bg02.png', 'bg03.png', 'bg04.png'];
@@ -97,6 +97,8 @@ export async function startGameWithHero(selectedHero, playerDeckCardIds, isDebug
             await new Promise(resolve => setTimeout(resolve, 100));
 
             // Play sounds sequentially
+            // Stop menu music right before the "versus" sound
+            stopBackgroundMusic();
             if (player.heroData.audioName) await playAudio(player.heroData.audioName);
             await playAudio('versus.mp3');
             if (opponent.heroData.audioName) await playAudio(opponent.heroData.audioName);

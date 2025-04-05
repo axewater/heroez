@@ -34,14 +34,13 @@ export function initMenu() {
 
 function handleStartClick() {
     console.log("Start button clicked");
-    stopBackgroundMusic(); // Stop music before starting game
     hideOpeningMenu();
     showHeroSelection(false); // Transition to hero selection (not in debug mode)
 }
 
 function handleStartDebugClick() {
     console.log("Start Debug button clicked");
-    stopBackgroundMusic(); // Stop music before starting game
+    setDebugMode(true); // Set debug mode in state
     hideOpeningMenu();
     showHeroSelection(true); // Transition to hero selection (in debug mode)
 }
@@ -56,7 +55,6 @@ function handleSettingsClick() {
 function handleDeckEditorClick() {
     console.log("Deck Editor button clicked");
     hideOpeningMenu();
-    stopBackgroundMusic(); // Stop music when going to deck editor
     // Assuming deckEditor.js exports showDeckEditor()
     import('./deckEditor.js').then(module => module.showDeckEditor());
 }
