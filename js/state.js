@@ -25,7 +25,7 @@ let state = {
     mulliganSelectedIndices: [],
 };
 
-const SETTINGS_STORAGE_KEY = 'aceBattlerSettings';
+const SETTINGS_STORAGE_KEY = 'heroezSettings';
 // Function to initialize or reset the state
 export function resetState(initialPlayerDeck = [], initialOpponentDeck = []) {
     state = {

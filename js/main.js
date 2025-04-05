@@ -90,16 +90,19 @@ function setupEventListeners() {
     }
 
      document.body.addEventListener('click', (e) => {
-         if (getState().targetingMode || getState().selectedCard || getState().selectedAttacker) {
-             const clickedInteractive = e.target.closest('.card, .hero-info, button');
-             if (!clickedInteractive) {
-                 console.log("Clicked outside interactive area, deselecting...");
-                 deselectCard();
-                 deselectAttacker();
-                 renderGame(); // <-- Added this line to update the UI
-             }
-         }
-     }, true);
+        // Only handle left clicks within game container
+        if (e.button !== 0 || !e.target.closest('#game-container')) return;
+        
+        if (getState().targetingMode || getState().selectedCard || getState().selectedAttacker) {            
+            const clickedInteractive = e.target.closest('.card, .hero-info, button');
+            if (!clickedInteractive) {
+                console.log("Clicked outside interactive area, deselecting...");
+                deselectCard();
+                deselectAttacker();
+                renderGame();
+            }
+        }
+    }, true);
 
     console.log("Event listeners set up.");
 }
@@ -131,7 +134,12 @@ function handleIntroInteraction() {
 
         // 4. Remove listeners to prevent multiple triggers
         document.removeEventListener('keydown', handleIntroInteraction);
-        introScreen.removeEventListener('click', handleIntroInteraction);
+        // Only handle left mouse button clicks
+        introScreen.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // Left click only
+                handleIntroInteraction();
+            }
+        });
     }
 }
 
@@ -157,9 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners(); // Setup general game event listeners
 
     // Setup Intro Screen Listeners
-    const introScreen = getDOMElement('introScreen'); // <-- Uses cached element
+    const introScreen = getDOMElement('introScreen');
     if (introScreen) {
-        document.addEventListener('keydown', handleIntroInteraction, { once: true }); // <-- Listener added after cache
-        introScreen.addEventListener('click', handleIntroInteraction, { once: true }); // <-- Listener added after cache
+        // Only listen for spacebar key
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                handleIntroInteraction();
+            }
+        }, { once: true });
+        
+        // Only handle left mouse button clicks
+        introScreen.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // Left click only
+                handleIntroInteraction();
+            }
+        });
     }
 });
