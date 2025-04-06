@@ -32,12 +32,10 @@
     flex-direction: column; /* Stack items vertically */
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
-    background-image: url('../img/other/menu.png'); /* New background image */
-    background-size: cover; /* Cover the entire area */
-    background-repeat: no-repeat; /* Prevent tiling */
     z-index: 2000; /* Ensure it's above game, below intro if needed */
     opacity: 0; /* Start hidden */
     transition: opacity 0.5s ease-out;
+    overflow: hidden; /* Ensure image doesn't overflow */
 }
 
 .menu-button {
@@ -69,4 +67,16 @@
     display: none !important;
     opacity: 0;
     pointer-events: none; /* Prevent interaction when hidden */
+}
+
+/* Style for the new background image */
+.menu-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the container, may crop */
+    z-index: -1; /* Place behind the buttons */
+    pointer-events: none; /* Prevent image from blocking button clicks */
 }
