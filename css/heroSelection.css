@@ -1,14 +1,14 @@
 #hero-selection-screen {
     position: absolute;
     top: 0;
-    left: 0; /* Keep position for child positioning */
+    left: 0;
     width: 100%;
     height: 100%;
     display: none;
-    flex-direction: column; /* Keep items stacked vertically */
-    justify-content: flex-end; /* Push content to the bottom */
+    flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
-    padding-bottom: 50px; /* Add padding at the bottom */
+    padding-bottom: 50px;
     z-index: 1900;
     color: white;
     text-align: center;
@@ -24,13 +24,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Scale the image to cover the container, maintaining aspect ratio */
-    object-position: center; /* Center the image within the element's box */
-    z-index: -1; /* Place the image behind the content */
-    border-radius: 10px; /* Match parent container's border-radius */
-    pointer-events: none; /* Prevent image from interfering with clicks */
+    object-fit: cover;
+    object-position: center;
+    z-index: -1;
+    border-radius: 10px;
+    pointer-events: none;
 }
-
 
 #hero-selection-screen h2 {
     font-size: 3em;
@@ -50,8 +49,9 @@
     background-color: rgba(0, 0, 0, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 10px;
-    padding: 20px;
+    padding: 15px;
     width: 180px;
+    height: 280px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -93,14 +93,16 @@
 }
 
 .hero-option h3 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     margin-bottom: 10px;
 }
 
 .hero-description {
-    font-size: 0.9em;
+    font-size: 0.8em;
     margin-bottom: 15px;
-    min-height: 40px;
+    max-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .select-hero-button {

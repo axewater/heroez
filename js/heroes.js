@@ -26,7 +26,7 @@ export const heroData = [
     {
         id: "docbrown",
         name: "Dr. Emmett Brown",
-        description: "Eccentric inventor. Great Scott! Where we're going, we don't need roads.",
+        description: "Eccentric inventor. Where we're going, we don't need roads.",
         portrait: "img/heroes/docbrown.png",
         audioName: "docbrown.mp3",
         uniqueCardIds: ["h_db1", "h_db2"]
